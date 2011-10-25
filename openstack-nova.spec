@@ -361,7 +361,7 @@ fi
 
 %changelog
 * Mon Oct 24 2011 David Busby <oneiroi@fedoraproject.org> 2011.3-6
-- Added patch tyo fix nova glance requirment 0010
+- Added patch to fix nova glance dependency.
 
 * Mon Oct 24 2011 Mark McLoughlin <markmc@redhat.com> - 2011.3-5
 - Fix block migration (#741690)
