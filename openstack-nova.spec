@@ -2,7 +2,7 @@
 
 Name:             openstack-nova
 Version:          2011.3
-Release:          6%{?dist}
+Release:          7%{?dist}
 Summary:          OpenStack Compute (nova)
 
 Group:            Applications/System
@@ -53,7 +53,7 @@ Requires:         python-paste
 Requires:         python-paste-deploy
 
 Requires:         libvirt-python
-Requires:         libvirt >= 0.8.2
+Requires:         libvirt >= 0.8.1
 Requires:         libxml2-python
 Requires:         python-cheetah
 Requires:         MySQL-python
@@ -358,6 +358,9 @@ fi
 %endif
 
 %changelog
+* Mon Oct 24 2011 David Busby <oneiroi@fedoraproject.org> 2011.3-6
+- Changed libvirt required version to >= 0.8.1
+
 * Mon Oct 24 2011 Mark McLoughlin <markmc@redhat.com> - 2011.3-5
 - Fix block migration (#741690)
 
