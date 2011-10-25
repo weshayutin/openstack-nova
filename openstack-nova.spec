@@ -2,7 +2,7 @@
 
 Name:             openstack-nova
 Version:          2011.3
-Release:          7%{?dist}
+Release:          5%{?dist}
 Summary:          OpenStack Compute (nova)
 
 Group:            Applications/System
@@ -38,7 +38,6 @@ Patch6:           0006-Allow-the-user-to-choose-either-ietadm-or-tgtadm-lp-.patc
 Patch7:           0007-Remove-VolumeDriver.sync_exec-method-lp-819997.patch
 Patch8:           0008-Refactor-ietadm-tgtadm-calls-out-into-helper-classes.patch
 Patch9:           0009-Fixed-bug-lp850602.patch
-Patch10:          0010-Fix-Nova-Glance-Dependency.patch
 
 BuildArch:        noarch
 BuildRequires:    intltool
@@ -54,7 +53,7 @@ Requires:         python-paste
 Requires:         python-paste-deploy
 
 Requires:         libvirt-python
-Requires:         libvirt >= 0.8.1
+Requires:         libvirt >= 0.8.2
 Requires:         libxml2-python
 Requires:         python-cheetah
 Requires:         MySQL-python
@@ -174,7 +173,6 @@ This package contains documentation files for nova.
 %patch7 -p1
 %patch8 -p1
 %patch9 -p1
-%patch10 -p1
 
 find . \( -name .gitignore -o -name .placeholder \) -delete
 
@@ -360,9 +358,6 @@ fi
 %endif
 
 %changelog
-* Mon Oct 24 2011 David Busby <oneiroi@fedoraproject.org> 2011.3-6
-- Added patch to fix nova glance dependency.
-
 * Mon Oct 24 2011 Mark McLoughlin <markmc@redhat.com> - 2011.3-5
 - Fix block migration (#741690)
 
