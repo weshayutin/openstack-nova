@@ -2,7 +2,7 @@
 
 Name:             openstack-nova
 Version:          2011.3
-Release:          5%{?dist}
+Release:          7%{?dist}
 Summary:          OpenStack Compute (nova)
 
 Group:            Applications/System
@@ -38,6 +38,7 @@ Patch6:           0006-Allow-the-user-to-choose-either-ietadm-or-tgtadm-lp-.patc
 Patch7:           0007-Remove-VolumeDriver.sync_exec-method-lp-819997.patch
 Patch8:           0008-Refactor-ietadm-tgtadm-calls-out-into-helper-classes.patch
 Patch9:           0009-Fixed-bug-lp850602.patch
+Patch10:          0010-Stop-returning-correct-password-on-api-calls.patch
 
 BuildArch:        noarch
 BuildRequires:    intltool
@@ -173,6 +174,7 @@ This package contains documentation files for nova.
 %patch7 -p1
 %patch8 -p1
 %patch9 -p1
+%patch10 -p1
 
 find . \( -name .gitignore -o -name .placeholder \) -delete
 
@@ -358,6 +360,9 @@ fi
 %endif
 
 %changelog
+* Wed Oct 26 2011 Mark McLoughlin <markmc@redhat.com> - 2011.3-7
+- Fix password leak in EC2 API (#749385, CVE 2011-4076)
+
 * Mon Oct 24 2011 Mark McLoughlin <markmc@redhat.com> - 2011.3-5
 - Fix block migration (#741690)
 
