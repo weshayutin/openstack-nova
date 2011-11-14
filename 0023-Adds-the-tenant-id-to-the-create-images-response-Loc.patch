@@ -1,0 +1,55 @@
+From 6f96fa65aa73e7803c9ba82d7a4f3b49b310e1b7 Mon Sep 17 00:00:00 2001
+From: Alex Meade <alex.meade@rackspace.com>
+Date: Thu, 29 Sep 2011 15:58:43 -0400
+Subject: [PATCH 23/40] Adds the tenant id to the create images response
+ Location header Fixes bug 862672
+
+(cherry picked from commit f3fb16a7935e91f8c9034d1da84a2b17cbe186f8)
+
+Change-Id: I97357dc76561db576d354eacf4d7756c664e0580
+---
+ nova/api/openstack/servers.py                   |    5 ++++-
+ nova/tests/api/openstack/test_server_actions.py |    4 ++--
+ 2 files changed, 6 insertions(+), 3 deletions(-)
+
+diff --git a/nova/api/openstack/servers.py b/nova/api/openstack/servers.py
+index 94c4e99..fc14234 100644
+--- a/nova/api/openstack/servers.py
++++ b/nova/api/openstack/servers.py
+@@ -822,7 +822,10 @@ class ControllerV11(Controller):
+ 
+         # build location of newly-created image entity
+         image_id = str(image['id'])
+-        image_ref = os.path.join(req.application_url, 'images', image_id)
++        image_ref = os.path.join(req.application_url,
++                                 context.project_id,
++                                 'images',
++                                 image_id)
+ 
+         resp = webob.Response(status_int=202)
+         resp.headers['Location'] = image_ref
+diff --git a/nova/tests/api/openstack/test_server_actions.py b/nova/tests/api/openstack/test_server_actions.py
+index b9ef414..6a0feda 100644
+--- a/nova/tests/api/openstack/test_server_actions.py
++++ b/nova/tests/api/openstack/test_server_actions.py
+@@ -868,7 +868,7 @@ class ServerActionsTestV11(test.TestCase):
+         response = req.get_response(fakes.wsgi_app())
+         self.assertEqual(202, response.status_int)
+         location = response.headers['Location']
+-        self.assertEqual('http://localhost/v1.1/images/123', location)
++        self.assertEqual('http://localhost/v1.1/fake/images/123', location)
+ 
+     def test_create_image_snapshots_disabled(self):
+         """Don't permit a snapshot if the allow_instance_snapshots flag is
+@@ -901,7 +901,7 @@ class ServerActionsTestV11(test.TestCase):
+         response = req.get_response(fakes.wsgi_app())
+         self.assertEqual(202, response.status_int)
+         location = response.headers['Location']
+-        self.assertEqual('http://localhost/v1.1/images/123', location)
++        self.assertEqual('http://localhost/v1.1/fake/images/123', location)
+ 
+     def test_create_image_with_too_much_metadata(self):
+         body = {
+-- 
+1.7.6.4
+

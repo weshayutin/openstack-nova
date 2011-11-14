@@ -1,19 +1,19 @@
-From 4450fa948467552faf6e6f522666ff999baa1590 Mon Sep 17 00:00:00 2001
+From 744a0d8e7aa2c16fe55098c96cf9e46984838a4f Mon Sep 17 00:00:00 2001
 From: Kei Masumoto <masumotok@nttdata.co.jp>
 Date: Wed, 28 Sep 2011 15:05:54 -0400
-Subject: [PATCH] Fixed bug lp850602. Adding backing file copy operation on
- kvm block migration.
+Subject: [PATCH 18/40] Fixed bug lp850602. Adding backing file copy operation
+ on kvm block migration.
 
 (cherry picked from commit b9aac1181581b9036c98f5aa493731fdc74be7e1)
 
-Change-Id: I73e34447c46ab188e5769b9ea69ec52fdd69f8f9
+Change-Id: Ia2311ef0e65e97bad7e425ad6affdb5f864043ea
 ---
  nova/tests/test_libvirt.py      |   12 +++++++++---
  nova/virt/libvirt/connection.py |   33 ++++++++++++++++++++++++++++++---
  2 files changed, 39 insertions(+), 6 deletions(-)
 
 diff --git a/nova/tests/test_libvirt.py b/nova/tests/test_libvirt.py
-index 60da454..2653636 100644
+index 8d28590..0f01de8 100644
 --- a/nova/tests/test_libvirt.py
 +++ b/nova/tests/test_libvirt.py
 @@ -794,7 +794,8 @@ class LibvirtConnTestCase(test.TestCase):

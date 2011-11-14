@@ -1,0 +1,166 @@
+From d46f6e095b43fc00099d87f73b098a137830b167 Mon Sep 17 00:00:00 2001
+From: Vishvananda Ishaya <vishvananda@gmail.com>
+Date: Fri, 14 Oct 2011 10:06:00 -0700
+Subject: [PATCH 14/40] Makes snapshots work for amis. Fixes bug 873156
+
+(cherry picked from commit b931d51ce47203ee6a4433dc7577e0779ab94710)
+
+Change-Id: I3adee5aed8a500602fb938f27fa5096ec376cbe2
+---
+ nova/image/fake.py              |   20 +++++++++---------
+ nova/tests/test_image.py        |    3 +-
+ nova/tests/test_libvirt.py      |   41 +++++++++++++++++++++++++++++++++++++++
+ nova/virt/libvirt/connection.py |    9 +++++++-
+ 4 files changed, 61 insertions(+), 12 deletions(-)
+
+diff --git a/nova/image/fake.py b/nova/image/fake.py
+index 97af817..2897bee 100644
+--- a/nova/image/fake.py
++++ b/nova/image/fake.py
+@@ -49,8 +49,8 @@ class _FakeImageService(service.BaseImageService):
+                  'deleted': False,
+                  'status': 'active',
+                  'is_public': False,
+-#                 'container_format': 'ami',
+-#                 'disk_format': 'raw',
++                 'container_format': 'raw',
++                 'disk_format': 'raw',
+                  'properties': {'kernel_id': FLAGS.null_kernel,
+                                 'ramdisk_id': FLAGS.null_kernel,
+                                 'architecture': 'x86_64'}}
+@@ -63,8 +63,8 @@ class _FakeImageService(service.BaseImageService):
+                  'deleted': False,
+                  'status': 'active',
+                  'is_public': True,
+-#                 'container_format': 'ami',
+-#                 'disk_format': 'raw',
++                 'container_format': 'ami',
++                 'disk_format': 'ami',
+                  'properties': {'kernel_id': FLAGS.null_kernel,
+                                 'ramdisk_id': FLAGS.null_kernel}}
+ 
+@@ -76,8 +76,8 @@ class _FakeImageService(service.BaseImageService):
+                  'deleted': False,
+                  'status': 'active',
+                  'is_public': True,
+-#                 'container_format': 'ami',
+-#                 'disk_format': 'raw',
++                 'container_format': None,
++                 'disk_format': None,
+                  'properties': {'kernel_id': FLAGS.null_kernel,
+                                 'ramdisk_id': FLAGS.null_kernel}}
+ 
+@@ -89,8 +89,8 @@ class _FakeImageService(service.BaseImageService):
+                  'deleted': False,
+                  'status': 'active',
+                  'is_public': True,
+-#                 'container_format': 'ami',
+-#                 'disk_format': 'raw',
++                 'container_format': 'ami',
++                 'disk_format': 'ami',
+                  'properties': {'kernel_id': FLAGS.null_kernel,
+                                 'ramdisk_id': FLAGS.null_kernel}}
+ 
+@@ -102,8 +102,8 @@ class _FakeImageService(service.BaseImageService):
+                  'deleted': False,
+                  'status': 'active',
+                  'is_public': True,
+-#                 'container_format': 'ami',
+-#                 'disk_format': 'raw',
++                 'container_format': 'ami',
++                 'disk_format': 'ami',
+                  'properties': {'kernel_id': FLAGS.null_kernel,
+                                 'ramdisk_id': FLAGS.null_kernel}}
+ 
+diff --git a/nova/tests/test_image.py b/nova/tests/test_image.py
+index 9680d6f..9eeefe0 100644
+--- a/nova/tests/test_image.py
++++ b/nova/tests/test_image.py
+@@ -39,7 +39,8 @@ class _ImageTestCase(test.TestCase):
+             keys = set(image.keys())
+             self.assertEquals(keys, set(['id', 'name', 'created_at',
+                                          'updated_at', 'deleted_at', 'deleted',
+-                                         'status', 'is_public', 'properties']))
++                                         'status', 'is_public', 'properties',
++                                         'disk_format', 'container_format']))
+             self.assertTrue(isinstance(image['created_at'], datetime.datetime))
+             self.assertTrue(isinstance(image['updated_at'], datetime.datetime))
+ 
+diff --git a/nova/tests/test_libvirt.py b/nova/tests/test_libvirt.py
+index 8d28590..51e584d 100644
+--- a/nova/tests/test_libvirt.py
++++ b/nova/tests/test_libvirt.py
+@@ -340,6 +340,47 @@ class LibvirtConnTestCase(test.TestCase):
+         instance_data = dict(self.test_instance)
+         self._check_xml_and_container(instance_data)
+ 
++    def test_snapshot_in_ami_format(self):
++        if not self.lazy_load_library_exists():
++            return
++
++        self.flags(image_service='nova.image.fake.FakeImageService')
++
++        # Start test
++        image_service = utils.import_object(FLAGS.image_service)
++
++        # Assign image_ref = 3 from nova/images/fakes for testing
++        # ami image
++        test_instance = copy.deepcopy(self.test_instance)
++        test_instance["image_ref"] = "3"
++
++        # Assuming that base image already exists in image_service
++        instance_ref = db.instance_create(self.context, test_instance)
++        properties = {'instance_id': instance_ref['id'],
++                      'user_id': str(self.context.user_id)}
++        snapshot_name = 'test-snap'
++        sent_meta = {'name': snapshot_name, 'is_public': False,
++                     'status': 'creating', 'properties': properties}
++        # Create new image. It will be updated in snapshot method
++        # To work with it from snapshot, the single image_service is needed
++        recv_meta = image_service.create(context, sent_meta)
++
++        self.mox.StubOutWithMock(connection.LibvirtConnection, '_conn')
++        connection.LibvirtConnection._conn.lookupByName = self.fake_lookup
++        self.mox.StubOutWithMock(connection.utils, 'execute')
++        connection.utils.execute = self.fake_execute
++
++        self.mox.ReplayAll()
++
++        conn = connection.LibvirtConnection(False)
++        conn.snapshot(self.context, instance_ref, recv_meta['id'])
++
++        snapshot = image_service.show(context, recv_meta['id'])
++        self.assertEquals(snapshot['properties']['image_state'], 'available')
++        self.assertEquals(snapshot['status'], 'active')
++        self.assertEquals(snapshot['disk_format'], 'ami')
++        self.assertEquals(snapshot['name'], snapshot_name)
++
+     def test_snapshot_in_raw_format(self):
+         if not self.lazy_load_library_exists():
+             return
+diff --git a/nova/virt/libvirt/connection.py b/nova/virt/libvirt/connection.py
+index 9290c5e..4b45515 100644
+--- a/nova/virt/libvirt/connection.py
++++ b/nova/virt/libvirt/connection.py
+@@ -420,10 +420,17 @@ class LibvirtConnection(driver.ComputeDriver):
+             metadata['properties']['architecture'] = arch
+ 
+         source_format = base.get('disk_format') or 'raw'
++        if source_format == 'ami':
++            # NOTE(vish): assume amis are raw
++            source_format = 'raw'
+         image_format = FLAGS.snapshot_image_format or source_format
+         if FLAGS.use_cow_images:
+             source_format = 'qcow2'
+-        metadata['disk_format'] = image_format
++        # NOTE(vish): glance forces ami disk format to be ami
++        if base.get('disk_format') == 'ami':
++            metadata['disk_format'] = 'ami'
++        else:
++            metadata['disk_format'] = image_format
+ 
+         if 'container_format' in base:
+             metadata['container_format'] = base['container_format']
+-- 
+1.7.6.4
+

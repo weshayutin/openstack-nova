@@ -1,0 +1,77 @@
+From b0e855e504d2c7b5f7b50f436e43a27ec05e5a46 Mon Sep 17 00:00:00 2001
+From: Brian Waldon <brian.waldon@rackspace.com>
+Date: Fri, 23 Sep 2011 10:35:18 -0400
+Subject: [PATCH 04/40] Removing old code that snuck back in
+
+(cherry picked from commit 7a95f73ad7b295ddd2313152973c6da2c78fac76)
+
+Change-Id: Ia0b0ed9a12e73b828be3cb2c491ebc39c15ece34
+---
+ nova/api/openstack/_id_translator.py       |   42 ----------------------------
+ nova/api/rackspace/controllers/__init__.py |    5 ---
+ 2 files changed, 0 insertions(+), 47 deletions(-)
+ delete mode 100644 nova/api/openstack/_id_translator.py
+ delete mode 100644 nova/api/rackspace/controllers/__init__.py
+
+diff --git a/nova/api/openstack/_id_translator.py b/nova/api/openstack/_id_translator.py
+deleted file mode 100644
+index 333aa84..0000000
+--- a/nova/api/openstack/_id_translator.py
++++ /dev/null
+@@ -1,42 +0,0 @@
+-from nova import datastore
+-
+-class RackspaceAPIIdTranslator(object):
+-    """
+-    Converts Rackspace API ids to and from the id format for a given
+-    strategy.
+-    """
+-
+-    def __init__(self, id_type, service_name):
+-        """
+-        Creates a translator for ids of the given type (e.g. 'flavor'), for the
+-        given storage service backend class name (e.g. 'LocalFlavorService').
+-        """
+-
+-        self._store = datastore.Redis.instance()
+-        key_prefix = "rsapi.idtranslator.%s.%s" % (id_type, service_name)
+-        # Forward (strategy format -> RS format) and reverse translation keys
+-        self._fwd_key = "%s.fwd" % key_prefix
+-        self._rev_key = "%s.rev" % key_prefix
+-
+-    def to_rs_id(self, opaque_id):
+-        """Convert an id from a strategy-specific one to a Rackspace one."""
+-        result = self._store.hget(self._fwd_key, str(opaque_id))
+-        if result: # we have a mapping from opaque to RS for this strategy
+-            return int(result)
+-        else:
+-            # Store the mapping.
+-            nextid = self._store.incr("%s.lastid" % self._fwd_key)
+-            if self._store.hsetnx(self._fwd_key, str(opaque_id), nextid):
+-                # If someone else didn't beat us to it, store the reverse
+-                # mapping as well.
+-                self._store.hset(self._rev_key, nextid, str(opaque_id))
+-                return nextid
+-            else:
+-                # Someone beat us to it; use their number instead, and
+-                # discard nextid (which is OK -- we don't require that
+-                # every int id be used.)
+-                return int(self._store.hget(self._fwd_key, str(opaque_id)))
+-
+-    def from_rs_id(self, rs_id):
+-        """Convert a Rackspace id to a strategy-specific one."""
+-        return self._store.hget(self._rev_key, rs_id)
+diff --git a/nova/api/rackspace/controllers/__init__.py b/nova/api/rackspace/controllers/__init__.py
+deleted file mode 100644
+index 052b6f3..0000000
+--- a/nova/api/rackspace/controllers/__init__.py
++++ /dev/null
+@@ -1,5 +0,0 @@
+-from nova.endpoint.rackspace.controllers.images import ImagesController
+-from nova.endpoint.rackspace.controllers.flavors import FlavorsController
+-from nova.endpoint.rackspace.controllers.servers import ServersController
+-from nova.endpoint.rackspace.controllers.sharedipgroups import \
+-        SharedIpGroupsController
+-- 
+1.7.6.4
+

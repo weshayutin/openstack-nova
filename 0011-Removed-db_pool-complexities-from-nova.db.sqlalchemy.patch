@@ -1,11 +1,12 @@
-From a122333e8faa77b57214071e6b2a45fb9eb986e0 Mon Sep 17 00:00:00 2001
+From 1a5e3e0c4cc2a3bf55331d46f702b980af1fbf97 Mon Sep 17 00:00:00 2001
 From: Brian Lamar <brian.lamar@rackspace.com>
 Date: Mon, 26 Sep 2011 11:52:21 -0400
-Subject: [PATCH] Removed db_pool complexities from
+Subject: [PATCH 11/40] Removed db_pool complexities from
  nova.db.sqlalchemy.session. Fixes bug 838581.
 
-Change-Id: I9b1f4790fcdb890a5113b853f1b1483f3212c530
 (cherry picked from commit f3dd56e916232e38e74d9e2f24ce9a738cac63cf)
+
+Change-Id: I96442f9c9eeddc48ce8307da93ff289e3d679553
 ---
  nova/db/sqlalchemy/session.py |   34 +---------------------------------
  nova/flags.py                 |    6 ------

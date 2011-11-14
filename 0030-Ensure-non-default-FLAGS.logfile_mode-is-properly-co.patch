@@ -1,0 +1,49 @@
+From fdcfe762a52e30e09223f4128a5f4da530aefcf9 Mon Sep 17 00:00:00 2001
+From: Adam Gandelman <adamg@canonical.com>
+Date: Thu, 29 Sep 2011 21:06:06 -0700
+Subject: [PATCH 30/40] Ensure non-default FLAGS.logfile_mode is properly
+ converted to an octet.
+
+Fixes bug 862969.
+
+(cherry picked from commit 5b173ef5dfb7c41dbc2a4bb5c9976811516eb00f)
+
+Change-Id: Ic89426e2e011e74d49ca57710ade93dc4e4740d0
+---
+ nova/flags.py |    2 +-
+ nova/log.py   |    5 +++--
+ 2 files changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/nova/flags.py b/nova/flags.py
+index 0a87148..55a56f2 100644
+--- a/nova/flags.py
++++ b/nova/flags.py
+@@ -349,7 +349,7 @@ DEFINE_string('lock_path', os.path.join(os.path.dirname(__file__), '../'),
+               'Directory for lock files')
+ DEFINE_string('logdir', None, 'output to a per-service log file in named '
+                               'directory')
+-DEFINE_integer('logfile_mode', 0644, 'Default file mode of the logs.')
++DEFINE_string('logfile_mode', '0644', 'Default file mode of the logs.')
+ DEFINE_string('sqlite_db', 'nova.sqlite', 'file name for sqlite')
+ DEFINE_string('sql_connection',
+               'sqlite:///$state_path/$sqlite_db',
+diff --git a/nova/log.py b/nova/log.py
+index eb0b602..1e04f75 100644
+--- a/nova/log.py
++++ b/nova/log.py
+@@ -259,9 +259,10 @@ class NovaRootLogger(NovaLogger):
+                 self.addHandler(self.filelog)
+                 self.logpath = logpath
+ 
++                mode = int(FLAGS.logfile_mode, 8)
+                 st = os.stat(self.logpath)
+-                if st.st_mode != (stat.S_IFREG | FLAGS.logfile_mode):
+-                    os.chmod(self.logpath, FLAGS.logfile_mode)
++                if st.st_mode != (stat.S_IFREG | mode):
++                    os.chmod(self.logpath, mode)
+         else:
+             self.removeHandler(self.filelog)
+             self.addHandler(self.streamlog)
+-- 
+1.7.6.4
+

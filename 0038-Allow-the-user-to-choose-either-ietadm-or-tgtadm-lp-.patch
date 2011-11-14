@@ -1,7 +1,8 @@
-From ed1aff808be28ed79773ed269b0096c4a48464ef Mon Sep 17 00:00:00 2001
+From 55e01ff6f84a201fecd1e550c8fad592a6edd567 Mon Sep 17 00:00:00 2001
 From: Mark McLoughlin <markmc@redhat.com>
 Date: Thu, 11 Aug 2011 07:44:38 -0400
-Subject: [PATCH] Allow the user to choose either ietadm or tgtadm (lp:819997)
+Subject: [PATCH 38/40] Allow the user to choose either ietadm or tgtadm
+ (lp:819997)
 
 (Actually authored by Chuck Short <zulcss@ubuntu.com> but Gerrit won't
 allow me to push it with Author: set to that)
@@ -14,7 +15,7 @@ Change-Id: Ia350345a25a5f39b8aa26c8daf2a9987590d4b62
  3 files changed, 111 insertions(+), 34 deletions(-)
 
 diff --git a/nova/flags.py b/nova/flags.py
-index 432d483..4c71dd3 100644
+index 56bc797..7e59ddc 100644
 --- a/nova/flags.py
 +++ b/nova/flags.py
 @@ -416,6 +416,9 @@ DEFINE_string('root_helper', 'sudo',

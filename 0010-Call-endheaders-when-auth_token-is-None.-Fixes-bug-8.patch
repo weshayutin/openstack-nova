@@ -1,0 +1,29 @@
+From 2754749c3767b7ddd90957b528828e235e25ccab Mon Sep 17 00:00:00 2001
+From: Dan Prince <dan.prince@rackspace.com>
+Date: Mon, 26 Sep 2011 13:39:14 -0400
+Subject: [PATCH 10/40] Call endheaders when auth_token is None. Fixes bug
+ 856721.
+
+(cherry picked from commit 14eb9c6ec9c82c9f56cde5279aebb1e5a8fac4f4)
+
+Change-Id: I39965c311d8485a87e27e83605ee52c6b1386c71
+---
+ plugins/xenserver/xenapi/etc/xapi.d/plugins/glance |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/plugins/xenserver/xenapi/etc/xapi.d/plugins/glance b/plugins/xenserver/xenapi/etc/xapi.d/plugins/glance
+index 1a9ac37..3f12c2e 100755
+--- a/plugins/xenserver/xenapi/etc/xapi.d/plugins/glance
++++ b/plugins/xenserver/xenapi/etc/xapi.d/plugins/glance
+@@ -255,7 +255,7 @@ def _upload_tarball(staging_path, image_id, glance_host, glance_port, os_type,
+     conn.putrequest('HEAD', '/v1/images/%s' % image_id)
+     if auth_token:
+         conn.putheader('x-auth-token', auth_token)
+-        conn.endheaders()
++    conn.endheaders()
+ 
+     resp = conn.getresponse()
+     if resp.status != httplib.OK:
+-- 
+1.7.6.4
+
