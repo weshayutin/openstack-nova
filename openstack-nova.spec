@@ -2,7 +2,7 @@
 
 Name:             openstack-nova
 Version:          2011.3
-Release:          7%{?dist}
+Release:          8%{?dist}
 Summary:          OpenStack Compute (nova)
 
 Group:            Applications/System
@@ -29,16 +29,50 @@ Source22:         nova-ifc-template
 #
 # Patches managed here: https://github.com/markmc/nova/tree/fedora-patches
 #
-Patch1:           0001-Removed-db_pool-complexities-from-nova.db.sqlalchemy.patch
-Patch2:           0002-Makes-sure-to-recreate-gateway-for-moved-ip.patch
-Patch3:           0003-Fix-the-grantee-group-loading-for-source-groups.patch
-Patch4:           0004-Add-INPUT-chain-rule-for-EC2-metadata-requests-lp-85.patch
-Patch5:           0005-Have-nova-api-add-the-INPUT-rule-for-EC2-metadata-lp.patch
-Patch6:           0006-Allow-the-user-to-choose-either-ietadm-or-tgtadm-lp-.patch
-Patch7:           0007-Remove-VolumeDriver.sync_exec-method-lp-819997.patch
-Patch8:           0008-Refactor-ietadm-tgtadm-calls-out-into-helper-classes.patch
-Patch9:           0009-Fixed-bug-lp850602.patch
-Patch10:          0010-Stop-returning-correct-password-on-api-calls.patch
+#   $> git format-patch b0e855e
+#   $> for p in 00*.patch; do echo "Patch${p:2:2}:          $p"; done
+#   $> for p in 00*.patch; do echo "%patch${p:2:2} -p1"; done
+#
+Patch01:          0001-Add-tools-rfc.sh-from-master.patch
+Patch02:          0002-Don-t-use-GitPython-for-authors-check.patch
+Patch03:          0003-Made-jenkins-email-pruning-more-resilient.patch
+Patch04:          0004-Removing-old-code-that-snuck-back-in.patch
+Patch05:          0005-Fix-outstanding-pep8-errors-for-a-clean-trunk.patch
+Patch06:          0006-Point-tools-rfc.sh-at-the-right-branch.patch
+Patch07:          0007-Makes-sure-to-recreate-gateway-for-moved-ip.patch
+Patch08:          0008-put-fully-qualified-domain-name-in-local-hostname.patch
+Patch09:          0009-Fix-the-grantee-group-loading-for-source-groups.patch
+Patch10:          0010-Call-endheaders-when-auth_token-is-None.-Fixes-bug-8.patch
+Patch11:          0011-Removed-db_pool-complexities-from-nova.db.sqlalchemy.patch
+Patch12:          0012-Raise-InsufficientFreeMemory.patch
+Patch13:          0013-Don-t-leak-exceptions-out-to-users.patch
+Patch14:          0014-Makes-snapshots-work-for-amis.-Fixes-bug-873156.patch
+Patch15:          0015-Add-missing-author.patch
+Patch16:          0016-Make-snapshots-private-by-default.patch
+Patch17:          0017-Snapshots-backups-can-no-longer-happen-simultaneousl.patch
+Patch18:          0018-Fixed-bug-lp850602.patch
+Patch19:          0019-bug-861310.patch
+Patch20:          0020-Enforce-snapshot-cleanup.patch
+Patch21:          0021-bug-lp845714.patch
+Patch22:          0022-Added-1.0.4-version-specifier-to-kombu-in-pip-requir.patch
+Patch23:          0023-Adds-the-tenant-id-to-the-create-images-response-Loc.patch
+Patch24:          0024-Fixes-bug-862633-OS-api-consoles-create-broken.patch
+Patch25:          0025-Deallocate-ip-if-build-fails.patch
+Patch26:          0026-Stop-returning-correct-password-on-api-calls.patch
+Patch27:          0027-Handle-pidfile-exception-for-dnsmasq.patch
+Patch28:          0028-Make-sure-unknown-extensions-return-404.patch
+Patch29:          0029-Include-original-exception-in-ClassNotFound-exceptio.patch
+Patch30:          0030-Ensure-non-default-FLAGS.logfile_mode-is-properly-co.patch
+Patch31:          0031-Explicit-errors-on-confirm-revertResize-failures.patch
+Patch32:          0032-Adds-ext4-and-reiserfs-to-_mount_filesystem.patch
+Patch33:          0033-Improve-access-check-on-images.patch
+Patch34:          0034-Fixes-bug-834633-Auto-assigning-floating-IPs.patch
+Patch35:          0035-fixes-bug-883233.patch
+Patch36:          0036-Add-INPUT-chain-rule-for-EC2-metadata-requests-lp-85.patch
+Patch37:          0037-Have-nova-api-add-the-INPUT-rule-for-EC2-metadata-lp.patch
+Patch38:          0038-Allow-the-user-to-choose-either-ietadm-or-tgtadm-lp-.patch
+Patch39:          0039-Remove-VolumeDriver.sync_exec-method-lp-819997.patch
+Patch40:          0040-Refactor-ietadm-tgtadm-calls-out-into-helper-classes.patch
 
 BuildArch:        noarch
 BuildRequires:    intltool
@@ -165,16 +199,50 @@ This package contains documentation files for nova.
 %prep
 %setup -q -n nova-%{version}
 
-%patch1 -p1
-%patch2 -p1
-%patch3 -p1
-%patch4 -p1
-%patch5 -p1
-%patch6 -p1
-%patch7 -p1
-%patch8 -p1
-%patch9 -p1
+# Replicate screwup during git->bzr switch
+%patch04 -p1 -R
+
+# Now apply the patches from git
+%patch01 -p1
+%patch02 -p1
+%patch03 -p1
+%patch04 -p1
+%patch05 -p1
+%patch06 -p1
+%patch07 -p1
+%patch08 -p1
+%patch09 -p1
 %patch10 -p1
+%patch11 -p1
+%patch12 -p1
+%patch13 -p1
+%patch14 -p1
+%patch15 -p1
+%patch16 -p1
+%patch17 -p1
+%patch18 -p1
+%patch19 -p1
+%patch20 -p1
+%patch21 -p1
+%patch22 -p1
+%patch23 -p1
+%patch24 -p1
+%patch25 -p1
+%patch26 -p1
+%patch27 -p1
+%patch28 -p1
+%patch29 -p1
+%patch30 -p1
+%patch31 -p1
+%patch32 -p1
+%patch33 -p1
+%patch34 -p1
+%patch35 -p1
+%patch36 -p1
+%patch37 -p1
+%patch38 -p1
+%patch39 -p1
+%patch40 -p1
 
 find . \( -name .gitignore -o -name .placeholder \) -delete
 
@@ -360,6 +428,9 @@ fi
 %endif
 
 %changelog
+* Mon Nov 14 2011 Mark McLoughlin <markmc@redhat.com> - 2011.3-8
+- Add ~20 significant fixes from upstream stable branch
+
 * Wed Oct 26 2011 Mark McLoughlin <markmc@redhat.com> - 2011.3-7
 - Fix password leak in EC2 API (#749385, CVE 2011-4076)
 

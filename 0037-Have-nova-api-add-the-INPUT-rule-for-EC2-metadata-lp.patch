@@ -1,7 +1,7 @@
-From 491261a15148092fce67feb8bb484e2d8a9d2a75 Mon Sep 17 00:00:00 2001
+From 514d3518edd4d74623bf3a529683b2b59212e390 Mon Sep 17 00:00:00 2001
 From: Mark McLoughlin <markmc@redhat.com>
 Date: Thu, 8 Sep 2011 14:29:49 +0100
-Subject: [PATCH] Have nova-api add the INPUT rule for EC2 metadata
+Subject: [PATCH 37/40] Have nova-api add the INPUT rule for EC2 metadata
  (lp:856385)
 
 It makes no sense to have nova-network add an iptables rule for the EC2
@@ -70,7 +70,7 @@ index 0000000..b3fcf93
 +        """
 +        self.network_driver.metadata_accept()
 diff --git a/nova/flags.py b/nova/flags.py
-index 0a87148..432d483 100644
+index 55a56f2..56bc797 100644
 --- a/nova/flags.py
 +++ b/nova/flags.py
 @@ -413,6 +413,9 @@ DEFINE_bool('resume_guests_state_on_host_boot', False,
@@ -84,10 +84,10 @@ index 0a87148..432d483 100644
  
  DEFINE_bool('monkey_patch', False,
 diff --git a/nova/network/linux_net.py b/nova/network/linux_net.py
-index 0482d4e..f1e9adf 100755
+index fd51e9b..297146b 100755
 --- a/nova/network/linux_net.py
 +++ b/nova/network/linux_net.py
-@@ -381,10 +381,17 @@ def metadata_forward():
+@@ -378,10 +378,17 @@ def metadata_forward():
                                            '-p tcp -m tcp --dport 80 -j DNAT '
                                            '--to-destination %s:%s' % \
                                            (FLAGS.ec2_dmz_host, FLAGS.ec2_port))
@@ -108,7 +108,7 @@ index 0482d4e..f1e9adf 100755
  
  
 diff --git a/nova/network/manager.py b/nova/network/manager.py
-index 5c2bc60..90b47b9 100644
+index d8de396..71e171c 100644
 --- a/nova/network/manager.py
 +++ b/nova/network/manager.py
 @@ -96,8 +96,6 @@ flags.DEFINE_string('fixed_range_v6', 'fd00::/48', 'Fixed IPv6 address block')

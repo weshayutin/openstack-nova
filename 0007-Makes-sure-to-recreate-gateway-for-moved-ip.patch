@@ -1,13 +1,14 @@
-From 96f0a932c59f03275a438d23386db5686b7f58e7 Mon Sep 17 00:00:00 2001
+From 1c8fedc82c4b388b0a3a876a54c7f14d3c2a8342 Mon Sep 17 00:00:00 2001
 From: Vishvananda Ishaya <vishvananda@gmail.com>
 Date: Mon, 26 Sep 2011 05:14:39 -0700
-Subject: [PATCH] Makes sure to recreate gateway for moved ip
+Subject: [PATCH 07/40] Makes sure to recreate gateway for moved ip
 
 If nova moves an ip when setting up dhcp, make sure to reset
 the default gateway.  Fixes bug 859587
 
-Change-Id: I9f2b7bc5ede142717df6cb1653043b4f5c09959a
 (cherry picked from commit 569b310b003c1c96151a3e3d448ddf5fe4e9299a)
+
+Change-Id: I6dd1fb9d80c9635a8a721e77386938684cdd8f53
 ---
  nova/network/linux_net.py    |   13 +++++++++++++
  nova/tests/test_linux_net.py |   32 +++++++++++++++++++++++++++++++-

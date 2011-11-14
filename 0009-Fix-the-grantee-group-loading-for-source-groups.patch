@@ -1,11 +1,13 @@
-From f558a865a4b3d67a6d1e33b888de79daf5ff2021 Mon Sep 17 00:00:00 2001
+From 1f6b213d92e71de1eb669e9fb869d564066dadf5 Mon Sep 17 00:00:00 2001
 From: Vishvananda Ishaya <vishvananda@gmail.com>
 Date: Mon, 26 Sep 2011 08:34:14 -0700
-Subject: [PATCH] Fix the grantee group loading for source groups
+Subject: [PATCH 09/40] Fix the grantee group loading for source groups
 
 Fixes bug 859679.
 
-Change-Id: Ia0b90b8373a02955f23b6dda0495f01511762822
+(cherry picked from commit 114ca0b2dc090270d8d20bd10b6e1e7a0b451db2)
+
+Change-Id: I92569ecc50fe3e9f17f633df03ee428587749a48
 ---
  nova/db/sqlalchemy/api.py |    5 ++---
  1 files changed, 2 insertions(+), 3 deletions(-)

@@ -1,7 +1,7 @@
-From c82a027f2993965f5d14be048ce8c4b56a76b468 Mon Sep 17 00:00:00 2001
+From fa75aca613a531a39e4a30a064e5d549ba26b7ac Mon Sep 17 00:00:00 2001
 From: Mark McLoughlin <markmc@redhat.com>
 Date: Sun, 18 Sep 2011 16:02:43 +0100
-Subject: [PATCH] Refactor ietadm/tgtadm calls out into helper classes
+Subject: [PATCH 40/40] Refactor ietadm/tgtadm calls out into helper classes
  (lp:819997)
 
 Add a new TargetAdmin abstract base class and implement it using ietadm
@@ -19,7 +19,7 @@ Change-Id: I1c0064e5d35483a6c4059cfc61a484f5f576b2da
  create mode 100644 nova/volume/iscsi.py
 
 diff --git a/nova/flags.py b/nova/flags.py
-index 4c71dd3..432d483 100644
+index 7e59ddc..56bc797 100644
 --- a/nova/flags.py
 +++ b/nova/flags.py
 @@ -416,9 +416,6 @@ DEFINE_string('root_helper', 'sudo',

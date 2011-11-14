@@ -1,7 +1,7 @@
-From ee5eacc0e268dc72d00f21685197f2fc734fc738 Mon Sep 17 00:00:00 2001
+From b82462cc4fd598cde59c663400e87824cb68a34b Mon Sep 17 00:00:00 2001
 From: Mark McLoughlin <markmc@redhat.com>
 Date: Sun, 18 Sep 2011 12:04:46 +0100
-Subject: [PATCH] Remove VolumeDriver.sync_exec method (lp:819997)
+Subject: [PATCH 39/40] Remove VolumeDriver.sync_exec method (lp:819997)
 
 We always use the same functions for sync_exec and execute.
 

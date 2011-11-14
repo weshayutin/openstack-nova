@@ -1,0 +1,82 @@
+From c11659215a1cd3e551ce56f089b2682842954b04 Mon Sep 17 00:00:00 2001
+From: Loganathan Parthipan <parthipan@hp.com>
+Date: Thu, 29 Sep 2011 16:41:49 +0100
+Subject: [PATCH 33/40] Improve access check on images
+
+Makes sure that users can delete only their own images, snapshots.
+Enable listing of all images, both private which are owned and the public
+ones. Only list the private images/snapshots for the owner and admin users.
+Fixes bug 863305
+
+(cherry picked from commit cb37d895a6b97e294aa838f85227d29892f4e11e)
+
+Change-Id: Idc15125371950e0c07b1dac48e8b844887fefc9d
+---
+ Authors               |    1 +
+ nova/image/glance.py  |   20 +++++++++++++++++++-
+ nova/image/service.py |    3 +++
+ 3 files changed, 23 insertions(+), 1 deletions(-)
+
+diff --git a/Authors b/Authors
+index cc78535..2298120 100644
+--- a/Authors
++++ b/Authors
+@@ -74,6 +74,7 @@ Kevin Bringard <kbringard@attinteractive.com>
+ Kevin L. Mitchell <kevin.mitchell@rackspace.com>
+ Kirill Shileev <kshileev@gmail.com>
+ Koji Iida <iida.koji@lab.ntt.co.jp>
++Loganathan Parthipan <parthipan@hp.com>
+ Lorin Hochstein <lorin@isi.edu>
+ Lvov Maxim <usrleon@gmail.com>
+ Mandell Degerness <mdegerne@gmail.com>
+diff --git a/nova/image/glance.py b/nova/image/glance.py
+index 13c8ff8..5b6ec87 100644
+--- a/nova/image/glance.py
++++ b/nova/image/glance.py
+@@ -295,10 +295,28 @@ class GlanceImageService(service.BaseImageService):
+         """Delete the given image.
+ 
+         :raises: ImageNotFound if the image does not exist.
++        :raises: NotAuthorized if the user is not an owner.
+ 
+         """
+         # NOTE(vish): show is to check if image is available
+-        self.show(context, image_id)
++        image_meta = self.show(context, image_id)
++
++        if FLAGS.use_deprecated_auth:
++            # NOTE(parthi): only allow image deletions if the user
++            # is a member of the project owning the image, in case of
++            # setup without keystone
++            # TODO Currently this access control breaks if
++            # 1. Image is not owned by a project
++            # 2. Deleting user is not bound a project
++            properties = image_meta['properties']
++            if (context.project_id and ('project_id' in properties)
++                and (context.project_id != properties['project_id'])):
++                raise exception.NotAuthorized(_("Not the image owner"))
++
++            if (context.project_id and ('owner_id' in properties)
++                and (context.project_id != properties['owner_id'])):
++                raise exception.NotAuthorized(_("Not the image owner"))
++
+         try:
+             result = self._get_client(context).delete_image(image_id)
+         except glance_exception.NotFound:
+diff --git a/nova/image/service.py b/nova/image/service.py
+index 5361cfc..0198279 100644
+--- a/nova/image/service.py
++++ b/nova/image/service.py
+@@ -151,6 +151,9 @@ class BaseImageService(object):
+ 
+         properties = image_meta['properties']
+ 
++        if context.project_id and ('owner_id' in properties):
++            return str(properties['owner_id']) == str(context.project_id)
++
+         if context.project_id and ('project_id' in properties):
+             return str(properties['project_id']) == str(context.project_id)
+ 
+-- 
+1.7.6.4
+

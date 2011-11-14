@@ -1,0 +1,36 @@
+From 03c9f40f1d7be54e62b129edf41a3c729049ce0c Mon Sep 17 00:00:00 2001
+From: Johannes Erdfelt <johannes.erdfelt@rackspace.com>
+Date: Tue, 18 Oct 2011 22:08:49 +0000
+Subject: [PATCH 13/40] Don't leak exceptions out to users
+
+Fixed bug 874472
+
+Exceptions can contain all kinds of sensitive information, including
+SQL queries (and arguments), configuration information and in some
+cases the correct password (bug 868360). The information isn't useful
+to users, so don't return potentially sensitive information. The
+exceptions still get logged for debugging and troubleshooting purposes.
+
+(cherry picked from commit 2431b7848d633dc67ad684b4d1cc79468df24568)
+
+Change-Id: I45af83ee5276b92259522a4761137d7339d2b77d
+---
+ nova/api/openstack/__init__.py |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/nova/api/openstack/__init__.py b/nova/api/openstack/__init__.py
+index 3b74fef..36da46b 100644
+--- a/nova/api/openstack/__init__.py
++++ b/nova/api/openstack/__init__.py
+@@ -64,7 +64,7 @@ class FaultWrapper(base_wsgi.Middleware):
+             return req.get_response(self.application)
+         except Exception as ex:
+             LOG.exception(_("Caught error: %s"), unicode(ex))
+-            exc = webob.exc.HTTPInternalServerError(explanation=unicode(ex))
++            exc = webob.exc.HTTPInternalServerError()
+             return faults.Fault(exc)
+ 
+ 
+-- 
+1.7.6.4
+

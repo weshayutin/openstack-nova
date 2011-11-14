@@ -1,0 +1,31 @@
+From 1def4abeeb6e03ad82906aaa6975c753d1649747 Mon Sep 17 00:00:00 2001
+From: Sateesh Chodapuneedi <sateesh.chodapuneedi@citrix.com>
+Date: Wed, 28 Sep 2011 18:07:22 +0530
+Subject: [PATCH 19/40] bug 861310
+
+Check if host list is not empty before trying to weigh the hosts.
+
+(cherry picked from commit 0546616926d7f95017405b4abb532a4517db7d90)
+
+Change-Id: I546690aaa750dc7de2b369c5843dd93cb0654489
+---
+ nova/scheduler/base_scheduler.py |    3 +++
+ 1 files changed, 3 insertions(+), 0 deletions(-)
+
+diff --git a/nova/scheduler/base_scheduler.py b/nova/scheduler/base_scheduler.py
+index e9c078b..a9ec556 100644
+--- a/nova/scheduler/base_scheduler.py
++++ b/nova/scheduler/base_scheduler.py
+@@ -54,6 +54,9 @@ class BaseScheduler(abstract_scheduler.AbstractScheduler):
+         """Derived classes may override this to provide more sophisticated
+         scheduling objectives
+         """
++        # Make sure if there are compute hosts to serve the request.
++        if not hosts:
++            return []
+         # NOTE(sirp): The default logic is the same as the NoopCostFunction
+         hosts = [dict(weight=1, hostname=hostname, capabilities=capabilities)
+                  for hostname, capabilities in hosts]
+-- 
+1.7.6.4
+

@@ -1,0 +1,28 @@
+From 6503923b235590e363d366375f3d2747e4d516b1 Mon Sep 17 00:00:00 2001
+From: Monty Taylor <mordred@inaugust.com>
+Date: Fri, 23 Sep 2011 17:37:29 -0400
+Subject: [PATCH 03/40] Made jenkins email pruning more resilient.
+
+(cherry picked from commit c586e4ed23846420177802c164f594e021cceea8)
+
+Change-Id: I8293ec3ab55735d484b617d0b1612f4bf6f3105e
+---
+ nova/tests/test_misc.py |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/nova/tests/test_misc.py b/nova/tests/test_misc.py
+index 45c4965..f30a1bf 100644
+--- a/nova/tests/test_misc.py
++++ b/nova/tests/test_misc.py
+@@ -71,7 +71,7 @@ class ProjectTestCase(test.TestCase):
+             for email in commands.getoutput('git log --format=%ae').split():
+                 if not email:
+                     continue
+-                if "jenkins@review.openstack.org" in email:
++                if "jenkins" in email and "openstack.org" in email:
+                     continue
+                 email = '<' + email + '>'
+                 contributors.add(str_dict_replace(email, mailmap))
+-- 
+1.7.6.4
+
