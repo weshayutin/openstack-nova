@@ -2,7 +2,7 @@
 
 Name:             openstack-nova
 Version:          2011.3
-Release:          7%{?dist}
+Release:          8%{?dist}
 Summary:          OpenStack Compute (nova)
 
 Group:            Applications/System
@@ -25,6 +25,7 @@ Source19:         openstack-nova-vncproxy.service
 Source20:         nova-sudoers
 Source21:         nova-polkit.pkla
 Source22:         nova-ifc-template
+Source23:         openstack-nova-db-setup
 
 #
 # Patches managed here: https://github.com/markmc/nova/tree/fedora-patches
@@ -286,9 +287,6 @@ install -d -m 755 %{buildroot}%{_sharedstatedir}/nova/networks
 install -d -m 755 %{buildroot}%{_sharedstatedir}/nova/tmp
 install -d -m 755 %{buildroot}%{_localstatedir}/log/nova
 
-# Setup ghost sqlite DB
-touch %{buildroot}%{_sharedstatedir}/nova/nova.sqlite
-
 # Setup ghost CA cert
 install -d -m 755 %{buildroot}%{_sharedstatedir}/nova/CA
 install -p -m 755 nova/CA/*.sh %{buildroot}%{_sharedstatedir}/nova/CA
@@ -332,6 +330,9 @@ install -p -D -m 644 %{SOURCE22} %{buildroot}%{_datarootdir}/nova/interfaces.tem
 install -d -m 755 %{buildroot}%{_sysconfdir}/polkit-1/localauthority/50-local.d
 install -p -D -m 644 %{SOURCE21} %{buildroot}%{_sysconfdir}/polkit-1/localauthority/50-local.d/50-nova.pkla
 
+# Install database setup helper script.
+install -p -D -m 755 %{SOURCE23} %{buildroot}%{_bindir}/openstack-nova-db-setup
+
 # Remove ajaxterm and various other tools
 rm -fr %{buildroot}%{_datarootdir}/nova/{ajaxterm,euca-get-ajax-console,install_venv.py,nova-debug,pip-requires,clean-vlans,with_venv.sh,esx}
 
@@ -348,11 +349,6 @@ useradd --uid 162 -r -g nova -G nova,nobody,qemu -d %{_sharedstatedir}/nova -s /
 exit 0
 
 %post
-# Initialize the DB
-if [ ! -f %{_sharedstatedir}/nova/nova.sqlite ]; then
-    runuser -l -s /bin/bash -c 'nova-manage --flagfile=/dev/null --logdir=%{_localstatedir}/log/nova --state_path=%{_sharedstatedir}/nova db sync' nova
-    chmod 600 %{_sharedstatedir}/nova/nova.sqlite
-fi
 if [ $1 -eq 1 ] ; then
     # Initial installation
     /bin/systemctl daemon-reload >/dev/null 2>&1 || :
@@ -389,6 +385,7 @@ fi
 %dir %attr(0755, nova, root) %{_localstatedir}/run/nova
 
 %{_bindir}/nova-*
+%{_bindir}/openstack-nova-db-setup
 %{_unitdir}/openstack-nova-*.service
 %{_datarootdir}/nova
 %{_mandir}/man1/nova*.1.gz
@@ -401,7 +398,6 @@ fi
 %dir %{_sharedstatedir}/nova/keys
 %dir %{_sharedstatedir}/nova/networks
 %dir %{_sharedstatedir}/nova/tmp
-%ghost %config(missingok,noreplace) %verify(not md5 size mtime) %{_sharedstatedir}/nova/nova.sqlite
 
 %dir %{_sharedstatedir}/nova/CA/
 %dir %{_sharedstatedir}/nova/CA/certs
@@ -431,6 +427,9 @@ fi
 %endif
 
 %changelog
+* Tue Nov 29 2011 Russell Bryant <rbryant@redhat.com> - 2011.3-8
+- Change default database to mysql. (#735012)
+
 * Mon Nov 14 2011 Mark McLoughlin <markmc@redhat.com> - 2011.3-7
 - Add ~20 significant fixes from upstream stable branch
 
