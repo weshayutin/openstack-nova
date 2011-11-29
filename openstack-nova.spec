@@ -427,7 +427,7 @@ fi
 %endif
 
 %changelog
-* Wed Nov 23 2011 Russell Bryant <rbryant@redhat.com> - 2011.3-8
+* Tue Nov 29 2011 Russell Bryant <rbryant@redhat.com> - 2011.3-8
 - Change default database to mysql. (#735012)
 
 * Mon Nov 14 2011 Mark McLoughlin <markmc@redhat.com> - 2011.3-7
