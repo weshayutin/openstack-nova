@@ -77,6 +77,7 @@ Patch40:          0040-Refactor-ietadm-tgtadm-calls-out-into-helper-classes.patc
 
 # These are fedora specific
 Patch100:         openstack-nova-nonet.patch
+Patch101:         openstack-nova-newdeps.patch
 
 # These are additional patches for upstream but not maintained at the above repo
 Patch200:         0001-Bug-898257-abstract-out-disk-image-access-methods.patch
@@ -145,11 +146,11 @@ Requires:         python-lxml
 Requires:         python-mox
 Requires:         python-redis
 Requires:         python-routes
-Requires:         python-sqlalchemy
+Requires:         python-sqlalchemy0.7
 Requires:         python-tornado
 Requires:         python-twisted-core
 Requires:         python-twisted-web
-Requires:         python-webob
+Requires:         python-webob1.0
 Requires:         python-netaddr
 Requires:         python-glance
 Requires:         python-novaclient
@@ -189,11 +190,11 @@ BuildRequires:    python-boto
 BuildRequires:    python-eventlet
 BuildRequires:    python-gflags
 BuildRequires:    python-routes
-BuildRequires:    python-sqlalchemy
+BuildRequires:    python-sqlalchemy0.7
 BuildRequires:    python-tornado
 BuildRequires:    python-twisted-core
 BuildRequires:    python-twisted-web
-BuildRequires:    python-webob
+BuildRequires:    python-webob1.0
 # while not strictly required, quiets the build down when building docs.
 BuildRequires:    python-carrot, python-mox, python-suds, m2crypto, bpython, python-memcached, python-migrate
 
@@ -255,6 +256,7 @@ This package contains documentation files for nova.
 
 # apply local patches
 %patch100 -p1
+%patch101 -p1
 
 # apply misc patches
 %patch200 -p1
@@ -441,6 +443,7 @@ fi
 
 %changelog
 * Wed Nov 30 2011 Pádraig Brady <P@draigBrady.com> - 2011.3-10
+- Use updated parallel install versions of epel packages
 - Add libguestfs support
 
 * Tue Nov 29 2011 Pádraig Brady <P@draigBrady.com> - 2011.3-9
