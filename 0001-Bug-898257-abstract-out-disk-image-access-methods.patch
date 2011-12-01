@@ -1,0 +1,535 @@
+From 105e3d6f72411d77b84abe23810e7a5b882bf340 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?P=C3=A1draig=20Brady?= <P@draigBrady.com>
+Date: Mon, 28 Nov 2011 14:31:58 +0000
+Subject: [PATCH 1/2] Bug#898257 abstract out disk image access methods
+
+Rather than providing two mutually exlusive image
+access methods (loop and qemu-nbd), try each in turn.
+This is to prepare for a follow up patch which will
+add libguestfs as a method to try.
+
+* nova/virt/disk.py(img_handlers): A new list of access methods to try,
+with the order being honored.
+(_baseMnt, _loopMnt, _nbdMnt): New mixin classes that abstract the
+devce allocation, partition mapping and file sys mounting,
+for each access type.
+(_DiskImage): An internal helper class that uses the mixin classes
+to provide the operations available on a disk image file.
+When mounting, iterate over each access method until one succeeds.
+If a hint is provided about a CoW format image, the list of
+methods to try will be reduced accordingly.
+Note expected errors are no longer raised as exceptions during mounting.
+Instead, on failure to mount an image, the last error is raised,
+while interveining errors are logged.
+* nova/virt/libvirt/connection.py: Adjust the function parameter
+names to be more general, rather than referencing specific
+implementations like 'nbd' and 'tune2fs'.
+Simplify the destroy_container() by storing and passing
+back a reference to the _DiskImage object, which has the
+necessary state to unmount.
+
+Change-Id: If3a4b1c8f4e2f2e7300a21071340dcc839cb36d7
+---
+ nova/virt/disk.py               |  386 +++++++++++++++++++++++++++------------
+ nova/virt/libvirt/connection.py |   15 +-
+ 2 files changed, 281 insertions(+), 120 deletions(-)
+
+diff --git a/nova/virt/disk.py b/nova/virt/disk.py
+index 9fe164c..71531e8 100644
+--- a/nova/virt/disk.py
++++ b/nova/virt/disk.py
+@@ -51,6 +51,9 @@ flags.DEFINE_integer('timeout_nbd', 10,
+                      'time to wait for a NBD device coming up')
+ flags.DEFINE_integer('max_nbd_devices', 16,
+                      'maximum number of possible nbd devices')
++flags.DEFINE_list('img_handlers', ['loop', 'nbd'],
++                    'Order of methods used to mount disk images')
++
+ 
+ # NOTE(yamahata): DEFINE_list() doesn't work because the command may
+ #                 include ','. For example,
+@@ -105,8 +108,259 @@ def extend(image, size):
+     utils.execute('resize2fs', image, check_exit_code=False)
+ 
+ 
++# Mixin classes for each image access method
++
++class _baseMnt(object):
++    """Standard operations, that can be overridden
++    by specialised classes below.  The basic operations
++    provided are get, map and mount."""
++
++    def get_dev(self):
++        """Make the image available as a block device
++        in the file system namespace."""
++        self.device = None
++        self.linked = True
++        return True
++
++    def unget_dev(self):
++        """Release the block device
++        from the file system namespace."""
++        self.linked = False
++
++    def map_dev(self):
++        """Make any partitions of the device
++        available in the file system namespace."""
++        if self.partition:
++            out, err = utils.execute('kpartx', '-a', self.device,
++                                     check_exit_code=False, run_as_root=True)
++            if err:
++                self.error = _('Failed to load partition: %s') % err
++                return False
++            self.mapped_device = '/dev/mapper/%sp%s' % (self.device.split('/')[-1],
++                                                        self.partition)
++        else:
++            self.mapped_device = self.device
++
++        # Note kpartx does nothing when presented with a raw image,
++        # so given we only use it when we expect a partitioned image, fail here
++        if not os.path.exists(self.mapped_device):
++            self.error = _('Failed to load partition: %s') % _('no partitions found')
++            return False
++
++        # This is an orthogonal operation
++        # which only needs to be done once
++        if self.disable_auto_fsck:
++            self.disable_auto_fsck = False
++            # Attempt to set ext[234] so that it doesn't auto-fsck
++            out, err = utils.execute('tune2fs', '-c', 0, '-i', 0,
++                                     self.mapped_device, check_exit_code=False,
++                                     run_as_root=True)
++            if err:
++                LOG.info(_('Failed to disable fs check: %s') % err)
++
++        self.mapped = True
++        return True
++
++    def unmap_dev(self):
++        """Release any partitions of the device
++        from the file system namespace."""
++        if not self.mapped:
++            return
++        if self.partition:
++            utils.execute('kpartx', '-d', self.device, run_as_root=True)
++        self.mapped = False
++
++    def mnt_dev(self):
++        """Mount the device into the file system."""
++        out, err = utils.execute('mount', self.mapped_device, self.mount_dir,
++                                 check_exit_code=False, run_as_root=True)
++        if err:
++            self.error = _('Failed to mount filesystem: %s') % err
++            return False
++
++        self.mounted = True
++        return True
++
++    def unmnt_dev(self):
++        """Unmount the device from the file system."""
++        if not self.mounted:
++            return
++        utils.execute('umount', self.mapped_device, run_as_root=True)
++        self.mounted = False
++
++    def do_mount(self,cls):
++        """Call the get, map and mnt operations above,
++        which may be specialised by mixin classes below."""
++        try:
++            if cls.get_dev(self) and cls.map_dev(self) and cls.mnt_dev(self):
++                self.mode = cls.mode
++                return True
++            else:
++                LOG.info(self.error)
++                self.do_umount(cls)
++        except:
++                self.do_umount(cls)
++                # XXX: Sometimes exception is cleared
++                # so we can fail to reraise here?
++                # That's because of greenthread call in utils.execute() ?
++                raise
++        return False
++
++    def do_umount(self,cls):
++        """Call the unmnt, unmap and unget operations,
++        which may be specialised by mixin classes below."""
++        self.mode = None
++        if self.mounted:
++            cls.unmnt_dev(self)
++        if self.mapped:
++            cls.unmap_dev(self)
++        if self.linked:
++            cls.unget_dev(self)
++
++
++class _loopMnt(_baseMnt):
++    """loop back support for raw images."""
++    mode = 'loop'
++
++    def get_dev(self):
++        out, err = utils.execute('losetup', '--find', '--show', self.image,
++                                 check_exit_code=False, run_as_root=True)
++        if err:
++            self.error = _('Could not attach image to loopback: %s') % err
++            return False
++
++        self.device = out.strip()
++        self.linked = True
++        return True
++
++    def unget_dev(self):
++        if not self.linked:
++            return
++        utils.execute('losetup', '--detach', self.device, run_as_root=True)
++        self.linked = False
++
++
++class _nbdMnt(_baseMnt):
++    """qemu-nbd support for CoW images."""
++    mode = 'nbd'
++
++    # NOTE(padraig): There are three issues with this nbd device handling
++    #  1. max_nbd_devices should be inferred (#861504)
++    #  2. We assume nothing else on the system uses nbd devices
++    #  3. Multiple workers on a system can race against each other
++    # A patch has been proposed in Nov 2011, to add add a -f option to
++    # qemu-nbd, akin to losetup -f. One could test for this by running qemu-nbd
++    # with just the -f option, where it will fail if not supported, or if there
++    # are no free devices. Note that patch currently hardcodes 16 devices.
++    # We might be able to alleviate problem 2. by scanning /proc/partitions
++    # like the aformentioned patch does.
++    _DEVICES = ['/dev/nbd%s' % i for i in range(FLAGS.max_nbd_devices)]
++    def _allocate_nbd(self):
++        while True:
++            if not self._DEVICES:
++                # really want to log this info, not raise
++                self.error = _('No free nbd devices')
++                return None
++            device = self._DEVICES.pop()
++            if not os.path.exists("/sys/block/%s/pid" % os.path.basename(device)):
++                break
++        return device
++
++    def _free_nbd(self, device):
++        self._DEVICES.append(device)
++
++    def get_dev(self):
++        device = self._allocate_nbd()
++        if not device:
++            return False
++        out, err = utils.execute('qemu-nbd', '-c', device, self.image,
++                                 check_exit_code=False, run_as_root=True)
++        if err:
++            self.error = _('qemu-nbd error: %s') % err
++            self._free_nbd(self.device)
++            return False
++
++        # NOTE(vish): this forks into another process, so give it a chance
++        #             to set up before continuing
++        for i in range(FLAGS.timeout_nbd):
++            if os.path.exists("/sys/block/%s/pid" % os.path.basename(device)):
++                self.device = device
++                break
++            time.sleep(1)
++        else:
++            self.error = _('nbd device %s did not show up') % device
++            self._free_nbd(self.device)
++            return False
++
++        self.linked = True
++        return True
++
++    def unget_dev(self):
++        if not self.linked:
++            return
++        utils.execute('qemu-nbd', '-d', self.device, run_as_root=True)
++        self._free_nbd(self.device)
++        self.linked = False
++        self.device = None
++
++
++class _DiskImage(_loopMnt, _nbdMnt):
++    """Provide operations on a disk image file."""
++
++    def __init__(self, image, partition=None, use_cow=False,
++                 disable_auto_fsck=False, mount_dir=None):
++        self.image = image
++        self.partition = partition
++        self.use_cow = use_cow
++        self.disable_auto_fsck = disable_auto_fsck
++        self.mount_dir = mount_dir
++
++        self.mode = None
++        self.linked = self.mapped = self.mounted = self.mkdir = False
++        self.device = self.mapped_device = None
++        self.error = ""
++
++        # As a performance tweak, don't bother trying to
++        # directly loopback mount a cow image.
++        self.handlers = FLAGS.img_handlers[:]
++        if self.use_cow:
++            self.handlers.remove('loop')
++
++    def _handler_class(self, mode):
++        """Look up the appropriate class to use based on MODE."""
++        for cls in self.__class__.__bases__:
++            if cls.mode == mode:
++                return cls
++        raise exception.Error(_("unknown disk image handler: %s" % mode))
++
++    def mount(self):
++        """Mount a disk image using the object attributes,
++        and first supported means provided by the mixin clases."""
++        if self.mode:
++            raise exception.Error(_('image already mounted'))
++
++        if not self.mount_dir:
++            self.mount_dir = tempfile.mkdtemp()
++            self.mkdir = True
++
++        # This explicit class lookup might be avoided with a multimethod decorator,
++        # but this is simple enough not to warrant this abstraction.
++        return any(self.do_mount(self._handler_class(h)) for h in self.handlers)
++
++    def umount(self):
++        """Unmount a disk image from the file system."""
++        try:
++            if self.mode:
++                self.do_umount(self._handler_class(self.mode))
++        finally:
++            if self.mkdir:
++                os.rmdir(self.mount_dir)
++
++
++# Public module functions
++
+ def inject_data(image, key=None, net=None, metadata=None,
+-                partition=None, nbd=False, tune2fs=True):
++                partition=None, use_cow=False, disable_auto_fsck=True):
+     """Injects a ssh key and optionally net data into a disk image.
+ 
+     it will mount the image as a fully partitioned disk and attempt to inject
+@@ -115,57 +369,18 @@ def inject_data(image, key=None, net=None, metadata=None,
+     If partition is not specified it mounts the image as a single partition.
+ 
+     """
+-    device = _link_device(image, nbd)
++    img = _DiskImage(image=image, partition=partition, use_cow=use_cow,
++                     disable_auto_fsck=disable_auto_fsck)
+     try:
+-        if not partition is None:
+-            # create partition
+-            out, err = utils.execute('kpartx', '-a', device, run_as_root=True)
+-            if err:
+-                raise exception.Error(_('Failed to load partition: %s') % err)
+-            mapped_device = '/dev/mapper/%sp%s' % (device.split('/')[-1],
+-                                                   partition)
++        if img.mount():
++            inject_data_into_fs(img.mount_dir, key, net, metadata, utils.execute)
+         else:
+-            mapped_device = device
+-
+-        try:
+-            # We can only loopback mount raw images. If the device isn't there,
+-            # it's normally because it's a .vmdk or a .vdi etc
+-            if not os.path.exists(mapped_device):
+-                raise exception.Error('Mapped device was not found (we can'
+-                                      ' only inject raw disk images): %s' %
+-                                      mapped_device)
+-
+-            if tune2fs:
+-                # Configure ext2fs so that it doesn't auto-check every N boots
+-                out, err = utils.execute('tune2fs', '-c', 0, '-i', 0,
+-                                         mapped_device, run_as_root=True)
+-            tmpdir = tempfile.mkdtemp()
+-            try:
+-                # mount loopback to dir
+-                out, err = utils.execute('mount', mapped_device, tmpdir,
+-                                         run_as_root=True)
+-                if err:
+-                    raise exception.Error(_('Failed to mount filesystem: %s')
+-                                          % err)
+-
+-                try:
+-                    inject_data_into_fs(tmpdir, key, net, metadata,
+-                                        utils.execute)
+-                finally:
+-                    # unmount device
+-                    utils.execute('umount', mapped_device, run_as_root=True)
+-            finally:
+-                # remove temporary directory
+-                utils.execute('rmdir', tmpdir)
+-        finally:
+-            if not partition is None:
+-                # remove partitions
+-                utils.execute('kpartx', '-d', device, run_as_root=True)
++            raise exception.Error(img.error)
+     finally:
+-        _unlink_device(device, nbd)
++        img.umount()
+ 
+ 
+-def setup_container(image, container_dir=None, nbd=False):
++def setup_container(image, container_dir=None, use_cow=False):
+     """Setup the LXC container.
+ 
+     It will mount the loopback image to the container directory in order
+@@ -174,86 +389,31 @@ def setup_container(image, container_dir=None, nbd=False):
+     LXC does not support qcow2 images yet.
+     """
+     try:
+-        device = _link_device(image, nbd)
+-        utils.execute('mount', device, container_dir, run_as_root=True)
++        img = _DiskImage(image=image, use_cow=use_cow, mount_dir=container_dir)
++        if img.mount():
++            return img
++        else:
++            raise exception.Error(img.error)
+     except Exception, exn:
+         LOG.exception(_('Failed to mount filesystem: %s'), exn)
+-        _unlink_device(device, nbd)
++        img.umount()
+ 
+ 
+-def destroy_container(target, instance, nbd=False):
++def destroy_container(img):
+     """Destroy the container once it terminates.
+ 
+-    It will umount the container that is mounted, try to find the loopback
+-    device associated with the container and delete it.
++    It will umount the container that is mounted,
++    and delete any  linked devices.
+ 
+     LXC does not support qcow2 images yet.
+     """
+-    out, err = utils.execute('mount', run_as_root=True)
+-    for loop in out.splitlines():
+-        if instance['name'] in loop:
+-            device = loop.split()[0]
+-
+     try:
+-        container_dir = '%s/rootfs' % target
+-        utils.execute('umount', container_dir, run_as_root=True)
+-        _unlink_device(device, nbd)
++        if img:
++            img.umount()
+     except Exception, exn:
+         LOG.exception(_('Failed to remove container: %s'), exn)
+ 
+ 
+-def _link_device(image, nbd):
+-    """Link image to device using loopback or nbd"""
+-
+-    if nbd:
+-        device = _allocate_device()
+-        utils.execute('qemu-nbd', '-c', device, image, run_as_root=True)
+-        # NOTE(vish): this forks into another process, so give it a chance
+-        #             to set up before continuuing
+-        for i in xrange(FLAGS.timeout_nbd):
+-            if os.path.exists("/sys/block/%s/pid" % os.path.basename(device)):
+-                return device
+-            time.sleep(1)
+-        raise exception.Error(_('nbd device %s did not show up') % device)
+-    else:
+-        out, err = utils.execute('losetup', '--find', '--show', image,
+-                                 run_as_root=True)
+-        if err:
+-            raise exception.Error(_('Could not attach image to loopback: %s')
+-                                  % err)
+-        return out.strip()
+-
+-
+-def _unlink_device(device, nbd):
+-    """Unlink image from device using loopback or nbd"""
+-    if nbd:
+-        utils.execute('qemu-nbd', '-d', device, run_as_root=True)
+-        _free_device(device)
+-    else:
+-        utils.execute('losetup', '--detach', device, run_as_root=True)
+-
+-
+-_DEVICES = ['/dev/nbd%s' % i for i in xrange(FLAGS.max_nbd_devices)]
+-
+-
+-def _allocate_device():
+-    # NOTE(vish): This assumes no other processes are allocating nbd devices.
+-    #             It may race cause a race condition if multiple
+-    #             workers are running on a given machine.
+-
+-    while True:
+-        if not _DEVICES:
+-            raise exception.Error(_('No free nbd devices'))
+-        device = _DEVICES.pop()
+-        if not os.path.exists("/sys/block/%s/pid" % os.path.basename(device)):
+-            break
+-    return device
+-
+-
+-def _free_device(device):
+-    _DEVICES.append(device)
+-
+-
+ def inject_data_into_fs(fs, key, net, metadata, execute):
+     """Injects data into a filesystem already mounted by the caller.
+     Virt connections can call this directly if they mount their fs
+diff --git a/nova/virt/libvirt/connection.py b/nova/virt/libvirt/connection.py
+index ba1dc86..bba2e0b 100644
+--- a/nova/virt/libvirt/connection.py
++++ b/nova/virt/libvirt/connection.py
+@@ -179,6 +179,7 @@ class LibvirtConnection(driver.ComputeDriver):
+         self.libvirt_xml = open(FLAGS.libvirt_xml_template).read()
+         self.cpuinfo_xml = open(FLAGS.cpuinfo_xml_template).read()
+         self._wrapped_conn = None
++        self.container = None
+         self.read_only = read_only
+ 
+         fw_class = utils.import_class(FLAGS.firewall_driver)
+@@ -347,7 +348,7 @@ class LibvirtConnection(driver.ComputeDriver):
+         LOG.info(_('instance %(instance_name)s: deleting instance files'
+                 ' %(target)s') % locals())
+         if FLAGS.libvirt_type == 'lxc':
+-            disk.destroy_container(target, instance, nbd=FLAGS.use_cow_images)
++            disk.destroy_container(self.container)
+         if os.path.exists(target):
+             shutil.rmtree(target)
+ 
+@@ -1003,11 +1004,11 @@ class LibvirtConnection(driver.ComputeDriver):
+             if config_drive:  # Should be True or None by now.
+                 injection_path = basepath('disk.config')
+                 img_id = 'config-drive'
+-                tune2fs = False
++                disable_auto_fsck = False
+             else:
+                 injection_path = basepath('disk')
+                 img_id = inst.image_ref
+-                tune2fs = True
++                disable_auto_fsck = True
+ 
+             for injection in ('metadata', 'key', 'net'):
+                 if locals()[injection]:
+@@ -1017,8 +1018,8 @@ class LibvirtConnection(driver.ComputeDriver):
+             try:
+                 disk.inject_data(injection_path, key, net, metadata,
+                                  partition=target_partition,
+-                                 nbd=FLAGS.use_cow_images,
+-                                 tune2fs=tune2fs)
++                                 use_cow=FLAGS.use_cow_images,
++                                 disable_auto_fsck=disable_auto_fsck)
+ 
+             except Exception as e:
+                 # This could be a windows image, or a vmdk format disk
+@@ -1026,9 +1027,9 @@ class LibvirtConnection(driver.ComputeDriver):
+                         ' data into image %(img_id)s (%(e)s)') % locals())
+ 
+         if FLAGS.libvirt_type == 'lxc':
+-            disk.setup_container(basepath('disk'),
++            self.container=disk.setup_container(basepath('disk'),
+                                 container_dir=container_dir,
+-                                nbd=FLAGS.use_cow_images)
++                                use_cow=FLAGS.use_cow_images)
+ 
+         if FLAGS.libvirt_type == 'uml':
+             utils.execute('chown', 'root', basepath('disk'), run_as_root=True)
+-- 
+1.7.6.4
+

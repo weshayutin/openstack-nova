@@ -2,7 +2,7 @@
 
 Name:             openstack-nova
 Version:          2011.3
-Release:          9%{?dist}
+Release:          10%{?dist}
 Summary:          OpenStack Compute (nova)
 
 Group:            Applications/System
@@ -75,6 +75,13 @@ Patch38:          0038-Allow-the-user-to-choose-either-ietadm-or-tgtadm-lp-.patc
 Patch39:          0039-Remove-VolumeDriver.sync_exec-method-lp-819997.patch
 Patch40:          0040-Refactor-ietadm-tgtadm-calls-out-into-helper-classes.patch
 
+# These are fedora specific
+Patch100:         openstack-nova-nonet.patch
+
+# These are additional patches for upstream but not maintained at the above repo
+Patch200:         0001-Bug-898257-abstract-out-disk-image-access-methods.patch
+Patch201:         0002-Bug-898257-support-handling-images-with-libguestfs.patch
+
 BuildArch:        noarch
 BuildRequires:    intltool
 BuildRequires:    python-setuptools
@@ -88,8 +95,9 @@ Requires:         openstack-glance
 Requires:         python-paste
 Requires:         python-paste-deploy
 
+Requires:         libguestfs-mount >= 1.7.17
 Requires:         libvirt-python
-Requires:         libvirt >= 0.8.2
+Requires:         libvirt >= 0.8.7
 Requires:         libxml2-python
 Requires:         python-cheetah
 Requires:         MySQL-python
@@ -245,6 +253,13 @@ This package contains documentation files for nova.
 %patch39 -p1
 %patch40 -p1
 
+# apply local patches
+%patch100 -p1
+
+# apply misc patches
+%patch200 -p1
+%patch201 -p1
+
 find . \( -name .gitignore -o -name .placeholder \) -delete
 
 find nova -name \*.py -exec sed -i '/\/usr\/bin\/env python/d' {} \;
@@ -342,9 +357,11 @@ rm -f %{buildroot}/usr/share/doc/nova/README*
 
 %pre
 getent group nova >/dev/null || groupadd -r nova --gid 162
-getent passwd nova >/dev/null || \
-useradd --uid 162 -r -g nova -G nova,nobody,qemu -d %{_sharedstatedir}/nova -s /sbin/nologin \
--c "OpenStack Nova Daemons" nova
+if ! getent passwd nova >/dev/null; then
+  useradd -u 162 -r -g nova -G nova,nobody,qemu,fuse -d %{_sharedstatedir}/nova -s /sbin/nologin -c "OpenStack Nova Daemons" nova
+else
+  usermod -a -G fuse nova
+fi
 exit 0
 
 %post
@@ -423,7 +440,14 @@ fi
 %endif
 
 %changelog
-* Tue Nov 29 2011 Russell Bryant <rbryant@redhat.com> - 2011.3-9
+* Wed Nov 30 2011 Pádraig Brady <P@draigBrady.com> - 2011.3-10
+- Add libguestfs support
+
+* Tue Nov 29 2011 Pádraig Brady <P@draigBrady.com> - 2011.3-9
+- Update the libvirt dependency from 0.8.2 to 0.8.7
+- Ensure we don't access the net when building docs
+
+* Tue Nov 29 2011 Russell Bryant <rbryant@redhat.com> - 2011.3-8
 - Change default database to mysql. (#735012)
 
 * Mon Nov 14 2011 Mark McLoughlin <markmc@redhat.com> - 2011.3-8
