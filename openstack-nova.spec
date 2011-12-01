@@ -75,6 +75,9 @@ Patch38:          0038-Allow-the-user-to-choose-either-ietadm-or-tgtadm-lp-.patc
 Patch39:          0039-Remove-VolumeDriver.sync_exec-method-lp-819997.patch
 Patch40:          0040-Refactor-ietadm-tgtadm-calls-out-into-helper-classes.patch
 
+# These are fedora specific
+Patch100:         openstack-nova-nonet.patch
+
 BuildArch:        noarch
 BuildRequires:    intltool
 BuildRequires:    python-setuptools
@@ -245,6 +248,9 @@ This package contains documentation files for nova.
 %patch38 -p1
 %patch39 -p1
 %patch40 -p1
+
+# apply local patches
+%patch100 -p1
 
 find . \( -name .gitignore -o -name .placeholder \) -delete
 
@@ -429,6 +435,7 @@ fi
 %changelog
 * Tue Nov 22 2011 Pádraig Brady <P@draigBrady.com> - 2011.3-9
 - Update the libvirt dependency from 0.8.2 to 0.8.7
+- Ensure we don't access the net when building docs
 
 * Tue Nov 29 2011 Russell Bryant <rbryant@redhat.com> - 2011.3-8
 - Change default database to mysql. (#735012)
