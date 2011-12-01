@@ -2,7 +2,7 @@
 
 Name:             openstack-nova
 Version:          2011.3
-Release:          8%{?dist}
+Release:          9%{?dist}
 Summary:          OpenStack Compute (nova)
 
 Group:            Applications/System
@@ -89,7 +89,7 @@ Requires:         python-paste
 Requires:         python-paste-deploy
 
 Requires:         libvirt-python
-Requires:         libvirt >= 0.8.2
+Requires:         libvirt >= 0.8.7
 Requires:         libxml2-python
 Requires:         python-cheetah
 Requires:         MySQL-python
@@ -427,6 +427,9 @@ fi
 %endif
 
 %changelog
+* Tue Nov 22 2011 Pádraig Brady <P@draigBrady.com> - 2011.3-9
+- Update the libvirt dependency from 0.8.2 to 0.8.7
+
 * Tue Nov 29 2011 Russell Bryant <rbryant@redhat.com> - 2011.3-8
 - Change default database to mysql. (#735012)
 
