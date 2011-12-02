@@ -68,13 +68,13 @@ fi
 
 # Make sure mysqld is running.
 
-if ! systemctl status mysqld.service > /dev/null
+if ! service mysqld status > /dev/null
 then
 	printf "mysqld is not running.  Would you like to start it now? (y/n): "
 	read response
 	case "$response" in
 		y|Y)
-			systemctl start mysqld.service
+			service mysqld start
 			;;
 		n|N)
 			echo "mysqld must be running.  Please start it before proceeding."
