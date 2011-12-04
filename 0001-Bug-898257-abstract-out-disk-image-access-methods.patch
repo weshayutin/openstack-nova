@@ -1,4 +1,4 @@
-From 105e3d6f72411d77b84abe23810e7a5b882bf340 Mon Sep 17 00:00:00 2001
+From ca9b37578ada6e5b5c51abe8227d885dd79fa159 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?P=C3=A1draig=20Brady?= <P@draigBrady.com>
 Date: Mon, 28 Nov 2011 14:31:58 +0000
 Subject: [PATCH 1/2] Bug#898257 abstract out disk image access methods
@@ -30,12 +30,12 @@ necessary state to unmount.
 
 Change-Id: If3a4b1c8f4e2f2e7300a21071340dcc839cb36d7
 ---
- nova/virt/disk.py               |  386 +++++++++++++++++++++++++++------------
+ nova/virt/disk.py               |  405 ++++++++++++++++++++++++++++-----------
  nova/virt/libvirt/connection.py |   15 +-
- 2 files changed, 281 insertions(+), 120 deletions(-)
+ 2 files changed, 300 insertions(+), 120 deletions(-)
 
 diff --git a/nova/virt/disk.py b/nova/virt/disk.py
-index 9fe164c..71531e8 100644
+index 9fe164c..0d6e65f 100644
 --- a/nova/virt/disk.py
 +++ b/nova/virt/disk.py
 @@ -51,6 +51,9 @@ flags.DEFINE_integer('timeout_nbd', 10,
@@ -48,7 +48,7 @@ index 9fe164c..71531e8 100644
  
  # NOTE(yamahata): DEFINE_list() doesn't work because the command may
  #                 include ','. For example,
-@@ -105,8 +108,259 @@ def extend(image, size):
+@@ -105,8 +108,278 @@ def extend(image, size):
      utils.execute('resize2fs', image, check_exit_code=False)
  
  
@@ -75,8 +75,7 @@ index 9fe164c..71531e8 100644
 +        """Make any partitions of the device
 +        available in the file system namespace."""
 +        if self.partition:
-+            out, err = utils.execute('kpartx', '-a', self.device,
-+                                     check_exit_code=False, run_as_root=True)
++            out, err = self.attempt('kpartx', '-a', self.device, run_as_root=True)
 +            if err:
 +                self.error = _('Failed to load partition: %s') % err
 +                return False
@@ -96,9 +95,8 @@ index 9fe164c..71531e8 100644
 +        if self.disable_auto_fsck:
 +            self.disable_auto_fsck = False
 +            # Attempt to set ext[234] so that it doesn't auto-fsck
-+            out, err = utils.execute('tune2fs', '-c', 0, '-i', 0,
-+                                     self.mapped_device, check_exit_code=False,
-+                                     run_as_root=True)
++            out, err = self.attempt('tune2fs', '-c', 0, '-i', 0,
++                                    self.mapped_device, run_as_root=True)
 +            if err:
 +                LOG.info(_('Failed to disable fs check: %s') % err)
 +
@@ -116,8 +114,8 @@ index 9fe164c..71531e8 100644
 +
 +    def mnt_dev(self):
 +        """Mount the device into the file system."""
-+        out, err = utils.execute('mount', self.mapped_device, self.mount_dir,
-+                                 check_exit_code=False, run_as_root=True)
++        out, err = self.attempt('mount', self.mapped_device, self.mount_dir,
++                                run_as_root=True)
 +        if err:
 +            self.error = _('Failed to mount filesystem: %s') % err
 +            return False
@@ -131,6 +129,27 @@ index 9fe164c..71531e8 100644
 +            return
 +        utils.execute('umount', self.mapped_device, run_as_root=True)
 +        self.mounted = False
++
++    @staticmethod
++    def attempt(*args, **kwargs):
++        """A wrapper around utils.execute() to convert error exit exceptions
++           to an error message and return code. If the 'discard_warnings'
++           parameter is set to True, then any output to stderr is ignored."""
++        discard_warnings = kwargs.pop('discard_warnings', False)
++
++        try:
++            out, err = utils.execute(*args, **kwargs)
++            failed = False
++        except exception.ProcessExecutionError, exn:
++            out, err = None, str(exn)
++            LOG.debug(err)
++            failed = True
++
++        if not failed and discard_warnings:
++            # Handle commands that output to stderr but otherwise succeed
++            err = None
++
++        return out, err
 +
 +    def do_mount(self,cls):
 +        """Call the get, map and mnt operations above,
@@ -167,8 +186,8 @@ index 9fe164c..71531e8 100644
 +    mode = 'loop'
 +
 +    def get_dev(self):
-+        out, err = utils.execute('losetup', '--find', '--show', self.image,
-+                                 check_exit_code=False, run_as_root=True)
++        out, err = self.attempt('losetup', '--find', '--show', self.image,
++                                run_as_root=True)
 +        if err:
 +            self.error = _('Could not attach image to loopback: %s') % err
 +            return False
@@ -217,8 +236,8 @@ index 9fe164c..71531e8 100644
 +        device = self._allocate_nbd()
 +        if not device:
 +            return False
-+        out, err = utils.execute('qemu-nbd', '-c', device, self.image,
-+                                 check_exit_code=False, run_as_root=True)
++        out, err = self.attempt('qemu-nbd', '-c', device, self.image,
++                                run_as_root=True)
 +        if err:
 +            self.error = _('qemu-nbd error: %s') % err
 +            self._free_nbd(self.device)
@@ -309,7 +328,7 @@ index 9fe164c..71531e8 100644
      """Injects a ssh key and optionally net data into a disk image.
  
      it will mount the image as a fully partitioned disk and attempt to inject
-@@ -115,57 +369,18 @@ def inject_data(image, key=None, net=None, metadata=None,
+@@ -115,57 +388,18 @@ def inject_data(image, key=None, net=None, metadata=None,
      If partition is not specified it mounts the image as a single partition.
  
      """
@@ -374,7 +393,7 @@ index 9fe164c..71531e8 100644
      """Setup the LXC container.
  
      It will mount the loopback image to the container directory in order
-@@ -174,86 +389,31 @@ def setup_container(image, container_dir=None, nbd=False):
+@@ -174,86 +408,31 @@ def setup_container(image, container_dir=None, nbd=False):
      LXC does not support qcow2 images yet.
      """
      try:
