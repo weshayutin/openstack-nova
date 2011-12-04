@@ -1,4 +1,4 @@
-From d2bf5c7d318fdcf557aa641aadb5efe9f54d052b Mon Sep 17 00:00:00 2001
+From 82436c3605de262de095790b2e7670e07f2253a3 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?P=C3=A1draig=20Brady?= <P@draigBrady.com>
 Date: Wed, 30 Nov 2011 17:00:17 +0000
 Subject: [PATCH 2/2] Bug#898257 support handling images with libguestfs
@@ -26,7 +26,7 @@ Change-Id: I2e22c9d149fff7a73cd8cebaa280d68d3fb9096c
  1 files changed, 40 insertions(+), 2 deletions(-)
 
 diff --git a/nova/virt/disk.py b/nova/virt/disk.py
-index 71531e8..87b06ff 100644
+index 0d6e65f..7ea2125 100644
 --- a/nova/virt/disk.py
 +++ b/nova/virt/disk.py
 @@ -51,7 +51,7 @@ flags.DEFINE_integer('timeout_nbd', 10,
@@ -38,7 +38,7 @@ index 71531e8..87b06ff 100644
                      'Order of methods used to mount disk images')
  
  
-@@ -304,7 +304,45 @@ class _nbdMnt(_baseMnt):
+@@ -323,7 +323,45 @@ class _nbdMnt(_baseMnt):
          self.device = None
  
  
@@ -64,7 +64,7 @@ index 71531e8..87b06ff 100644
 +        # root access is not required for guestfs, but the current
 +        # user must be able to fusermount (by being part of the
 +        # fuser group for example).
-+        out, err = utils.execute(*args, check_exit_code=False)
++        out, err = self.attempt(*args, discard_warnings=True)
 +        if err:
 +            self.error = _('Failed to mount filesystem: %s') % err
 +            return False
