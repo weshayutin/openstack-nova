@@ -2,7 +2,7 @@
 
 Name:             openstack-nova
 Version:          2011.3
-Release:          10%{?dist}
+Release:          11%{?dist}
 Summary:          OpenStack Compute (nova)
 
 Group:            Applications/System
@@ -442,6 +442,9 @@ fi
 %endif
 
 %changelog
+* Tue Dec 06 2011 Russell Bryant <rbryant@redhat.com> - 2011.3-11
+- Add --yes, --rootpw, and --novapw options to openstack-nova-db-setup.
+
 * Wed Nov 30 2011 Pádraig Brady <P@draigBrady.com> - 2011.3-10
 - Use updated parallel install versions of epel packages
 - Add libguestfs support
