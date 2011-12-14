@@ -1,5 +1,5 @@
-From 82436c3605de262de095790b2e7670e07f2253a3 Mon Sep 17 00:00:00 2001
-From: =?UTF-8?q?P=C3=A1draig=20Brady?= <P@draigBrady.com>
+From 89e0437aff4bf039568e04f05f95b5142e392c04 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?P=C3=A1draig=20Brady?= <pbrady@redhat.com>
 Date: Wed, 30 Nov 2011 17:00:17 +0000
 Subject: [PATCH 2/2] Bug#898257 support handling images with libguestfs
 
@@ -11,9 +11,10 @@ It does have extra overhead in that it starts a VM to
 access the image. This has both advantages and disadvantages.
 Also qemu-nbd is not supported on some systems like RHEL 6.
 
-* nova/virt/disk.py (img_handlers): Add guestfs to the default list
-of access methods to try, to act as a fallback.
-(_guestfsMnt): A new mixin class to provide the access method.
+* nova/virt/disk/base.py (img_handlers): Add guestfs to the default
+list of access methods to try, to act as a fallback.
+* nova/virt/disk/guestfs.py: A new plugin class to provide support
+for libguestfs mounting.
 Note we use the guestmount utility, as a non root user,
 so the user will need the ability to use fusermount, which
 is often provided by being a member of the 'fuser' group.
@@ -22,28 +23,72 @@ greater granularity of control over the image.
 
 Change-Id: I2e22c9d149fff7a73cd8cebaa280d68d3fb9096c
 ---
- nova/virt/disk.py |   42 ++++++++++++++++++++++++++++++++++++++++--
- 1 files changed, 40 insertions(+), 2 deletions(-)
+ nova/virt/disk/base.py    |    6 ++--
+ nova/virt/disk/guestfs.py |   88 +++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 91 insertions(+), 3 deletions(-)
+ create mode 100644 nova/virt/disk/guestfs.py
 
-diff --git a/nova/virt/disk.py b/nova/virt/disk.py
-index 0d6e65f..7ea2125 100644
---- a/nova/virt/disk.py
-+++ b/nova/virt/disk.py
-@@ -51,7 +51,7 @@ flags.DEFINE_integer('timeout_nbd', 10,
-                      'time to wait for a NBD device coming up')
- flags.DEFINE_integer('max_nbd_devices', 16,
-                      'maximum number of possible nbd devices')
+diff --git a/nova/virt/disk/base.py b/nova/virt/disk/base.py
+index 8b5acc4..9ae0bd1 100644
+--- a/nova/virt/disk/base.py
++++ b/nova/virt/disk/base.py
+@@ -33,7 +33,7 @@ from nova import exception
+ from nova import flags
+ from nova import log as logging
+ from nova import utils
+-from nova.virt.disk import loop, nbd
++from nova.virt.disk import loop, nbd, guestfs
+ 
+ LOG = logging.getLogger('nova.compute.disk')
+ FLAGS = flags.FLAGS
+@@ -44,7 +44,7 @@ flags.DEFINE_integer('block_size', 1024 * 1024 * 256,
+ flags.DEFINE_string('injected_network_template',
+                     utils.abspath('virt/interfaces.template'),
+                     'Template file for injected network')
 -flags.DEFINE_list('img_handlers', ['loop', 'nbd'],
 +flags.DEFINE_list('img_handlers', ['loop', 'nbd', 'guestfs'],
                      'Order of methods used to mount disk images')
  
  
-@@ -323,7 +323,45 @@ class _nbdMnt(_baseMnt):
-         self.device = None
- 
- 
--class _DiskImage(_loopMnt, _nbdMnt):
-+class _guestfsMnt(_baseMnt):
+@@ -131,7 +131,7 @@ class _DiskImage(object):
+     @staticmethod
+     def _handler_class(mode):
+         """Look up the appropriate class to use based on MODE."""
+-        for cls in (loop.Mount, nbd.Mount):
++        for cls in (loop.Mount, nbd.Mount, guestfs.Mount):
+             if cls.mode == mode:
+                 return cls
+         raise exception.Error(_("unknown disk image handler: %s" % mode))
+diff --git a/nova/virt/disk/guestfs.py b/nova/virt/disk/guestfs.py
+new file mode 100644
+index 0000000..6323dc8
+--- /dev/null
++++ b/nova/virt/disk/guestfs.py
+@@ -0,0 +1,88 @@
++# vim: tabstop=4 shiftwidth=4 softtabstop=4
++
++# Copyright 2011 Red Hat, Inc.
++#
++# Licensed under the Apache License, Version 2.0 (the "License"); you may
++# not use this file except in compliance with the License. You may obtain
++# a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
++# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
++# License for the specific language governing permissions and limitations
++# under the License.
++"""Support for mounting images with libguestfs"""
++
++import os
++
++from nova import utils
++from nova.virt.disk import mount
++
++
++class Mount(mount.Mount):
 +    """libguestfs support for arbitrary images."""
 +    mode = 'guestfs'
 +
@@ -56,18 +101,47 @@ index 0d6e65f..7ea2125 100644
 +
 +    def mnt_dev(self):
 +        args = ('guestmount', '--rw', '-a', self.image)
-+        if self.partition:
++        if self.partition == -1:
++            args += ('-i',)  # find the OS partition
++        elif self.partition:
 +            args += ('-m', '/dev/sda%d' % self.partition)
 +        else:
-+            args += ('-i',) # find the OS partition
++            # We don't resort to -i for this case yet,
++            # as some older versions of libguestfs
++            # have problems identifying ttylinux images for example
++            args += ('-m', '/dev/sda')
 +        args += (self.mount_dir,)
-+        # root access is not required for guestfs, but the current
-+        # user must be able to fusermount (by being part of the
-+        # fuser group for example).
-+        out, err = self.attempt(*args, discard_warnings=True)
++        # root access should not required for guestfs (if the user
++        # has permissions to fusermount (by being part of the fuse
++        # group for example)).  Also note the image and mount_dir
++        # have appropriate creditials at this point for read/write
++        # mounting by the nova user.  However currently there are
++        # subsequent access issues by both the nova and root users
++        # if the nova user mounts the image, as detailed here:
++        # https://bugzilla.redhat.com/show_bug.cgi?id=765814
++        _out, err = utils.trycmd(*args, discard_warnings=True,
++                                 run_as_root=True)
 +        if err:
 +            self.error = _('Failed to mount filesystem: %s') % err
++            # Be defensive and ensure this is unmounted,
++            # as I'm not sure guestmount will never have
++            # mounted when it returns EXIT_FAILURE.
++            # This is required if discard_warnings=False above
++            utils.trycmd('fusermount', '-u', self.mount_dir, run_as_root=True)
 +            return False
++
++        # More defensiveness as there are edge cases where
++        # guestmount can return success while not mounting
++        try:
++            if not os.listdir(self.mount_dir):
++                # Assume we've just got the original empty temp dir
++                err = _('unknown guestmount error')
++                self.error = _('Failed to mount filesystem: %s') % err
++                return False
++        except OSError:
++            # This is the usual path and means root has
++            # probably mounted fine
++            pass
 +
 +        self.mounted = True
 +        return True
@@ -75,16 +149,10 @@ index 0d6e65f..7ea2125 100644
 +    def unmnt_dev(self):
 +        if not self.mounted:
 +            return
-+        # root users don't need a specific unmnt_dev
++        # root users don't need a specific unmnt_dev()
 +        # but ordinary users do
-+        utils.execute('fusermount', '-u', self.mount_dir)
++        utils.execute('fusermount', '-u', self.mount_dir, run_as_root=True)
 +        self.mounted = False
-+
-+
-+class _DiskImage(_loopMnt, _nbdMnt, _guestfsMnt):
-     """Provide operations on a disk image file."""
- 
-     def __init__(self, image, partition=None, use_cow=False,
 -- 
 1.7.6.4
 
