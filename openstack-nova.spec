@@ -2,7 +2,7 @@
 
 Name:             openstack-nova
 Version:          2011.3
-Release:          12%{?dist}
+Release:          13%{?dist}
 Summary:          OpenStack Compute (nova)
 
 Group:            Applications/System
@@ -446,7 +446,7 @@ fi
 %endif
 
 %changelog
-* Tue Dec 14 2011 Pádraig Brady <P@draigBrady.com> - 2011.3-12
+* Tue Dec 14 2011 Pádraig Brady <P@draigBrady.com> - 2011.3-13
 - Sanitize EC2 manifests and image tarballs (#767236, CVE 2011-4596)
 - update libguestfs support
 
