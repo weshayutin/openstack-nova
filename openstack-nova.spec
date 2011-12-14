@@ -74,6 +74,7 @@ Patch37:          0037-Have-nova-api-add-the-INPUT-rule-for-EC2-metadata-lp.patc
 Patch38:          0038-Allow-the-user-to-choose-either-ietadm-or-tgtadm-lp-.patch
 Patch39:          0039-Remove-VolumeDriver.sync_exec-method-lp-819997.patch
 Patch40:          0040-Refactor-ietadm-tgtadm-calls-out-into-helper-classes.patch
+Patch41:          0041-Sanitize-EC2-manifests-and-image-tarballs.patch
 
 # These are fedora specific
 Patch100:         openstack-nova-nonet.patch
@@ -253,6 +254,7 @@ This package contains documentation files for nova.
 %patch38 -p1
 %patch39 -p1
 %patch40 -p1
+%patch41 -p1
 
 # apply local patches
 %patch100 -p1
@@ -444,6 +446,9 @@ fi
 %endif
 
 %changelog
+* Tue Dec 14 2011 Pádraig Brady <P@draigBrady.com> - 2011.3-12
+- Sanitize EC2 manifests and image tarballs (#767236, CVE 2011-4596)
+
 * Tue Dec 06 2011 Russell Bryant <rbryant@redhat.com> - 2011.3-11
 - Add --yes, --rootpw, and --novapw options to openstack-nova-db-setup.
 
