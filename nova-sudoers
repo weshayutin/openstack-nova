@@ -30,6 +30,8 @@ Cmnd_Alias NOVACMDS = /bin/aoe-stat,                            \
                       /sbin/vconfig,                            \
                       /sbin/vgcreate,                           \
                       /sbin/vgs,                                \
+                      /usr/bin/fusermount,                      \
+                      /usr/bin/guestmount,                      \
                       /usr/bin/socat,                           \
                       /usr/bin/tee,                             \
         		      /usr/bin/qemu-nbd,            			\
