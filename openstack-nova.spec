@@ -448,6 +448,7 @@ fi
 %changelog
 * Tue Dec 14 2011 Pádraig Brady <P@draigBrady.com> - 2011.3-12
 - Sanitize EC2 manifests and image tarballs (#767236, CVE 2011-4596)
+- update libguestfs support
 
 * Tue Dec 06 2011 Russell Bryant <rbryant@redhat.com> - 2011.3-11
 - Add --yes, --rootpw, and --novapw options to openstack-nova-db-setup.
