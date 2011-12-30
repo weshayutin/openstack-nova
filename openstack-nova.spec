@@ -2,7 +2,7 @@
 
 Name:             openstack-nova
 Version:          2011.3
-Release:          13%{?dist}
+Release:          14%{?dist}
 Summary:          OpenStack Compute (nova)
 
 Group:            Applications/System
@@ -98,6 +98,8 @@ Requires:         python-paste
 Requires:         python-paste-deploy
 
 Requires:         libguestfs-mount >= 1.7.17
+# The fuse dependency should be added to libguestfs-mount
+Requires:         fuse
 Requires:         libvirt-python
 Requires:         libvirt >= 0.8.7
 Requires:         libxml2-python
@@ -362,8 +364,10 @@ rm -f %{buildroot}/usr/share/doc/nova/README*
 %pre
 getent group nova >/dev/null || groupadd -r nova --gid 162
 if ! getent passwd nova >/dev/null; then
-  useradd -u 162 -r -g nova -G nova,nobody,qemu,fuse -d %{_sharedstatedir}/nova -s /sbin/nologin -c "OpenStack Nova Daemons" nova
-else
+  useradd -u 162 -r -g nova -G nova,nobody,qemu -d %{_sharedstatedir}/nova -s /sbin/nologin -c "OpenStack Nova Daemons" nova
+fi
+# Add nova to the fuse group (if present) to support guestmount
+if getent group fuse; then
   usermod -a -G fuse nova
 fi
 exit 0
@@ -444,6 +448,10 @@ fi
 %endif
 
 %changelog
+* Fri Dec 30 2011 Pádraig Brady <P@draigBrady.com> - 2011.3-14
+- Don't require the fuse group (#770927)
+- Require the fuse package (to avoid #767852)
+
 * Tue Dec 14 2011 Pádraig Brady <P@draigBrady.com> - 2011.3-13
 - Sanitize EC2 manifests and image tarballs (#767236, CVE 2011-4596)
 - update libguestfs support
