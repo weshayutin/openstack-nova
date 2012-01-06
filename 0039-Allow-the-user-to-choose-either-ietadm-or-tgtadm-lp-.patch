@@ -1,7 +1,7 @@
-From 55e01ff6f84a201fecd1e550c8fad592a6edd567 Mon Sep 17 00:00:00 2001
+From 95e4d32d5abc9a86d7a6d1344f9c44ae293aca7b Mon Sep 17 00:00:00 2001
 From: Mark McLoughlin <markmc@redhat.com>
 Date: Thu, 11 Aug 2011 07:44:38 -0400
-Subject: [PATCH 38/40] Allow the user to choose either ietadm or tgtadm
+Subject: [PATCH 39/44] Allow the user to choose either ietadm or tgtadm
  (lp:819997)
 
 (Actually authored by Chuck Short <zulcss@ubuntu.com> but Gerrit won't
@@ -233,5 +233,5 @@ index e5bb498..76f0655 100644
              # Instances remount read-only in this case.
              # /etc/init.d/iscsitarget restart and rebooting nova-volume
 -- 
-1.7.6.4
+1.7.6.5
 

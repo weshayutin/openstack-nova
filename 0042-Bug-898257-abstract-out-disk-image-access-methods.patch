@@ -1,7 +1,7 @@
-From e63b54e824e5cf3585f9d9c87272941a75b6cea9 Mon Sep 17 00:00:00 2001
+From 6ae9df1eea3749ed2e570e1573b8a781f17caed4 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?P=C3=A1draig=20Brady?= <pbrady@redhat.com>
 Date: Wed, 30 Nov 2011 17:00:17 +0000
-Subject: [PATCH 1/2] Bug#898257 abstract out disk image access methods
+Subject: [PATCH 42/44] Bug#898257 abstract out disk image access methods
 
 Rather than providing two mutually exlusive image
 access methods (loop and qemu-nbd), try each in turn.
@@ -54,10 +54,10 @@ Change-Id: If3a4b1c8f4e2f2e7300a21071340dcc839cb36d7
  create mode 100644 nova/virt/disk/nbd.py
 
 diff --git a/nova/utils.py b/nova/utils.py
-index 4648f55..672d2ca 100644
+index c64b11f..f2e69cf 100644
 --- a/nova/utils.py
 +++ b/nova/utils.py
-@@ -202,6 +202,36 @@ def execute(*cmd, **kwargs):
+@@ -201,6 +201,36 @@ def execute(*cmd, **kwargs):
              greenthread.sleep(0)
  
  
@@ -1021,7 +1021,7 @@ index 0000000..55b287e
 +        self.linked = False
 +        self.device = None
 diff --git a/nova/virt/libvirt/connection.py b/nova/virt/libvirt/connection.py
-index ba1dc86..bba2e0b 100644
+index 67f4434..19ad79e 100644
 --- a/nova/virt/libvirt/connection.py
 +++ b/nova/virt/libvirt/connection.py
 @@ -179,6 +179,7 @@ class LibvirtConnection(driver.ComputeDriver):
@@ -1032,7 +1032,7 @@ index ba1dc86..bba2e0b 100644
          self.read_only = read_only
  
          fw_class = utils.import_class(FLAGS.firewall_driver)
-@@ -347,7 +348,7 @@ class LibvirtConnection(driver.ComputeDriver):
+@@ -336,7 +337,7 @@ class LibvirtConnection(driver.ComputeDriver):
          LOG.info(_('instance %(instance_name)s: deleting instance files'
                  ' %(target)s') % locals())
          if FLAGS.libvirt_type == 'lxc':
@@ -1041,7 +1041,7 @@ index ba1dc86..bba2e0b 100644
          if os.path.exists(target):
              shutil.rmtree(target)
  
-@@ -1003,11 +1004,11 @@ class LibvirtConnection(driver.ComputeDriver):
+@@ -992,11 +993,11 @@ class LibvirtConnection(driver.ComputeDriver):
              if config_drive:  # Should be True or None by now.
                  injection_path = basepath('disk.config')
                  img_id = 'config-drive'
@@ -1055,7 +1055,7 @@ index ba1dc86..bba2e0b 100644
  
              for injection in ('metadata', 'key', 'net'):
                  if locals()[injection]:
-@@ -1017,8 +1018,8 @@ class LibvirtConnection(driver.ComputeDriver):
+@@ -1006,8 +1007,8 @@ class LibvirtConnection(driver.ComputeDriver):
              try:
                  disk.inject_data(injection_path, key, net, metadata,
                                   partition=target_partition,
@@ -1066,7 +1066,7 @@ index ba1dc86..bba2e0b 100644
  
              except Exception as e:
                  # This could be a windows image, or a vmdk format disk
-@@ -1026,9 +1027,9 @@ class LibvirtConnection(driver.ComputeDriver):
+@@ -1015,9 +1016,9 @@ class LibvirtConnection(driver.ComputeDriver):
                          ' data into image %(img_id)s (%(e)s)') % locals())
  
          if FLAGS.libvirt_type == 'lxc':
@@ -1079,5 +1079,5 @@ index ba1dc86..bba2e0b 100644
          if FLAGS.libvirt_type == 'uml':
              utils.execute('chown', 'root', basepath('disk'), run_as_root=True)
 -- 
-1.7.6.4
+1.7.6.5
 

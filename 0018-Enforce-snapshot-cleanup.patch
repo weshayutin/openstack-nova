@@ -1,7 +1,7 @@
 From 5ff8e1cfa1b0ea22d7113b6d9fa729c8f43f1a19 Mon Sep 17 00:00:00 2001
 From: David Subiros <david.perez5@hp.com>
 Date: Wed, 28 Sep 2011 15:19:04 +0100
-Subject: [PATCH 20/40] Enforce snapshot cleanup.
+Subject: [PATCH 18/44] Enforce snapshot cleanup.
 
 Makes sure that the snapshot and the temporary directory is cleaned up,
 even if qemu-img fails. Fixes bug 861582.
@@ -86,5 +86,5 @@ index 00be545..da00df0 100644
      @exception.wrap_exception()
      def reboot(self, instance, network_info, xml=None):
 -- 
-1.7.6.4
+1.7.6.5
 

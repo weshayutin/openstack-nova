@@ -1,7 +1,7 @@
-From fa75aca613a531a39e4a30a064e5d549ba26b7ac Mon Sep 17 00:00:00 2001
+From 4ee1b55f3c5e667e1a84a365f5ed759e3a284409 Mon Sep 17 00:00:00 2001
 From: Mark McLoughlin <markmc@redhat.com>
 Date: Sun, 18 Sep 2011 16:02:43 +0100
-Subject: [PATCH 40/40] Refactor ietadm/tgtadm calls out into helper classes
+Subject: [PATCH 41/44] Refactor ietadm/tgtadm calls out into helper classes
  (lp:819997)
 
 Add a new TargetAdmin abstract base class and implement it using ietadm
@@ -557,5 +557,5 @@ index 0000000..d50dd5f
 +    else:
 +        return IetAdm()
 -- 
-1.7.6.4
+1.7.6.5
 

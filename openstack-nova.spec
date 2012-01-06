@@ -2,7 +2,7 @@
 
 Name:             openstack-nova
 Version:          2011.3
-Release:          14%{?dist}
+Release:          15%{?dist}
 Summary:          OpenStack Compute (nova)
 
 Group:            Applications/System
@@ -30,10 +30,12 @@ Source23:         openstack-nova-db-setup
 #
 # Patches managed here: https://github.com/markmc/nova/tree/fedora-patches
 #
-#   $> git format-patch b0e855e
+#   $> git format-patch 2011.3
 #   $> for p in 00*.patch; do echo "Patch${p:2:2}:          $p"; done
 #   $> for p in 00*.patch; do echo "%patch${p:2:2} -p1"; done
 #
+
+# These are from stable/diablo
 Patch01:          0001-Add-tools-rfc.sh-from-master.patch
 Patch02:          0002-Don-t-use-GitPython-for-authors-check.patch
 Patch03:          0003-Made-jenkins-email-pruning-more-resilient.patch
@@ -46,42 +48,44 @@ Patch09:          0009-Fix-the-grantee-group-loading-for-source-groups.patch
 Patch10:          0010-Call-endheaders-when-auth_token-is-None.-Fixes-bug-8.patch
 Patch11:          0011-Removed-db_pool-complexities-from-nova.db.sqlalchemy.patch
 Patch12:          0012-Raise-InsufficientFreeMemory.patch
-Patch13:          0013-Don-t-leak-exceptions-out-to-users.patch
-Patch14:          0014-Makes-snapshots-work-for-amis.-Fixes-bug-873156.patch
-Patch15:          0015-Add-missing-author.patch
-Patch16:          0016-Make-snapshots-private-by-default.patch
-Patch17:          0017-Snapshots-backups-can-no-longer-happen-simultaneousl.patch
-Patch18:          0018-Fixed-bug-lp850602.patch
-Patch19:          0019-bug-861310.patch
-Patch20:          0020-Enforce-snapshot-cleanup.patch
-Patch21:          0021-bug-lp845714.patch
-Patch22:          0022-Added-1.0.4-version-specifier-to-kombu-in-pip-requir.patch
-Patch23:          0023-Adds-the-tenant-id-to-the-create-images-response-Loc.patch
-Patch24:          0024-Fixes-bug-862633-OS-api-consoles-create-broken.patch
-Patch25:          0025-Deallocate-ip-if-build-fails.patch
-Patch26:          0026-Stop-returning-correct-password-on-api-calls.patch
-Patch27:          0027-Handle-pidfile-exception-for-dnsmasq.patch
-Patch28:          0028-Make-sure-unknown-extensions-return-404.patch
-Patch29:          0029-Include-original-exception-in-ClassNotFound-exceptio.patch
-Patch30:          0030-Ensure-non-default-FLAGS.logfile_mode-is-properly-co.patch
+Patch13:          0013-Add-missing-author.patch
+Patch14:          0014-Make-snapshots-private-by-default.patch
+Patch15:          0015-Snapshots-backups-can-no-longer-happen-simultaneousl.patch
+Patch16:          0016-Fixed-bug-lp850602.patch
+Patch17:          0017-bug-861310.patch
+Patch18:          0018-Enforce-snapshot-cleanup.patch
+Patch19:          0019-bug-lp845714.patch
+Patch20:          0020-Added-1.0.4-version-specifier-to-kombu-in-pip-requir.patch
+Patch21:          0021-Adds-the-tenant-id-to-the-create-images-response-Loc.patch
+Patch22:          0022-Fixes-bug-862633-OS-api-consoles-create-broken.patch
+Patch23:          0023-Deallocate-ip-if-build-fails.patch
+Patch24:          0024-Stop-returning-correct-password-on-api-calls.patch
+Patch25:          0025-Handle-pidfile-exception-for-dnsmasq.patch
+Patch26:          0026-Make-sure-unknown-extensions-return-404.patch
+Patch27:          0027-Include-original-exception-in-ClassNotFound-exceptio.patch
+Patch28:          0028-Ensure-non-default-FLAGS.logfile_mode-is-properly-co.patch
+Patch29:          0029-Don-t-leak-exceptions-out-to-users.patch
+Patch30:          0030-Makes-snapshots-work-for-amis.-Fixes-bug-873156.patch
 Patch31:          0031-Explicit-errors-on-confirm-revertResize-failures.patch
 Patch32:          0032-Adds-ext4-and-reiserfs-to-_mount_filesystem.patch
 Patch33:          0033-Improve-access-check-on-images.patch
 Patch34:          0034-Fixes-bug-834633-Auto-assigning-floating-IPs.patch
 Patch35:          0035-fixes-bug-883233.patch
-Patch36:          0036-Add-INPUT-chain-rule-for-EC2-metadata-requests-lp-85.patch
-Patch37:          0037-Have-nova-api-add-the-INPUT-rule-for-EC2-metadata-lp.patch
-Patch38:          0038-Allow-the-user-to-choose-either-ietadm-or-tgtadm-lp-.patch
-Patch39:          0039-Remove-VolumeDriver.sync_exec-method-lp-819997.patch
-Patch40:          0040-Refactor-ietadm-tgtadm-calls-out-into-helper-classes.patch
-Patch41:          0041-Sanitize-EC2-manifests-and-image-tarballs.patch
 
-# These are fedora specific
-Patch100:         openstack-nova-nonet.patch
+# This is a security fix
+Patch36:          0036-Sanitize-EC2-manifests-and-image-tarballs.patch
 
-# These are additional patches for upstream but not maintained at the above repo
-Patch200:         0001-Bug-898257-abstract-out-disk-image-access-methods.patch
-Patch201:         0002-Bug-898257-support-handling-images-with-libguestfs.patch
+# These are Fedora specific backports from master
+Patch37:          0037-Add-INPUT-chain-rule-for-EC2-metadata-requests-lp-85.patch
+Patch38:          0038-Have-nova-api-add-the-INPUT-rule-for-EC2-metadata-lp.patch
+Patch39:          0039-Allow-the-user-to-choose-either-ietadm-or-tgtadm-lp-.patch
+Patch40:          0040-Remove-VolumeDriver.sync_exec-method-lp-819997.patch
+Patch41:          0041-Refactor-ietadm-tgtadm-calls-out-into-helper-classes.patch
+Patch42:          0042-Bug-898257-abstract-out-disk-image-access-methods.patch
+Patch43:          0043-Bug-898257-support-handling-images-with-libguestfs.patch
+
+# This is Fedora specific and not upstream
+Patch44:          0044-Ensure-we-don-t-access-the-net-when-building-docs.patch
 
 BuildArch:        noarch
 BuildRequires:    intltool
@@ -257,13 +261,9 @@ This package contains documentation files for nova.
 %patch39 -p1
 %patch40 -p1
 %patch41 -p1
-
-# apply local patches
-%patch100 -p1
-
-# apply misc patches
-%patch200 -p1
-%patch201 -p1
+%patch42 -p1
+%patch43 -p1
+%patch44 -p1
 
 find . \( -name .gitignore -o -name .placeholder \) -delete
 
@@ -450,6 +450,9 @@ fi
 %endif
 
 %changelog
+* Fri Jan  6 2012 Mark McLoughlin <markmc@redhat.com> - 2011.3-15
+- Move recent patches into git (no functional changes)
+
 * Fri Dec 30 2011 Pádraig Brady <P@draigBrady.com> - 2011.3-14
 - Don't require the fuse group (#770927)
 - Require the fuse package (to avoid #767852)

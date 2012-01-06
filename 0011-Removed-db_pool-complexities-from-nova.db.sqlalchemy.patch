@@ -1,7 +1,7 @@
 From 1a5e3e0c4cc2a3bf55331d46f702b980af1fbf97 Mon Sep 17 00:00:00 2001
 From: Brian Lamar <brian.lamar@rackspace.com>
 Date: Mon, 26 Sep 2011 11:52:21 -0400
-Subject: [PATCH 11/40] Removed db_pool complexities from
+Subject: [PATCH 11/44] Removed db_pool complexities from
  nova.db.sqlalchemy.session. Fixes bug 838581.
 
 (cherry picked from commit f3dd56e916232e38e74d9e2f24ce9a738cac63cf)
@@ -91,5 +91,5 @@ index aa76def..0a87148 100644
                'sqlite:///$state_path/$sqlite_db',
                'connection string for sql database')
 -- 
-1.7.6.4
+1.7.6.5
 

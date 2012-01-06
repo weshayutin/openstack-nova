@@ -1,7 +1,7 @@
-From c11659215a1cd3e551ce56f089b2682842954b04 Mon Sep 17 00:00:00 2001
+From 978510d31d1b220181f81206204783ef19b84d8d Mon Sep 17 00:00:00 2001
 From: Loganathan Parthipan <parthipan@hp.com>
 Date: Thu, 29 Sep 2011 16:41:49 +0100
-Subject: [PATCH 33/40] Improve access check on images
+Subject: [PATCH 33/44] Improve access check on images
 
 Makes sure that users can delete only their own images, snapshots.
 Enable listing of all images, both private which are owned and the public
@@ -78,5 +78,5 @@ index 5361cfc..0198279 100644
              return str(properties['project_id']) == str(context.project_id)
  
 -- 
-1.7.6.4
+1.7.6.5
 

@@ -1,7 +1,7 @@
 From 21393e64b9524b89d373d2d303afce38919c96c2 Mon Sep 17 00:00:00 2001
 From: Julien Danjou <julien.danjou@enovance.com>
 Date: Thu, 6 Oct 2011 17:15:32 +0200
-Subject: [PATCH 29/40] Include original exception in ClassNotFound exception
+Subject: [PATCH 27/44] Include original exception in ClassNotFound exception
 
 By doing this, we allow the error messages to be more useful. When an import
 of a class fails because of a missing module dependency, it would have fail
@@ -89,5 +89,5 @@ index 81157a4..c64b11f 100644
  
  def import_object(import_str):
 -- 
-1.7.6.4
+1.7.6.5
 

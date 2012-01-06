@@ -1,7 +1,7 @@
-From d46f6e095b43fc00099d87f73b098a137830b167 Mon Sep 17 00:00:00 2001
+From 56cb277ae540b915ef6c8b267eb1c511d62c3990 Mon Sep 17 00:00:00 2001
 From: Vishvananda Ishaya <vishvananda@gmail.com>
 Date: Fri, 14 Oct 2011 10:06:00 -0700
-Subject: [PATCH 14/40] Makes snapshots work for amis. Fixes bug 873156
+Subject: [PATCH 30/44] Makes snapshots work for amis. Fixes bug 873156
 
 (cherry picked from commit b931d51ce47203ee6a4433dc7577e0779ab94710)
 
@@ -87,7 +87,7 @@ index 9680d6f..9eeefe0 100644
              self.assertTrue(isinstance(image['updated_at'], datetime.datetime))
  
 diff --git a/nova/tests/test_libvirt.py b/nova/tests/test_libvirt.py
-index 8d28590..51e584d 100644
+index 0f01de8..0673af2 100644
 --- a/nova/tests/test_libvirt.py
 +++ b/nova/tests/test_libvirt.py
 @@ -340,6 +340,47 @@ class LibvirtConnTestCase(test.TestCase):
@@ -139,7 +139,7 @@ index 8d28590..51e584d 100644
          if not self.lazy_load_library_exists():
              return
 diff --git a/nova/virt/libvirt/connection.py b/nova/virt/libvirt/connection.py
-index 9290c5e..4b45515 100644
+index da00df0..67f4434 100644
 --- a/nova/virt/libvirt/connection.py
 +++ b/nova/virt/libvirt/connection.py
 @@ -420,10 +420,17 @@ class LibvirtConnection(driver.ComputeDriver):
@@ -162,5 +162,5 @@ index 9290c5e..4b45515 100644
          if 'container_format' in base:
              metadata['container_format'] = base['container_format']
 -- 
-1.7.6.4
+1.7.6.5
 

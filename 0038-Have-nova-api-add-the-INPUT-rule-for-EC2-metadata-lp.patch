@@ -1,7 +1,7 @@
-From 514d3518edd4d74623bf3a529683b2b59212e390 Mon Sep 17 00:00:00 2001
+From ff39bf6f78d2a2c0ea65b87ff0eec6f652eefc65 Mon Sep 17 00:00:00 2001
 From: Mark McLoughlin <markmc@redhat.com>
 Date: Thu, 8 Sep 2011 14:29:49 +0100
-Subject: [PATCH 37/40] Have nova-api add the INPUT rule for EC2 metadata
+Subject: [PATCH 38/44] Have nova-api add the INPUT rule for EC2 metadata
  (lp:856385)
 
 It makes no sense to have nova-network add an iptables rule for the EC2
@@ -184,5 +184,5 @@ index 247eb4f..b9ad579 100644
          self.port = self.server.port
  
 -- 
-1.7.6.4
+1.7.6.5
 

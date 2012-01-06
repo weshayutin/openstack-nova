@@ -1,7 +1,7 @@
-From b82462cc4fd598cde59c663400e87824cb68a34b Mon Sep 17 00:00:00 2001
+From 01ffa1eedf3cdced97bc4e7e07175d6dab9bb0a9 Mon Sep 17 00:00:00 2001
 From: Mark McLoughlin <markmc@redhat.com>
 Date: Sun, 18 Sep 2011 12:04:46 +0100
-Subject: [PATCH 39/40] Remove VolumeDriver.sync_exec method (lp:819997)
+Subject: [PATCH 40/44] Remove VolumeDriver.sync_exec method (lp:819997)
 
 We always use the same functions for sync_exec and execute.
 
@@ -232,5 +232,5 @@ index 76f0655..8468602 100644
              LOG.debug(_("Failed to retrieve QoS info"))
              return {}
 -- 
-1.7.6.4
+1.7.6.5
 
