@@ -1,8 +1,8 @@
-From 74ce079c65b4283de58d46cf63943db2860a06fe Mon Sep 17 00:00:00 2001
+From 70e52bdb507276320a35249c87161dd451ece1c8 Mon Sep 17 00:00:00 2001
 From: Brian Lamar <brian.lamar@rackspace.com>
 Date: Thu, 29 Sep 2011 15:55:42 -0400
-Subject: [PATCH 22/95] Added ==1.0.4 version specifier to kombu in
- pip-requires to ensure tests pass in a clean venv.
+Subject: [PATCH] Added ==1.0.4 version specifier to kombu in pip-requires to
+ ensure tests pass in a clean venv.
 
 Fixes bug 862629.
 

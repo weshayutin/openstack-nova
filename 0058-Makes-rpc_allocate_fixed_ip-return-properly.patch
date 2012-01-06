@@ -1,7 +1,7 @@
-From 1e3b88ba20b9f9ab925ecd1238845adbc0157cb1 Mon Sep 17 00:00:00 2001
+From c5a13de64e6d67fa7a41ce48e3e1be31d283b45e Mon Sep 17 00:00:00 2001
 From: Vishvananda Ishaya <vishvananda@gmail.com>
 Date: Mon, 28 Nov 2011 14:42:38 -0800
-Subject: [PATCH 58/95] Makes rpc_allocate_fixed_ip return properly
+Subject: [PATCH] Makes rpc_allocate_fixed_ip return properly
 
  * Fixes bug 855030
  * Includes test

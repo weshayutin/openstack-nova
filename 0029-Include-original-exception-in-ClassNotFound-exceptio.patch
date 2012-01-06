@@ -1,7 +1,7 @@
-From 21393e64b9524b89d373d2d303afce38919c96c2 Mon Sep 17 00:00:00 2001
+From 1576a68e95176f453e4085f9aa8f99328daa1d34 Mon Sep 17 00:00:00 2001
 From: Julien Danjou <julien.danjou@enovance.com>
 Date: Thu, 6 Oct 2011 17:15:32 +0200
-Subject: [PATCH 29/95] Include original exception in ClassNotFound exception
+Subject: [PATCH] Include original exception in ClassNotFound exception
 
 By doing this, we allow the error messages to be more useful. When an import
 of a class fails because of a missing module dependency, it would have fail

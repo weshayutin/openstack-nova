@@ -1,7 +1,7 @@
-From 18a5ca1c20729e4f3309dc1785999ecf3255616f Mon Sep 17 00:00:00 2001
+From 5ac2c16c95c662b4840c18c7c5ccf09eaee35c1f Mon Sep 17 00:00:00 2001
 From: "James E. Blair" <jeblair@hp.com>
 Date: Thu, 8 Dec 2011 15:14:48 -0800
-Subject: [PATCH 76/95] Rename .nova-venv to .venv.
+Subject: [PATCH] Rename .nova-venv to .venv.
 
 This simplifies a number of Jenkins jobs which currently, other
 than directory names, could be the same for all OpenStack
@@ -28,31 +28,13 @@ Change-Id: Ieaf1dac3207ecb34b911c7edcd2086809abdf49e
 
 diff --git a/.gitignore b/.gitignore
 index 2afc7a3..8bc8497 100644
---- a/.gitignore
-+++ b/.gitignore
-@@ -10,3 +10,4 @@ build/*
- build-stamp
- nova.egg-info
- .nova-venv
-+.venv
 diff --git a/.mailmap b/.mailmap
 index f2f59d8..9b6127c 100644
---- a/.mailmap
-+++ b/.mailmap
-@@ -22,6 +22,8 @@
- <jake@ansolabs.com> <jake@markupisart.com>
- <jake@ansolabs.com> <admin@jakedahn.com>
- <jaypipes@gmail.com> <jpipes@serialcoder>
-+<jeblair@hp.com> <james.blair@rackspace.com>
-+<jeblair@hp.com> <corvus@inaugust.com>
- <jmckenty@gmail.com> <jmckenty@joshua-mckentys-macbook-pro.local>
- <jmckenty@gmail.com> <jmckenty@yyj-dhcp171.corp.flock.com>
- <jmckenty@gmail.com> <joshua.mckenty@nasa.gov>
 diff --git a/Authors b/Authors
-index 08403b8..9cb7ba8 100644
+index ab90964..657b95d 100644
 --- a/Authors
 +++ b/Authors
-@@ -48,7 +48,7 @@ Hisaki Ohara <hisaki.ohara@intel.com>
+@@ -49,7 +49,7 @@ Hisaki Ohara <hisaki.ohara@intel.com>
  Ilya Alekseyev <ilyaalekseyev@acm.org>
  Isaku Yamahata <yamahata@valinux.co.jp>
  Jake Dahn <jake@ansolabs.com>

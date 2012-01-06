@@ -1,7 +1,7 @@
-From 78e81f1b7c0c2cc9b1e447cf3dce47d3b6ed0ce3 Mon Sep 17 00:00:00 2001
+From 2fac129efefd7dbd416bef57fe5f86f848b521e7 Mon Sep 17 00:00:00 2001
 From: Jesse Andrews <anotherjesse@gmail.com>
 Date: Mon, 28 Nov 2011 17:00:47 -0800
-Subject: [PATCH 73/95] removed logic of throwing exception if no floating ip
+Subject: [PATCH] removed logic of throwing exception if no floating ip
 
 fixes 897089
 
@@ -61,10 +61,10 @@ index 23c0408..6108585 100644
  
  @require_context
 diff --git a/nova/exception.py b/nova/exception.py
-index 50477af..2db2e2b 100644
+index 2c8b9ba..466bfff 100644
 --- a/nova/exception.py
 +++ b/nova/exception.py
-@@ -536,10 +536,6 @@ class FloatingIpNotFoundForAddress(FloatingIpNotFound):
+@@ -529,10 +529,6 @@ class FloatingIpNotFoundForAddress(FloatingIpNotFound):
      message = _("Floating ip not found for address %(address)s.")
  
  

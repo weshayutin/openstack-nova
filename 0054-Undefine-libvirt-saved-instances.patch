@@ -1,7 +1,7 @@
-From 27b0ff5ccd66eaaeda2ac2a013815c4d34cf9ec9 Mon Sep 17 00:00:00 2001
+From 7667b2af26c06d78ecc89efa92036217d690d46c Mon Sep 17 00:00:00 2001
 From: Derek Higgins <higginsd@gmail.com>
 Date: Fri, 4 Nov 2011 00:25:34 +0000
-Subject: [PATCH 54/95] Undefine libvirt saved instances
+Subject: [PATCH] Undefine libvirt saved instances
 
 Fixes bug 814561
 
@@ -22,10 +22,10 @@ Change-Id: I760a15d2ab135d7c3d638ca3c4358d8600582411
  3 files changed, 34 insertions(+), 0 deletions(-)
 
 diff --git a/Authors b/Authors
-index cedd199..f8aa25e 100644
+index 119fd0a..08403b8 100644
 --- a/Authors
 +++ b/Authors
-@@ -31,6 +31,7 @@ Dave Walker <DaveWalker@ubuntu.com>
+@@ -32,6 +32,7 @@ Dave Walker <DaveWalker@ubuntu.com>
  David Pravec <David.Pravec@danix.org>
  David Subiros <david.perez5@hp.com>
  Dean Troyer <dtroyer@gmail.com>

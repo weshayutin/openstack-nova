@@ -1,7 +1,7 @@
-From 87823bbc4940e585e9b2fa2d83d1a89d43c29275 Mon Sep 17 00:00:00 2001
+From 4f3e4974b709b2dc02faa116818c364233199acb Mon Sep 17 00:00:00 2001
 From: Rick Harris <rconradharris@gmail.com>
 Date: Tue, 27 Sep 2011 21:05:31 +0000
-Subject: [PATCH 25/95] Deallocate ip if build fails.
+Subject: [PATCH] Deallocate ip if build fails.
 
 Fixes LP837687
 

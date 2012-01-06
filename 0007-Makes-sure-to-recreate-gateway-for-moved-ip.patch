@@ -1,7 +1,7 @@
-From 1c8fedc82c4b388b0a3a876a54c7f14d3c2a8342 Mon Sep 17 00:00:00 2001
+From 750141ff56a70d16dcf92929e7d7e8bb9d88d5be Mon Sep 17 00:00:00 2001
 From: Vishvananda Ishaya <vishvananda@gmail.com>
 Date: Mon, 26 Sep 2011 05:14:39 -0700
-Subject: [PATCH 07/95] Makes sure to recreate gateway for moved ip
+Subject: [PATCH] Makes sure to recreate gateway for moved ip
 
 If nova moves an ip when setting up dhcp, make sure to reset
 the default gateway.  Fixes bug 859587

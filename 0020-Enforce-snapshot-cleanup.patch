@@ -1,7 +1,7 @@
-From 5ff8e1cfa1b0ea22d7113b6d9fa729c8f43f1a19 Mon Sep 17 00:00:00 2001
+From 1d1588f3d3a244d2e3dffed86af44a0f9ab944de Mon Sep 17 00:00:00 2001
 From: David Subiros <david.perez5@hp.com>
 Date: Wed, 28 Sep 2011 15:19:04 +0100
-Subject: [PATCH 20/95] Enforce snapshot cleanup.
+Subject: [PATCH] Enforce snapshot cleanup.
 
 Makes sure that the snapshot and the temporary directory is cleaned up,
 even if qemu-img fails. Fixes bug 861582.
@@ -27,10 +27,10 @@ index f3962c8..f23565b 100644
  Devendra Modium <dmodium@isi.edu>
  Devin Carlen <devin.carlen@gmail.com>
 diff --git a/nova/virt/libvirt/connection.py b/nova/virt/libvirt/connection.py
-index 00be545..da00df0 100644
+index 7baeb69..67f4434 100644
 --- a/nova/virt/libvirt/connection.py
 +++ b/nova/virt/libvirt/connection.py
-@@ -445,29 +445,31 @@ class LibvirtConnection(driver.ComputeDriver):
+@@ -452,29 +452,31 @@ class LibvirtConnection(driver.ComputeDriver):
  
          # Export the snapshot to a raw image
          temp_dir = tempfile.mkdtemp()

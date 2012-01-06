@@ -1,7 +1,7 @@
-From 0ca35753f5f5a506162fde679ae7719d5d22f8e0 Mon Sep 17 00:00:00 2001
+From aeb2224ec984206fb70962ddc8c1a611f71e3965 Mon Sep 17 00:00:00 2001
 From: Ahmad Hassan <ahmad.hassan@hp.com>
 Date: Wed, 5 Oct 2011 17:02:45 +0100
-Subject: [PATCH 28/95] Make sure unknown extensions return 404
+Subject: [PATCH] Make sure unknown extensions return 404
 
 At the moment, if an extension doens't exist and we call a show method
 with wrong id then the exception is not captured. There is a need to

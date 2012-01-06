@@ -1,7 +1,7 @@
-From abea7aac12704dcd0bc337e03f4e47a8ec189df8 Mon Sep 17 00:00:00 2001
+From a07ac3774146d7e2c1e300e6300a6f079e5bd313 Mon Sep 17 00:00:00 2001
 From: Scott Moser <smoser@ubuntu.com>
 Date: Tue, 13 Dec 2011 16:48:05 -0500
-Subject: [PATCH 82/95] avoid error and trace on dom.vcpus() in lxc
+Subject: [PATCH] avoid error and trace on dom.vcpus() in lxc
 
 This fixes bug 903943.  If you used lxc, you'd eventually
 see stack traces in nova-compute due to use of dom.vcpus().
@@ -12,7 +12,7 @@ Change-Id: I8ff4e973d33eef3df116feb237b2febc8e6a59b5
  1 files changed, 7 insertions(+), 1 deletions(-)
 
 diff --git a/nova/virt/libvirt/connection.py b/nova/virt/libvirt/connection.py
-index 36938bf..d2735ea 100644
+index 333d0cd..55cb31d 100644
 --- a/nova/virt/libvirt/connection.py
 +++ b/nova/virt/libvirt/connection.py
 @@ -1379,7 +1379,13 @@ class LibvirtConnection(driver.ComputeDriver):

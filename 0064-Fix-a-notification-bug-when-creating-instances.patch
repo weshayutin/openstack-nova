@@ -1,7 +1,7 @@
-From d565f3ad5917e90ab50a4b8ae9fe5079f70ed591 Mon Sep 17 00:00:00 2001
+From 41d85b5893e650b40480b9535b24f2f9e3f53e6f Mon Sep 17 00:00:00 2001
 From: "Kevin L. Mitchell" <kevin.mitchell@rackspace.com>
 Date: Thu, 10 Nov 2011 17:35:44 -0600
-Subject: [PATCH 64/95] Fix a notification bug when creating instances
+Subject: [PATCH] Fix a notification bug when creating instances
 
 Fixes a notifier bug that caused 'launched_at' to be empty and
 state to be reported as 'building', due to failure to refresh
@@ -17,11 +17,11 @@ Change-Id: I70fbf3c67407c67b69040ee481ca6d51212cc55d
  2 files changed, 7 insertions(+), 6 deletions(-)
 
 diff --git a/nova/compute/manager.py b/nova/compute/manager.py
-index 69dea2e..5203fc3 100644
+index 1196d98..b926eac 100644
 --- a/nova/compute/manager.py
 +++ b/nova/compute/manager.py
-@@ -445,12 +445,12 @@ class ComputeManager(manager.SchedulerDependentManager):
-                 return
+@@ -459,12 +459,12 @@ class ComputeManager(manager.SchedulerDependentManager):
+                                   network_info, block_device_info)
  
              current_power_state = self._get_power_state(context, instance)
 -            self._instance_update(context,
@@ -40,10 +40,10 @@ index 69dea2e..5203fc3 100644
              usage_info = utils.usage_from_instance(instance)
              notifier.notify('compute.%s' % self.host,
 diff --git a/nova/tests/test_compute.py b/nova/tests/test_compute.py
-index 67dbe5e..a791d52 100644
+index d32c5df..c6747d0 100644
 --- a/nova/tests/test_compute.py
 +++ b/nova/tests/test_compute.py
-@@ -431,6 +431,7 @@ class ComputeTestCase(test.TestCase):
+@@ -435,6 +435,7 @@ class ComputeTestCase(test.TestCase):
          self.assertTrue('display_name' in payload)
          self.assertTrue('created_at' in payload)
          self.assertTrue('launched_at' in payload)

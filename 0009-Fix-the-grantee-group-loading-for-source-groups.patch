@@ -1,7 +1,7 @@
-From 1f6b213d92e71de1eb669e9fb869d564066dadf5 Mon Sep 17 00:00:00 2001
+From 1171ac66de5259da9b22ccd1a71d6a64f6c738db Mon Sep 17 00:00:00 2001
 From: Vishvananda Ishaya <vishvananda@gmail.com>
 Date: Mon, 26 Sep 2011 08:34:14 -0700
-Subject: [PATCH 09/95] Fix the grantee group loading for source groups
+Subject: [PATCH] Fix the grantee group loading for source groups
 
 Fixes bug 859679.
 

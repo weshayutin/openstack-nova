@@ -1,7 +1,7 @@
-From 17268cab604b0712affc4c0b488769be03605571 Mon Sep 17 00:00:00 2001
+From df042f7802370de4490d9130a39eaec792725565 Mon Sep 17 00:00:00 2001
 From: Vishvananda Ishaya <vishvananda@gmail.com>
 Date: Fri, 21 Oct 2011 11:18:11 -0700
-Subject: [PATCH 46/95] Add local storage of context for logging
+Subject: [PATCH] Add local storage of context for logging
 
  * adds nova/local.py:store for storing greenthread local data
  * saves a weak reference to the last context object created

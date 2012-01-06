@@ -1,29 +1,16 @@
-From fc37582812747887ebcce766fd80541da98c3b43 Mon Sep 17 00:00:00 2001
+From cdb944ce4e4a8df8b0eb0184bf55075464b054b2 Mon Sep 17 00:00:00 2001
 From: Ivan Kolodyazhny <e0ne@e0ne.info>
 Date: Thu, 24 Nov 2011 14:54:30 +0200
-Subject: [PATCH 84/95] Bug 820059: bin/nova-manage.py VpnCommands.spawn calls
+Subject: [PATCH] Bug 820059: bin/nova-manage.py VpnCommands.spawn calls
  non-existant method VpnCommands._vpn_for - fixed
 
 Change-Id: I86c509d98fac685a5d658f397d0672f71b4bc175
 ---
- Authors         |    1 +
  bin/nova-manage |    7 ++++++-
- 2 files changed, 7 insertions(+), 1 deletions(-)
+ 1 files changed, 6 insertions(+), 1 deletions(-)
 
-diff --git a/Authors b/Authors
-index a9266b2..9c0f5c5 100644
---- a/Authors
-+++ b/Authors
-@@ -48,6 +48,7 @@ Hisaharu Ishii <ishii.hisaharu@lab.ntt.co.jp>
- Hisaki Ohara <hisaki.ohara@intel.com>
- Ilya Alekseyev <ilyaalekseyev@acm.org>
- Isaku Yamahata <yamahata@valinux.co.jp>
-+Ivan Kolodyazhny <e0ne@e0ne.info>
- Jake Dahn <jake@ansolabs.com>
- James E. Blair <jeblair@hp.com>
- Jason Cannavale <jason.cannavale@rackspace.com>
 diff --git a/bin/nova-manage b/bin/nova-manage
-index 3ff73f1..fb6f7bd 100755
+index 45d649e..f3aff19 100755
 --- a/bin/nova-manage
 +++ b/bin/nova-manage
 @@ -88,6 +88,7 @@ from nova import rpc

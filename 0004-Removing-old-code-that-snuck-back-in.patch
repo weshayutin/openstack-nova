@@ -1,7 +1,7 @@
-From b0e855e504d2c7b5f7b50f436e43a27ec05e5a46 Mon Sep 17 00:00:00 2001
+From e44b3461fd03f2802f38ce4e88951fb9f4e7586d Mon Sep 17 00:00:00 2001
 From: Brian Waldon <brian.waldon@rackspace.com>
 Date: Fri, 23 Sep 2011 10:35:18 -0400
-Subject: [PATCH 04/95] Removing old code that snuck back in
+Subject: [PATCH] Removing old code that snuck back in
 
 (cherry picked from commit 7a95f73ad7b295ddd2313152973c6da2c78fac76)
 

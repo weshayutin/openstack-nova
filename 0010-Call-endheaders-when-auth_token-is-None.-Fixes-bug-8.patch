@@ -1,8 +1,7 @@
-From 2754749c3767b7ddd90957b528828e235e25ccab Mon Sep 17 00:00:00 2001
+From fb13e864b53eaabd308a604966478ca5574b4393 Mon Sep 17 00:00:00 2001
 From: Dan Prince <dan.prince@rackspace.com>
 Date: Mon, 26 Sep 2011 13:39:14 -0400
-Subject: [PATCH 10/95] Call endheaders when auth_token is None. Fixes bug
- 856721.
+Subject: [PATCH] Call endheaders when auth_token is None. Fixes bug 856721.
 
 (cherry picked from commit 14eb9c6ec9c82c9f56cde5279aebb1e5a8fac4f4)
 

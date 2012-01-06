@@ -1,7 +1,7 @@
-From 44a2a648e7c26e3721e5ee6e28a0104458bceba3 Mon Sep 17 00:00:00 2001
+From 21378809edee3b649dfd80f8d65a5992caf374e7 Mon Sep 17 00:00:00 2001
 From: Scott Moser <smoser@ubuntu.com>
 Date: Fri, 23 Sep 2011 16:44:44 -0400
-Subject: [PATCH 08/95] put fully qualified domain name in local-hostname
+Subject: [PATCH] put fully qualified domain name in local-hostname
 
 make metadata service return fully qualified domain name (fqdn) in
 the local-hostname field. (bug 854614)

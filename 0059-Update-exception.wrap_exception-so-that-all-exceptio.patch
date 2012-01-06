@@ -1,9 +1,8 @@
-From d05c2e6d33f40dac1aa373fcceb819d97d9e3467 Mon Sep 17 00:00:00 2001
+From 983e165024db2db88ff92f46bfdd921c7e8d9128 Mon Sep 17 00:00:00 2001
 From: Dan Prince <dan.prince@rackspace.com>
 Date: Thu, 15 Sep 2011 22:53:42 -0400
-Subject: [PATCH 59/95] Update exception.wrap_exception so that all exceptions
- (not just Error and NovaException types) get logged
- correctly.
+Subject: [PATCH] Update exception.wrap_exception so that all exceptions (not
+ just Error and NovaException types) get logged correctly.
 
 (cherry picked from commit 19b3b7a0c50dd6a68238daf8827519fd83a395cc)
 

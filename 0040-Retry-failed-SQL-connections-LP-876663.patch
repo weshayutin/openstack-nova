@@ -1,7 +1,7 @@
-From b0821f257e7fb512474a0da2b9d5c24d4cbf49ae Mon Sep 17 00:00:00 2001
+From fb4450a4e0eb08f140b299b58951a0ed2371f00a Mon Sep 17 00:00:00 2001
 From: Soren Hansen <soren@linux2go.dk>
 Date: Thu, 27 Oct 2011 11:46:54 +0200
-Subject: [PATCH 40/95] Retry failed SQL connections (LP #876663)
+Subject: [PATCH] Retry failed SQL connections (LP #876663)
 
 (cherry picked from commit 6ebc0ac3248b6ec7f1a221b4dae5f326406ab614)
 

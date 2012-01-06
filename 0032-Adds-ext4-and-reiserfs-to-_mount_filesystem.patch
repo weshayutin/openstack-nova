@@ -1,7 +1,7 @@
-From c206f73d03aa487868ba2acaa3581624160d1b67 Mon Sep 17 00:00:00 2001
+From 931d0cb0fa80a967d4bfc55d55f5fc9624aed42d Mon Sep 17 00:00:00 2001
 From: Josh Kearney <josh@jk0.org>
 Date: Thu, 20 Oct 2011 14:44:11 -0500
-Subject: [PATCH 32/95] Adds ext4 and reiserfs to _mount_filesystem().
+Subject: [PATCH] Adds ext4 and reiserfs to _mount_filesystem().
 
 Fixes bug 870495.
 

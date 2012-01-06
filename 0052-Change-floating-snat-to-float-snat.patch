@@ -1,7 +1,7 @@
-From 938292fc63ab1fb36d4ac0ae1ad74ab5cff26410 Mon Sep 17 00:00:00 2001
+From 31ba163efd5831eb9cd337b0d6cb222b1cb19c2d Mon Sep 17 00:00:00 2001
 From: Brad Hall <brad@nicira.com>
 Date: Sun, 2 Oct 2011 07:13:53 -0700
-Subject: [PATCH 52/95] Change floating-snat to float-snat
+Subject: [PATCH] Change floating-snat to float-snat
 
 With iptables v1.4.10 I'm running into an issue with the chain length of the
 "nova-dhcpbridge-floating-snat" table (iptables it complaining that the name

@@ -1,7 +1,7 @@
-From 2e85c05390a8d4f195659e993200a3b71011c832 Mon Sep 17 00:00:00 2001
+From 7a833a57c66468efae9ea0932ab56089209d5812 Mon Sep 17 00:00:00 2001
 From: "James E. Blair" <james.blair@rackspace.com>
 Date: Thu, 20 Oct 2011 13:48:18 -0400
-Subject: [PATCH 38/95] Add .gitreview config file for gerrit.
+Subject: [PATCH] Add .gitreview config file for gerrit.
 
 The CI team is developing a new tool, git-review:
 
@@ -32,10 +32,10 @@ index 0000000..3a2f61c
 +port=29418
 +project=openstack/nova.git
 diff --git a/Authors b/Authors
-index cedd199..79741a7 100644
+index 03aedc2..b83f951 100644
 --- a/Authors
 +++ b/Authors
-@@ -46,6 +46,7 @@ Hisaki Ohara <hisaki.ohara@intel.com>
+@@ -47,6 +47,7 @@ Hisaki Ohara <hisaki.ohara@intel.com>
  Ilya Alekseyev <ilyaalekseyev@acm.org>
  Isaku Yamahata <yamahata@valinux.co.jp>
  Jake Dahn <jake@ansolabs.com>

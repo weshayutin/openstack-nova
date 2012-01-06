@@ -1,7 +1,7 @@
-From ba68a78d440269ac21f16cb19b4fd3ba8949c945 Mon Sep 17 00:00:00 2001
+From 62c7e6110bf93d8408ab656d811d4642e68aa6b5 Mon Sep 17 00:00:00 2001
 From: Mark McLoughlin <markmc@redhat.com>
 Date: Fri, 23 Sep 2011 15:57:55 +0100
-Subject: [PATCH 02/95] Don't use GitPython for authors check
+Subject: [PATCH] Don't use GitPython for authors check
 
 I hit this issue with an older GitPython version:
 

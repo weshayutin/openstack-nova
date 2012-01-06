@@ -1,11 +1,11 @@
-From 8405b63ad8d8c5f2c7ddb4614519ca2473d741c4 Mon Sep 17 00:00:00 2001
+From b038f5668dcb3b95de326d142fed74a2c10ff8ba Mon Sep 17 00:00:00 2001
 From: Aaron Lee <aaron.lee@rackspace.com>
 Date: Thu, 27 Oct 2011 17:37:34 -0500
-Subject: [PATCH 39/95] Adding bulk create fixed ips. The true issue here is
- the creation of IPs in the DB that are not currently
- used(we are building the entire block). This fix is
- just a bandaid, but it does cut ~25 seconds off of
- the quantum tests on my laptop.
+Subject: [PATCH] Adding bulk create fixed ips. The true issue here is the
+ creation of IPs in the DB that are not currently used(we
+ are building the entire block). This fix is just a bandaid,
+ but it does cut ~25 seconds off of the quantum tests on my
+ laptop.
 
 (pre)$ ./run_tests.sh -N nova.tests.test_quantum:QuantumNovaIPAMTestCase
 QuantumNovaIPAMTestCase
@@ -68,10 +68,10 @@ index 6cc678a..665bdc1 100644
      session = get_session()
      with session.begin():
 diff --git a/nova/network/manager.py b/nova/network/manager.py
-index d8de396..55066c3 100644
+index ef3dbd6..cab6f88 100644
 --- a/nova/network/manager.py
 +++ b/nova/network/manager.py
-@@ -835,15 +835,18 @@ class NetworkManager(manager.SchedulerDependentManager):
+@@ -838,15 +838,18 @@ class NetworkManager(manager.SchedulerDependentManager):
          top_reserved = self._top_reserved_ips
          project_net = netaddr.IPNetwork(network['cidr'])
          num_ips = len(project_net)

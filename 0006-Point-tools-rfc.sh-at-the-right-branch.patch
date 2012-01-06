@@ -1,7 +1,7 @@
-From 2e8b1175e43cce67832e2c564598e6cf2efff2de Mon Sep 17 00:00:00 2001
+From 208b3f160c67bf082f71ba97b8834f1917f2eb4c Mon Sep 17 00:00:00 2001
 From: Mark McLoughlin <markmc@redhat.com>
 Date: Tue, 18 Oct 2011 21:33:07 +0100
-Subject: [PATCH 06/95] Point tools/rfc.sh at the right branch
+Subject: [PATCH] Point tools/rfc.sh at the right branch
 
 Change-Id: I9c4ed40015ea658530206c3c0d0aad70605cd5fe
 ---

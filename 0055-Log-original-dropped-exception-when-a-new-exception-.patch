@@ -1,8 +1,7 @@
-From f286a4b29d4386f8fe93f9c58fe1486f859c1317 Mon Sep 17 00:00:00 2001
+From 83646d007ea6eaa414d8f86f277af831b4bfa054 Mon Sep 17 00:00:00 2001
 From: Johannes Erdfelt <johannes.erdfelt@rackspace.com>
 Date: Mon, 31 Oct 2011 15:11:36 +0000
-Subject: [PATCH 55/95] Log original dropped exception when a new exception
- occurs
+Subject: [PATCH] Log original dropped exception when a new exception occurs
 
 If a exception is caught while processing a previous exception, make sure
 to log it so it doesn't silently get discarded
@@ -39,7 +38,7 @@ index 5feb840..69dea2e 100644
      @exception.wrap_exception(notifier=notifier, publisher_id=publisher_id())
      def run_instance(self, context, instance_id, **kwargs):
 diff --git a/nova/exception.py b/nova/exception.py
-index b88e8e5..a3992d2 100644
+index b98219c..50477af 100644
 --- a/nova/exception.py
 +++ b/nova/exception.py
 @@ -92,6 +92,8 @@ def wrap_exception(notifier=None, publisher_id=None, event_type=None,

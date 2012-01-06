@@ -1,7 +1,7 @@
-From 475f3624245500c5382faf5b2708a59fcec2c9ad Mon Sep 17 00:00:00 2001
+From 7494fe4634fef0f7ff29243970d4e3ce76a3b70b Mon Sep 17 00:00:00 2001
 From: Chris Behrens <cbehrens@codestud.com>
 Date: Tue, 29 Nov 2011 09:01:16 -0800
-Subject: [PATCH 74/95] Fix RPC responses to allow None response correctly.
+Subject: [PATCH] Fix RPC responses to allow None response correctly.
 
 Fixes bug 897155
 
@@ -181,7 +181,7 @@ index 303a4ff..57fd074 100644
  
  
 diff --git a/nova/rpc/impl_kombu.py b/nova/rpc/impl_kombu.py
-index b994a6a..41e8ff5 100644
+index cc1c864..3667752 100644
 --- a/nova/rpc/impl_kombu.py
 +++ b/nova/rpc/impl_kombu.py
 @@ -625,7 +625,7 @@ class ProxyCallback(object):
@@ -217,9 +217,9 @@ index b994a6a..41e8ff5 100644
 +        if self._done:
 +            return
          self._done = True
-         self._connection.close()
- 
-@@ -688,6 +693,8 @@ class MulticallWaiter(object):
+         self._iterator.close()
+         self._iterator = None
+@@ -690,6 +695,8 @@ class MulticallWaiter(object):
          """The consume() callback will call this.  Store the result."""
          if data['failure']:
              self._result = RemoteError(*data['failure'])
@@ -228,7 +228,7 @@ index b994a6a..41e8ff5 100644
          else:
              self._result = data['result']
  
-@@ -697,13 +704,13 @@ class MulticallWaiter(object):
+@@ -699,13 +706,13 @@ class MulticallWaiter(object):
              raise StopIteration
          while True:
              self._iterator.next()
@@ -245,7 +245,7 @@ index b994a6a..41e8ff5 100644
              yield result
  
  
-@@ -758,7 +765,7 @@ def fanout_cast(context, topic, msg):
+@@ -760,7 +767,7 @@ def fanout_cast(context, topic, msg):
          conn.fanout_send(topic, msg)
  
  
@@ -254,7 +254,7 @@ index b994a6a..41e8ff5 100644
      """Sends a reply or an error on the channel signified by msg_id.
  
      Failure should be a sys.exc_info() tuple.
-@@ -778,4 +785,6 @@ def msg_reply(msg_id, reply=None, failure=None):
+@@ -780,4 +787,6 @@ def msg_reply(msg_id, reply=None, failure=None):
              msg = {'result': dict((k, repr(v))
                              for k, v in reply.__dict__.iteritems()),
                      'failure': failure}

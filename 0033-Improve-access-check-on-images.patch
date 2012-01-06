@@ -1,7 +1,7 @@
-From c11659215a1cd3e551ce56f089b2682842954b04 Mon Sep 17 00:00:00 2001
+From 5714b37e4de7de4bb1fb7ff54058751274b7d716 Mon Sep 17 00:00:00 2001
 From: Loganathan Parthipan <parthipan@hp.com>
 Date: Thu, 29 Sep 2011 16:41:49 +0100
-Subject: [PATCH 33/95] Improve access check on images
+Subject: [PATCH] Improve access check on images
 
 Makes sure that users can delete only their own images, snapshots.
 Enable listing of all images, both private which are owned and the public

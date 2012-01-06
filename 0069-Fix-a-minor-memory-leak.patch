@@ -1,7 +1,7 @@
-From d2ae5bef3d6dc253e942e284ed9149c3912b2385 Mon Sep 17 00:00:00 2001
+From f5d0764d3afa18aa110579a7e91cd18312cb22de Mon Sep 17 00:00:00 2001
 From: "Kevin L. Mitchell" <kevin.mitchell@rackspace.com>
 Date: Fri, 18 Nov 2011 14:49:41 -0600
-Subject: [PATCH 69/95] Fix a minor memory leak
+Subject: [PATCH] Fix a minor memory leak
 
 Fixes a minor memory leak caused by a self-referential data structure
 with a __del__() method by explicitly breaking the cycle.

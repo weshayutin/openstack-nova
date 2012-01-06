@@ -1,7 +1,7 @@
-From ad4eef0a0b296652f8ce08d86a10dea8a40b005b Mon Sep 17 00:00:00 2001
+From 6c16e34097bdc96c557c94dc5692b06a60bcf631 Mon Sep 17 00:00:00 2001
 From: Yun Shen <Yun.Shen@hp.com>
 Date: Thu, 29 Sep 2011 12:09:37 +0100
-Subject: [PATCH 27/95] Handle pidfile exception for dnsmasq
+Subject: [PATCH] Handle pidfile exception for dnsmasq
 
 Capture the exception in dnsmasq_pid_for method. If the pidfile cannot be read
 for some reason, it should be treated as if it does not exist. This prevents

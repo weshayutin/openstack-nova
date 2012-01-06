@@ -1,7 +1,7 @@
-From be3f35b9ead65419e548ca13d5d463deb9da3a9d Mon Sep 17 00:00:00 2001
+From e46bbf831f4d12408be07109039c3a2ea1ff982d Mon Sep 17 00:00:00 2001
 From: Joe Gordon <jogo@cloudscaling.com>
 Date: Tue, 1 Nov 2011 12:22:13 -0700
-Subject: [PATCH 50/95] fix bug 816630
+Subject: [PATCH] fix bug 816630
 
 Off by one error fixed
 With test case
@@ -15,11 +15,11 @@ Change-Id: I5060c0a59949d69d6f859a01e7cf5fa8e0227d8a
  2 files changed, 12 insertions(+), 1 deletions(-)
 
 diff --git a/nova/network/manager.py b/nova/network/manager.py
-index d8de396..a154441 100644
+index cab6f88..c6155f2 100644
 --- a/nova/network/manager.py
 +++ b/nova/network/manager.py
-@@ -837,7 +837,7 @@ class NetworkManager(manager.SchedulerDependentManager):
-         num_ips = len(project_net)
+@@ -841,7 +841,7 @@ class NetworkManager(manager.SchedulerDependentManager):
+         ips = []
          for index in range(num_ips):
              address = str(project_net[index])
 -            if index < bottom_reserved or num_ips - index < top_reserved:
@@ -28,7 +28,7 @@ index d8de396..a154441 100644
              else:
                  reserved = False
 diff --git a/nova/tests/test_network.py b/nova/tests/test_network.py
-index 844aba2..6ae8884 100644
+index 40efd4f..dbf934e 100644
 --- a/nova/tests/test_network.py
 +++ b/nova/tests/test_network.py
 @@ -210,6 +210,17 @@ class FlatNetworkTestCase(test.TestCase):

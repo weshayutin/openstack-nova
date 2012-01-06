@@ -1,7 +1,7 @@
-From 770aabb576fc9911177737b223dedd3d6de6183b Mon Sep 17 00:00:00 2001
+From a1a3cb1dcb19fb21bc30755ce4afc30e0c9a6799 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Asbj=C3=B8rn=20Sannes?= <asbjorn.sannes@interhost.no>
 Date: Wed, 19 Oct 2011 22:36:03 +0200
-Subject: [PATCH 36/95] Fix deletion of instances without fixed ips.
+Subject: [PATCH] Fix deletion of instances without fixed ips.
 
 Catch exception when there are no fixed ips for an instance when deallocating it.
 

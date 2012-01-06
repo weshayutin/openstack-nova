@@ -1,7 +1,7 @@
-From d46f6e095b43fc00099d87f73b098a137830b167 Mon Sep 17 00:00:00 2001
+From 8479e1308c93cd1af8790405b12b627e4ecdd488 Mon Sep 17 00:00:00 2001
 From: Vishvananda Ishaya <vishvananda@gmail.com>
 Date: Fri, 14 Oct 2011 10:06:00 -0700
-Subject: [PATCH 14/95] Makes snapshots work for amis. Fixes bug 873156
+Subject: [PATCH] Makes snapshots work for amis. Fixes bug 873156
 
 (cherry picked from commit b931d51ce47203ee6a4433dc7577e0779ab94710)
 

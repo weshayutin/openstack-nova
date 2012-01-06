@@ -1,8 +1,8 @@
-From c733462b229290210d6249e0f8fc7d2beaab9091 Mon Sep 17 00:00:00 2001
+From 9ddcfaf41859132be41c463bb643a285cb783f46 Mon Sep 17 00:00:00 2001
 From: Ewan Mellor <ewan.mellor@citrix.com>
 Date: Sun, 27 Nov 2011 23:26:49 -0800
-Subject: [PATCH 72/95] Bug #897091: "nova actions" fails with HTTP 400 /
- TypeError if a server action has been performed
+Subject: [PATCH] Bug #897091: "nova actions" fails with HTTP 400 / TypeError
+ if a server action has been performed
 
 Fix code in Controller.action that was overwriting the definition of the
 actions method with a dictionary.  This meant that 'nova actions' would fail

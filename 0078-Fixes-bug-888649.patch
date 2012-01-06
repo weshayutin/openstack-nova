@@ -1,7 +1,7 @@
-From 5d319531552689e4842a84adce01c81899cdfb17 Mon Sep 17 00:00:00 2001
+From 1f59e8d73e06fbae6b2512be48a2f26f8bc50032 Mon Sep 17 00:00:00 2001
 From: Ollie Leahy <oliver.leahy@hp.com>
 Date: Thu, 24 Nov 2011 15:56:08 +0000
-Subject: [PATCH 78/95] Fixes bug 888649
+Subject: [PATCH] Fixes bug 888649
 
 Change exception.VolumeIsBusy to derive from NovaException instead of
 Error, so that an 'unexpected keyword' exception is not thrown when
@@ -23,10 +23,10 @@ Change-Id: I15464cb0cf72a2c71f430e4c8c5c2b27cd4e2ef9
  3 files changed, 30 insertions(+), 1 deletions(-)
 
 diff --git a/Authors b/Authors
-index 9cb7ba8..4943767 100644
+index 657b95d..a9266b2 100644
 --- a/Authors
 +++ b/Authors
-@@ -99,6 +99,7 @@ Nachi Ueno <ueno.nachi@lab.ntt.co.jp>
+@@ -100,6 +100,7 @@ Nachi Ueno <ueno.nachi@lab.ntt.co.jp>
  Naveed Massjouni <naveedm9@gmail.com>
  Nikolay Sokolov <nsokolov@griddynamics.com>
  Nirmal Ranganathan <nirmal.ranganathan@rackspace.com>
@@ -35,10 +35,10 @@ index 9cb7ba8..4943767 100644
  Renuka Apte <renuka.apte@citrix.com>
  Ricardo Carrillo Cruz <emaildericky@gmail.com>
 diff --git a/nova/exception.py b/nova/exception.py
-index 50477af..688f554 100644
+index 466bfff..c2a98eb 100644
 --- a/nova/exception.py
 +++ b/nova/exception.py
-@@ -384,7 +384,7 @@ class SnapshotNotFound(NotFound):
+@@ -377,7 +377,7 @@ class SnapshotNotFound(NotFound):
      message = _("Snapshot %(snapshot_id)s could not be found.")
  
  

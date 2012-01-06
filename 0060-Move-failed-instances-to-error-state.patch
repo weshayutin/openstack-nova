@@ -1,7 +1,7 @@
-From 094ea6bf60c1edec84571bfe2d2d17fc554608c2 Mon Sep 17 00:00:00 2001
+From d9f24f2783edfda3ac26f22cef7ae7d8407f383a Mon Sep 17 00:00:00 2001
 From: Aaron Lee <aaron.lee@rackspace.com>
 Date: Thu, 3 Nov 2011 15:05:30 -0500
-Subject: [PATCH 60/95] Move failed instances to error state
+Subject: [PATCH] Move failed instances to error state
 
 On instance creation there is the possibility of
 an instance raising. This would not cause the

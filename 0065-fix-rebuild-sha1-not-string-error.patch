@@ -1,7 +1,7 @@
-From ce4ea1f35c2d73b644498f4f06b46c75abd9b08d Mon Sep 17 00:00:00 2001
+From bd5a96868635e35b8a462d9b4172de597c83886d Mon Sep 17 00:00:00 2001
 From: David Subiros <david.perez5@hp.com>
 Date: Tue, 4 Oct 2011 13:12:40 +0100
-Subject: [PATCH 65/95] fix rebuild sha1 not string error
+Subject: [PATCH] fix rebuild sha1 not string error
 
 fixes bug #889164
 The sha1() parameter is converted to a string

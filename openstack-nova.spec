@@ -2,7 +2,7 @@
 
 Name:             openstack-nova
 Version:          2011.3
-Release:          17%{?dist}
+Release:          18%{?dist}
 Summary:          OpenStack Compute (nova)
 
 Group:            Applications/System
@@ -30,7 +30,8 @@ Source23:         openstack-nova-db-setup
 #
 # Patches managed here: https://github.com/markmc/nova/tree/fedora-patches
 #
-#   $> git format-patch 2011.3
+#   $> git format-patch -N 2011.3
+#   $> for p in 00*.patch; do filterdiff -x '*/.gitignore' -x '*/.mailmap' $p | sponge $p; done
 #   $> for p in 00*.patch; do echo "Patch${p:2:2}:          $p"; done
 #   $> for p in 00*.patch; do echo "%patch${p:2:2} -p1"; done
 #
@@ -550,6 +551,9 @@ fi
 %endif
 
 %changelog
+* Fri Jan  6 2012 Mark McLoughlin <markmc@redhat.com> - 2011.3-18
+- Fix up recent patches which don't apply
+
 * Fri Jan  6 2012 Mark McLoughlin <markmc@redhat.com> - 2011.3-17
 - Backport tgtadm off-by-one fix from upstream (#752709)
 

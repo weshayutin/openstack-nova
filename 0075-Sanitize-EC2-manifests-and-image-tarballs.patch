@@ -1,7 +1,7 @@
-From 76363226bd8533256f7795bba358d7f4b8a6c9e6 Mon Sep 17 00:00:00 2001
+From 10cb91d1e3a42460c8cb286acbdef4eb51c6d298 Mon Sep 17 00:00:00 2001
 From: Thierry Carrez <thierry@openstack.org>
 Date: Thu, 1 Dec 2011 17:54:16 +0100
-Subject: [PATCH 75/95] Sanitize EC2 manifests and image tarballs
+Subject: [PATCH] Sanitize EC2 manifests and image tarballs
 
 Prevent potential directory traversal with malicious EC2 image tarballs,
 by making sure the tarfile is safe before unpacking it. Fixes bug 894755

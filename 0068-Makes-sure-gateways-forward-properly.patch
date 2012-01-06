@@ -1,7 +1,7 @@
-From e9f427fc2e8014eeba3f46284c38414209fb0b7e Mon Sep 17 00:00:00 2001
+From fc7334078d09c4d1a19884ee6667c7fe4fa351ee Mon Sep 17 00:00:00 2001
 From: Vishvananda Ishaya <vishvananda@gmail.com>
 Date: Wed, 16 Nov 2011 10:17:23 -0800
-Subject: [PATCH 68/95] Makes sure gateways forward properly
+Subject: [PATCH] Makes sure gateways forward properly
 
  * Fixes bug 890195
  * Fixes missing context in dhcp call
