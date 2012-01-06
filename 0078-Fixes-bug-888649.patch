@@ -1,0 +1,91 @@
+From 1f59e8d73e06fbae6b2512be48a2f26f8bc50032 Mon Sep 17 00:00:00 2001
+From: Ollie Leahy <oliver.leahy@hp.com>
+Date: Thu, 24 Nov 2011 15:56:08 +0000
+Subject: [PATCH] Fixes bug 888649
+
+Change exception.VolumeIsBusy to derive from NovaException instead of
+Error, so that an 'unexpected keyword' exception is not thrown when
+the exception is raised with keyword parameters.
+
+Add unit test to confirm that the 'unexpected keyword' exception is not
+thrown when the exception is raised by nova.volume.driver.VolumeDriver
+
+Responded to reviewer observations, fix pep8 errors in tset_volume.py,
+added email address to Authors file.
+
+(cherry picked from commit e0ef89f091a77a25fa9bcfd466159e101cb42c56)
+
+Change-Id: I15464cb0cf72a2c71f430e4c8c5c2b27cd4e2ef9
+---
+ Authors                   |    1 +
+ nova/exception.py         |    2 +-
+ nova/tests/test_volume.py |   28 ++++++++++++++++++++++++++++
+ 3 files changed, 30 insertions(+), 1 deletions(-)
+
+diff --git a/Authors b/Authors
+index 657b95d..a9266b2 100644
+--- a/Authors
++++ b/Authors
+@@ -100,6 +100,7 @@ Nachi Ueno <ueno.nachi@lab.ntt.co.jp>
+ Naveed Massjouni <naveedm9@gmail.com>
+ Nikolay Sokolov <nsokolov@griddynamics.com>
+ Nirmal Ranganathan <nirmal.ranganathan@rackspace.com>
++Ollie Leahy <oliver.leahy@hp.com>
+ Paul Voccio <paul@openstack.org>
+ Renuka Apte <renuka.apte@citrix.com>
+ Ricardo Carrillo Cruz <emaildericky@gmail.com>
+diff --git a/nova/exception.py b/nova/exception.py
+index 466bfff..c2a98eb 100644
+--- a/nova/exception.py
++++ b/nova/exception.py
+@@ -377,7 +377,7 @@ class SnapshotNotFound(NotFound):
+     message = _("Snapshot %(snapshot_id)s could not be found.")
+ 
+ 
+-class VolumeIsBusy(Error):
++class VolumeIsBusy(NovaException):
+     message = _("deleting volume %(volume_name)s that has snapshot")
+ 
+ 
+diff --git a/nova/tests/test_volume.py b/nova/tests/test_volume.py
+index 7888b6b..689383c 100644
+--- a/nova/tests/test_volume.py
++++ b/nova/tests/test_volume.py
+@@ -295,6 +295,34 @@ class DriverTestCase(test.TestCase):
+             self.volume.delete_volume(self.context, volume_id)
+ 
+ 
++class VolumeDriverTestCase(DriverTestCase):
++    """Test case for VolumeDriver"""
++    driver_name = "nova.volume.driver.VolumeDriver"
++
++    def setUp(self):
++        super(VolumeDriverTestCase, self).setUp()
++
++    def tearDown(self):
++        super(VolumeDriverTestCase, self).tearDown()
++
++    def test_delete_busy_volume(self):
++        """Test deleting a busy volume."""
++        self.stubs.Set(self.volume.driver, '_volume_not_present',
++                       lambda x: False)
++        self.stubs.Set(self.volume.driver, '_delete_volume',
++                       lambda x, y: False)
++        # Want DriverTestCase._fake_execute to return 'o' so that
++        # volume.driver.delete_volume() raises the VolumeIsBusy exception.
++        self.output = 'o'
++        self.assertRaises(exception.VolumeIsBusy,
++                          self.volume.driver.delete_volume,
++                          {'name': 'test1', 'size': 1024})
++        # when DriverTestCase._fake_execute returns something other than
++        # 'o' volume.driver.delete_volume() does not raise an exception.
++        self.output = 'x'
++        self.volume.driver.delete_volume({'name': 'test1', 'size': 1024})
++
++
+ class AOETestCase(DriverTestCase):
+     """Test Case for AOEDriver"""
+     driver_name = "nova.volume.driver.AOEDriver"
+-- 
+1.7.6.5
+

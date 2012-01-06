@@ -1,0 +1,54 @@
+From e46bbf831f4d12408be07109039c3a2ea1ff982d Mon Sep 17 00:00:00 2001
+From: Joe Gordon <jogo@cloudscaling.com>
+Date: Tue, 1 Nov 2011 12:22:13 -0700
+Subject: [PATCH] fix bug 816630
+
+Off by one error fixed
+With test case
+
+(cherry picked from commit a6a7e936fe8fb55471dc1ecc41d8644398e45ef7)
+
+Change-Id: I5060c0a59949d69d6f859a01e7cf5fa8e0227d8a
+---
+ nova/network/manager.py    |    2 +-
+ nova/tests/test_network.py |   11 +++++++++++
+ 2 files changed, 12 insertions(+), 1 deletions(-)
+
+diff --git a/nova/network/manager.py b/nova/network/manager.py
+index cab6f88..c6155f2 100644
+--- a/nova/network/manager.py
++++ b/nova/network/manager.py
+@@ -841,7 +841,7 @@ class NetworkManager(manager.SchedulerDependentManager):
+         ips = []
+         for index in range(num_ips):
+             address = str(project_net[index])
+-            if index < bottom_reserved or num_ips - index < top_reserved:
++            if index < bottom_reserved or num_ips - index <= top_reserved:
+                 reserved = True
+             else:
+                 reserved = False
+diff --git a/nova/tests/test_network.py b/nova/tests/test_network.py
+index 40efd4f..dbf934e 100644
+--- a/nova/tests/test_network.py
++++ b/nova/tests/test_network.py
+@@ -210,6 +210,17 @@ class FlatNetworkTestCase(test.TestCase):
+         self.mox.ReplayAll()
+         self.network.validate_networks(self.context, requested_networks)
+ 
++    def test_validate_reserved(self):
++        context_admin = context.RequestContext('testuser', 'testproject',
++                                              is_admin=True)
++        nets = self.network.create_networks(context_admin, 'fake',
++                                       '192.168.0.0/24', False, 1,
++                                       256, None, None, None, None )
++        self.assertEqual(1, len(nets))
++        network = nets[0]
++        self.assertEqual(3, db.network_count_reserved_ips(context_admin,
++                        network['id']))
++
+     def test_validate_networks_none_requested_networks(self):
+         self.network.validate_networks(self.context, None)
+ 
+-- 
+1.7.6.5
+

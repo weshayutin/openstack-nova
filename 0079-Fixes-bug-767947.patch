@@ -1,0 +1,72 @@
+From 795568953b22ad9b649888438b31f04d0a2bb186 Mon Sep 17 00:00:00 2001
+From: Alvaro Lopez Garcia <aloga@ifca.unican.es>
+Date: Wed, 30 Nov 2011 12:25:00 +0100
+Subject: [PATCH] Fixes bug 767947
+
+If libvirt was restarted, a libvirt.libvirtError was raised with error
+domain libvirt.VIR_FROM_RPC when trying to use the existing connection.
+
+(cherry picked from commit 7c11490677bc49086271ee377e6a8076eebe15f6)
+
+Change-Id: Ib3d4ff23aadf5a0c93dde0c37c5686bf404ce9de
+---
+ nova/tests/test_libvirt.py      |   28 ++++++++++++++++++++++++++++
+ nova/virt/libvirt/connection.py |    3 ++-
+ 2 files changed, 30 insertions(+), 1 deletions(-)
+
+diff --git a/nova/tests/test_libvirt.py b/nova/tests/test_libvirt.py
+index b44bde2..f268587 100644
+--- a/nova/tests/test_libvirt.py
++++ b/nova/tests/test_libvirt.py
+@@ -957,6 +957,34 @@ class LibvirtConnTestCase(test.TestCase):
+         ip = conn.get_host_ip_addr()
+         self.assertEquals(ip, FLAGS.my_ip)
+ 
++    def test_broken_connection(self):
++        # Skip if non-libvirt environment
++        if not self.lazy_load_library_exists():
++            return
++
++        for (error, domain) in (
++                (libvirt.VIR_ERR_SYSTEM_ERROR, libvirt.VIR_FROM_REMOTE),
++                (libvirt.VIR_ERR_SYSTEM_ERROR, libvirt.VIR_FROM_RPC)):
++
++            conn = connection.LibvirtConnection(False)
++
++            self.mox.StubOutWithMock(conn, "_wrapped_conn")
++            self.mox.StubOutWithMock(conn._wrapped_conn, "getCapabilities")
++            self.mox.StubOutWithMock(libvirt.libvirtError, "get_error_code")
++            self.mox.StubOutWithMock(libvirt.libvirtError, "get_error_domain")
++
++            conn._wrapped_conn.getCapabilities().AndRaise(
++                    libvirt.libvirtError("fake failure"))
++
++            libvirt.libvirtError.get_error_code().AndReturn(error)
++            libvirt.libvirtError.get_error_domain().AndReturn(domain)
++
++            self.mox.ReplayAll()
++
++            self.assertFalse(conn._test_connection())
++
++            self.mox.UnsetStubs()
++
+     def test_volume_in_mapping(self):
+         conn = connection.LibvirtConnection(False)
+         swap = {'device_name': '/dev/sdb',
+diff --git a/nova/virt/libvirt/connection.py b/nova/virt/libvirt/connection.py
+index 333ae49..36938bf 100644
+--- a/nova/virt/libvirt/connection.py
++++ b/nova/virt/libvirt/connection.py
+@@ -203,7 +203,8 @@ class LibvirtConnection(driver.ComputeDriver):
+             return True
+         except libvirt.libvirtError as e:
+             if e.get_error_code() == libvirt.VIR_ERR_SYSTEM_ERROR and \
+-               e.get_error_domain() == libvirt.VIR_FROM_REMOTE:
++               e.get_error_domain() in (libvirt.VIR_FROM_REMOTE,
++                       libvirt.VIR_FROM_RPC):
+                 LOG.debug(_('Connection to libvirt broke'))
+                 return False
+             raise
+-- 
+1.7.6.5
+

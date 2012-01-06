@@ -1,7 +1,7 @@
-From ec2bfe91b7bf7424eb34ad371ec25eec62cd3d24 Mon Sep 17 00:00:00 2001
+From ec91a845df453a71e154d039c162d51c7ef67116 Mon Sep 17 00:00:00 2001
 From: Brian Waldon <brian.waldon@rackspace.com>
 Date: Mon, 26 Sep 2011 13:57:34 -0400
-Subject: [PATCH 31/40] Explicit errors on confirm/revertResize failures
+Subject: [PATCH] Explicit errors on confirm/revertResize failures
 
 Fixing bug 856527
 
@@ -84,5 +84,5 @@ index 6a0feda..eb4ec05 100644
          """The happy path for creating backups"""
          self.flags(allow_admin_api=True)
 -- 
-1.7.6.4
+1.7.6.5
 

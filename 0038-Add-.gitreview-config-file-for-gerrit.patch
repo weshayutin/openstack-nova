@@ -1,0 +1,48 @@
+From 7a833a57c66468efae9ea0932ab56089209d5812 Mon Sep 17 00:00:00 2001
+From: "James E. Blair" <james.blair@rackspace.com>
+Date: Thu, 20 Oct 2011 13:48:18 -0400
+Subject: [PATCH] Add .gitreview config file for gerrit.
+
+The CI team is developing a new tool, git-review:
+
+  https://github.com/openstack-ci/git-review
+
+which is intendend to replace rfc.sh.  This adds a .gitreview file
+so that it can automatically determine the canonical gerrit location
+for the repository when first run.  Later, rfc.sh will be updated to
+indicate it is deprecated, and then eventually removed.
+
+(cherry picked from commit adffdf2df98dadd884b1969ba45e9fdb0b4e9266)
+
+Change-Id: Ifc1d34143b1b90faa4324f7750bfc43f69a5f494
+---
+ .gitreview |    4 ++++
+ Authors    |    1 +
+ 2 files changed, 5 insertions(+), 0 deletions(-)
+ create mode 100644 .gitreview
+
+diff --git a/.gitreview b/.gitreview
+new file mode 100644
+index 0000000..3a2f61c
+--- /dev/null
++++ b/.gitreview
+@@ -0,0 +1,4 @@
++[gerrit]
++host=review.openstack.org
++port=29418
++project=openstack/nova.git
+diff --git a/Authors b/Authors
+index 03aedc2..b83f951 100644
+--- a/Authors
++++ b/Authors
+@@ -47,6 +47,7 @@ Hisaki Ohara <hisaki.ohara@intel.com>
+ Ilya Alekseyev <ilyaalekseyev@acm.org>
+ Isaku Yamahata <yamahata@valinux.co.jp>
+ Jake Dahn <jake@ansolabs.com>
++James E. Blair <james.blair@rackspace.com>
+ Jason Cannavale <jason.cannavale@rackspace.com>
+ Jason Koelker <jason@koelker.net>
+ Jay Pipes <jaypipes@gmail.com>
+-- 
+1.7.6.5
+

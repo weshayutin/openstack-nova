@@ -1,0 +1,47 @@
+From cdb944ce4e4a8df8b0eb0184bf55075464b054b2 Mon Sep 17 00:00:00 2001
+From: Ivan Kolodyazhny <e0ne@e0ne.info>
+Date: Thu, 24 Nov 2011 14:54:30 +0200
+Subject: [PATCH] Bug 820059: bin/nova-manage.py VpnCommands.spawn calls
+ non-existant method VpnCommands._vpn_for - fixed
+
+Change-Id: I86c509d98fac685a5d658f397d0672f71b4bc175
+---
+ bin/nova-manage |    7 ++++++-
+ 1 files changed, 6 insertions(+), 1 deletions(-)
+
+diff --git a/bin/nova-manage b/bin/nova-manage
+index 45d649e..f3aff19 100755
+--- a/bin/nova-manage
++++ b/bin/nova-manage
+@@ -88,6 +88,7 @@ from nova import rpc
+ from nova import utils
+ from nova import version
+ from nova import vsa
++from nova.api.ec2 import admin
+ from nova.api.ec2 import ec2utils
+ from nova.auth import manager
+ from nova.cloudpipe import pipelib
+@@ -175,8 +176,9 @@ class VpnCommands(object):
+     def spawn(self):
+         """Run all VPNs."""
+         print "WARNING: This method only works with deprecated auth"
++        ctxt = context.get_admin_context()
+         for p in reversed(self.manager.get_projects()):
+-            if not self._vpn_for(p.id):
++            if self._vpn_for(ctxt, p.id):
+                 print 'spawning %s' % p.id
+                 self.pipe.launch_vpn_instance(p.id, p.project_manager_id)
+                 time.sleep(10)
+@@ -212,6 +214,9 @@ class VpnCommands(object):
+                               {'vpn_public_address': ip,
+                                'vpn_public_port': int(port)})
+ 
++    def _vpn_for(self, context, project_id):
++        return admin.AdminController()._vpn_for(context, project_id)
++
+ 
+ class ShellCommands(object):
+     def bpython(self):
+-- 
+1.7.6.5
+

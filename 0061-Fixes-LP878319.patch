@@ -1,0 +1,152 @@
+From 1c38d199adfb7ae3e1934ee6b3b7ffc68ce03679 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Jason=20K=C3=B6lker?= <jason@koelker.net>
+Date: Fri, 4 Nov 2011 16:37:09 -0500
+Subject: [PATCH] Fixes LP878319
+
+* Adds lookup of host version in XenAPI session
+* Add call to determine function name of resize
+
+(cherry picked from commit bee61b32420a2b8ce982406cd6c9647098bdf70b)
+
+Change-Id: I797ff2ea34a3b3fde1091efba803a4572aaf1ede
+---
+ nova/tests/test_xenapi.py  |   17 +++++++++++++++++
+ nova/tests/xenapi/stubs.py |    8 ++++++--
+ nova/virt/xenapi/fake.py   |    2 ++
+ nova/virt/xenapi/vmops.py  |    9 +++++++--
+ nova/virt/xenapi_conn.py   |   11 ++++++++++-
+ 5 files changed, 42 insertions(+), 5 deletions(-)
+
+diff --git a/nova/tests/test_xenapi.py b/nova/tests/test_xenapi.py
+index 82226e6..a2ccfeb 100644
+--- a/nova/tests/test_xenapi.py
++++ b/nova/tests/test_xenapi.py
+@@ -751,6 +751,23 @@ class XenAPIMigrateInstance(test.TestCase):
+         stubs.stubout_get_this_vm_uuid(self.stubs)
+         glance_stubs.stubout_glance_client(self.stubs)
+ 
++    def test_resize_xenserver_6(self):
++        instance = db.instance_create(self.context, self.values)
++        called = {'resize': False}
++
++        def fake_vdi_resize(*args, **kwargs):
++            called['resize'] = True
++
++        self.stubs.Set(stubs.FakeSessionForMigrationTests,
++                       "VDI_resize", fake_vdi_resize)
++        stubs.stubout_session(self.stubs,
++                              stubs.FakeSessionForMigrationTests,
++                              product_version=(6, 0, 0))
++        stubs.stubout_loopingcall_start(self.stubs)
++        conn = xenapi_conn.get_connection(False)
++        conn._vmops.resize_instance(instance, '')
++        self.assertEqual(called['resize'], True)
++
+     def test_migrate_disk_and_power_off(self):
+         instance = db.instance_create(self.context, self.values)
+         stubs.stubout_session(self.stubs, stubs.FakeSessionForMigrationTests)
+diff --git a/nova/tests/xenapi/stubs.py b/nova/tests/xenapi/stubs.py
+index 49cdc1f..796c047 100644
+--- a/nova/tests/xenapi/stubs.py
++++ b/nova/tests/xenapi/stubs.py
+@@ -57,8 +57,8 @@ def stubout_instance_snapshot(stubs):
+     stubs.Set(vm_utils, 'wait_for_vhd_coalesce', fake_wait_for_vhd_coalesce)
+ 
+ 
+-def stubout_session(stubs, cls):
+-    """Stubs out two methods from XenAPISession"""
++def stubout_session(stubs, cls, product_version=None):
++    """Stubs out three methods from XenAPISession"""
+     def fake_import(self):
+         """Stubs out get_imported_xenapi of XenAPISession"""
+         fake_module = 'nova.virt.xenapi.fake'
+@@ -69,6 +69,10 @@ def stubout_session(stubs, cls):
+                        lambda s, url: cls(url))
+     stubs.Set(xenapi_conn.XenAPISession, 'get_imported_xenapi',
+                        fake_import)
++    if product_version is None:
++        product_version = (5, 6, 2)
++    stubs.Set(xenapi_conn.XenAPISession, 'get_product_version',
++            lambda s: product_version)
+ 
+ 
+ def stub_out_get_target(stubs):
+diff --git a/nova/virt/xenapi/fake.py b/nova/virt/xenapi/fake.py
+index 475ed54..33cd61c 100644
+--- a/nova/virt/xenapi/fake.py
++++ b/nova/virt/xenapi/fake.py
+@@ -381,6 +381,8 @@ class SessionBase(object):
+     def VDI_resize_online(self, *args):
+         return 'derp'
+ 
++    VDI_resize = VDI_resize_online
++
+     def VM_clean_reboot(self, *args):
+         return 'burp'
+ 
+diff --git a/nova/virt/xenapi/vmops.py b/nova/virt/xenapi/vmops.py
+index 446b623..04e9c4b 100644
+--- a/nova/virt/xenapi/vmops.py
++++ b/nova/virt/xenapi/vmops.py
+@@ -75,12 +75,13 @@ class VMOps(object):
+     """
+     Management class for VM-related tasks
+     """
+-    def __init__(self, session):
++    def __init__(self, session, product_version):
+         self.XenAPI = session.get_imported_xenapi()
+         self._session = session
+         self.poll_rescue_last_ran = None
+         VMHelper.XenAPI = self.XenAPI
+         self.vif_driver = utils.import_object(FLAGS.xenapi_vif_driver)
++        self._product_version = product_version
+ 
+     def list_instances(self):
+         """List VM instances."""
+@@ -622,7 +623,11 @@ class VMOps(object):
+                         " GB") % locals())
+             vdi_ref = self._session.call_xenapi('VDI.get_by_uuid', vdi_uuid)
+             # for an instance with no local storage
+-            self._session.call_xenapi('VDI.resize_online', vdi_ref,
++            if self._product_version[0] > 5:
++                resize_func_name = 'VDI.resize'
++            else:
++                resize_func_name = 'VDI.resize_online'
++            self._session.call_xenapi(resize_func_name, vdi_ref,
+                     str(new_disk_size))
+             LOG.debug(_("Resize instance %s complete") % (instance.name))
+ 
+diff --git a/nova/virt/xenapi_conn.py b/nova/virt/xenapi_conn.py
+index 0d23e76..9f410ba 100644
+--- a/nova/virt/xenapi_conn.py
++++ b/nova/virt/xenapi_conn.py
+@@ -160,9 +160,10 @@ class XenAPIConnection(driver.ComputeDriver):
+     def __init__(self, url, user, pw):
+         super(XenAPIConnection, self).__init__()
+         self._session = XenAPISession(url, user, pw)
+-        self._vmops = VMOps(self._session)
+         self._volumeops = VolumeOps(self._session)
+         self._host_state = None
++        self._product_version = self._session.get_product_version()
++        self._vmops = VMOps(self._session, self._product_version)
+ 
+     @property
+     def HostState(self):
+@@ -361,6 +362,14 @@ class XenAPISession(object):
+         with timeout.Timeout(FLAGS.xenapi_login_timeout, exception):
+             self._session.login_with_password(user, pw)
+ 
++    def get_product_version(self):
++        """Return a tuple of (major, minor, rev) for the host version"""
++        host = self.get_xenapi_host()
++        software_version = self.call_xenapi('host.get_software_version',
++                                            host)
++        product_version = software_version['product_version']
++        return tuple(int(part) for part in product_version.split('.'))
++
+     def get_imported_xenapi(self):
+         """Stubout point. This can be replaced with a mock xenapi module."""
+         return __import__('XenAPI')
+-- 
+1.7.6.5
+

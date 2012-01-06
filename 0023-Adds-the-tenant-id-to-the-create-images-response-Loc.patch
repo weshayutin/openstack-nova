@@ -1,8 +1,8 @@
-From 6f96fa65aa73e7803c9ba82d7a4f3b49b310e1b7 Mon Sep 17 00:00:00 2001
+From 2808dea7d9e8d16c43206a545fd4ef75533f11d7 Mon Sep 17 00:00:00 2001
 From: Alex Meade <alex.meade@rackspace.com>
 Date: Thu, 29 Sep 2011 15:58:43 -0400
-Subject: [PATCH 23/40] Adds the tenant id to the create images response
- Location header Fixes bug 862672
+Subject: [PATCH] Adds the tenant id to the create images response Location
+ header Fixes bug 862672
 
 (cherry picked from commit f3fb16a7935e91f8c9034d1da84a2b17cbe186f8)
 
@@ -51,5 +51,5 @@ index b9ef414..6a0feda 100644
      def test_create_image_with_too_much_metadata(self):
          body = {
 -- 
-1.7.6.4
+1.7.6.5
 

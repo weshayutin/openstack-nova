@@ -1,0 +1,43 @@
+From 1e8515bc889bb242e8d20b034b0dc4a842771719 Mon Sep 17 00:00:00 2001
+From: Ivan Kolodyazhny <e0ne@e0ne.info>
+Date: Wed, 28 Dec 2011 23:30:35 +0200
+Subject: [PATCH] Bug 751229: Floating address range fixed
+
+Change-Id: I4c7ab8512fe3a00dd555d3a183b2c2348cef9e21
+---
+ Authors         |    1 +
+ bin/nova-manage |    6 ++++--
+ 2 files changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/Authors b/Authors
+index a9266b2..9c0f5c5 100644
+--- a/Authors
++++ b/Authors
+@@ -48,6 +48,7 @@ Hisaharu Ishii <ishii.hisaharu@lab.ntt.co.jp>
+ Hisaki Ohara <hisaki.ohara@intel.com>
+ Ilya Alekseyev <ilyaalekseyev@acm.org>
+ Isaku Yamahata <yamahata@valinux.co.jp>
++Ivan Kolodyazhny <e0ne@e0ne.info>
+ Jake Dahn <jake@ansolabs.com>
+ James E. Blair <jeblair@hp.com>
+ Jason Cannavale <jason.cannavale@rackspace.com>
+diff --git a/bin/nova-manage b/bin/nova-manage
+index 3ff73f1..45d649e 100755
+--- a/bin/nova-manage
++++ b/bin/nova-manage
+@@ -683,8 +683,10 @@ class FloatingIpCommands(object):
+     @args('--ip_range', dest="range", metavar='<range>', help='IP range')
+     def create(self, range):
+         """Creates floating ips for zone by range"""
+-        for address in netaddr.IPNetwork(range):
+-            db.floating_ip_create(context.get_admin_context(),
++        addresses = netaddr.IPNetwork(range)
++        admin_context = context.get_admin_context()
++        for address in addresses.iter_hosts():
++            db.floating_ip_create(admin_context,
+                                   {'address': str(address)})
+ 
+     @args('--ip_range', dest="ip_range", metavar='<range>', help='IP range')
+-- 
+1.7.6.5
+

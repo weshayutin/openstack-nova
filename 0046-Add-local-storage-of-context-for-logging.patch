@@ -1,0 +1,122 @@
+From df042f7802370de4490d9130a39eaec792725565 Mon Sep 17 00:00:00 2001
+From: Vishvananda Ishaya <vishvananda@gmail.com>
+Date: Fri, 21 Oct 2011 11:18:11 -0700
+Subject: [PATCH] Add local storage of context for logging
+
+ * adds nova/local.py:store for storing greenthread local data
+ * saves a weak reference to the last context object created
+ * uses the last context object if it exists for logging
+ * Fixes bug 879582
+
+(cherry picked from commit 7cca5a8ff7f559da60c03405f69f78a42c763b61)
+
+Cc: stable-maintainers
+Change-Id: Ic373556ce197f2e8e7d23c807a65b12111db96eb
+---
+ nova/context.py |    3 +++
+ nova/local.py   |   37 +++++++++++++++++++++++++++++++++++++
+ nova/log.py     |    4 ++++
+ 3 files changed, 44 insertions(+), 0 deletions(-)
+ create mode 100644 nova/local.py
+
+diff --git a/nova/context.py b/nova/context.py
+index de5b791..36d15ba 100644
+--- a/nova/context.py
++++ b/nova/context.py
+@@ -1,5 +1,6 @@
+ # vim: tabstop=4 shiftwidth=4 softtabstop=4
+ 
++# Copyright 2011 OpenStack LLC.
+ # Copyright 2010 United States Government as represented by the
+ # Administrator of the National Aeronautics and Space Administration.
+ # All Rights Reserved.
+@@ -20,6 +21,7 @@
+ 
+ import uuid
+ 
++from nova import local
+ from nova import utils
+ 
+ 
+@@ -51,6 +53,7 @@ class RequestContext(object):
+         self.request_id = request_id
+         self.auth_token = auth_token
+         self.strategy = strategy
++        local.store.context = self
+ 
+     def to_dict(self):
+         return {'user_id': self.user_id,
+diff --git a/nova/local.py b/nova/local.py
+new file mode 100644
+index 0000000..19d9627
+--- /dev/null
++++ b/nova/local.py
+@@ -0,0 +1,37 @@
++# vim: tabstop=4 shiftwidth=4 softtabstop=4
++
++# Copyright 2011 OpenStack LLC.
++# All Rights Reserved.
++#
++#    Licensed under the Apache License, Version 2.0 (the "License"); you may
++#    not use this file except in compliance with the License. You may obtain
++#    a copy of the License at
++#
++#         http://www.apache.org/licenses/LICENSE-2.0
++#
++#    Unless required by applicable law or agreed to in writing, software
++#    distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
++#    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
++#    License for the specific language governing permissions and limitations
++#    under the License.
++
++"""Greenthread local storage of variables using weak references"""
++
++import weakref
++
++from eventlet import corolocal
++
++
++class WeakLocal(corolocal.local):
++    def __getattribute__(self, attr):
++        rval = corolocal.local.__getattribute__(self, attr)
++        if rval:
++            rval = rval()
++        return rval
++
++    def __setattr__(self, attr, value):
++        value = weakref.ref(value)
++        return corolocal.local.__setattr__(self, attr, value)
++
++
++store = WeakLocal()
+diff --git a/nova/log.py b/nova/log.py
+index 1e04f75..86f1570 100644
+--- a/nova/log.py
++++ b/nova/log.py
+@@ -1,5 +1,6 @@
+ # vim: tabstop=4 shiftwidth=4 softtabstop=4
+ 
++# Copyright 2011 OpenStack LLC.
+ # Copyright 2010 United States Government as represented by the
+ # Administrator of the National Aeronautics and Space Administration.
+ # All Rights Reserved.
+@@ -38,6 +39,7 @@ import traceback
+ 
+ import nova
+ from nova import flags
++from nova import local
+ from nova import version
+ 
+ 
+@@ -152,6 +154,8 @@ class NovaLogger(logging.Logger):
+         """Extract context from any log call."""
+         if not extra:
+             extra = {}
++        if context is None:
++            context = getattr(local.store, 'context', None)
+         if context:
+             extra.update(_dictify_context(context))
+         extra.update({"nova_version": version.version_string_with_vcs()})
+-- 
+1.7.6.5
+

@@ -1,0 +1,61 @@
+From ec88d55d468a7945d1c0ab2189cd0acdf28b78d2 Mon Sep 17 00:00:00 2001
+From: Unmesh Gurjar <unmesh.gurjar@vertex.co.in>
+Date: Wed, 19 Oct 2011 14:44:01 +0530
+Subject: [PATCH] Fix lp:861160 -- newly created network has no uuid
+
+Implemented code review changes.
+Fixed issue causing pep8 build failure.
+
+(cherry picked from commit bef4ae509256683fefe8785ce62ef2e423009653)
+
+Change-Id: If2cc0e23be8d4e1558a10fa86e6ba4cdec61b7d1
+---
+ Authors                   |    1 +
+ nova/db/sqlalchemy/api.py |    1 +
+ nova/tests/test_db_api.py |    9 +++++++++
+ 3 files changed, 11 insertions(+), 0 deletions(-)
+
+diff --git a/Authors b/Authors
+index b83f951..119fd0a 100644
+--- a/Authors
++++ b/Authors
+@@ -119,6 +119,7 @@ Todd Willey <todd@ansolabs.com>
+ Trey Morris <trey.morris@rackspace.com>
+ Troy Toman <troy.toman@rackspace.com>
+ Tushar Patil <tushar.vitthal.patil@gmail.com>
++Unmesh Gurjar <unmesh.gurjar@vertex.co.in>
+ Vasiliy Shlykov <vash@vasiliyshlykov.org>
+ Vishvananda Ishaya <vishvananda@gmail.com>
+ Vivek Y S <vivek.ys@gmail.com>
+diff --git a/nova/db/sqlalchemy/api.py b/nova/db/sqlalchemy/api.py
+index 665bdc1..23c0408 100644
+--- a/nova/db/sqlalchemy/api.py
++++ b/nova/db/sqlalchemy/api.py
+@@ -1764,6 +1764,7 @@ def network_count_reserved_ips(context, network_id):
+ @require_admin_context
+ def network_create_safe(context, values):
+     network_ref = models.Network()
++    network_ref['uuid'] = str(utils.gen_uuid())
+     network_ref.update(values)
+     try:
+         network_ref.save()
+diff --git a/nova/tests/test_db_api.py b/nova/tests/test_db_api.py
+index 60d7abd..3e37d9a 100644
+--- a/nova/tests/test_db_api.py
++++ b/nova/tests/test_db_api.py
+@@ -95,3 +95,12 @@ class DbApiTestCase(test.TestCase):
+         self.assertEqual(result[0].id, inst2.id)
+         self.assertEqual(result[1].id, inst1.id)
+         self.assertTrue(result[1].deleted)
++
++    def test_network_create_safe(self):
++        ctxt = context.get_admin_context()
++        values = {'host': 'localhost', 'project_id': 'project1'}
++        network = db.network_create_safe(ctxt, values)
++        self.assertNotEqual(None, network.uuid)
++        self.assertEqual(36, len(network.uuid))
++        db_network = db.network_get(ctxt, network.id)
++        self.assertEqual(network.uuid, db_network.uuid)
+-- 
+1.7.6.5
+

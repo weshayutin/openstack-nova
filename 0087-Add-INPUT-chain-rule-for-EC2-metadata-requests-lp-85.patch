@@ -1,8 +1,7 @@
-From b434509c19376d67e7cbf358661cbfdb2ea934f9 Mon Sep 17 00:00:00 2001
+From de13d079a18c87cdaa9359ca0f02df3543db60bb Mon Sep 17 00:00:00 2001
 From: Mark McLoughlin <markmc@redhat.com>
 Date: Mon, 5 Sep 2011 07:10:52 +0100
-Subject: [PATCH 36/40] Add INPUT chain rule for EC2 metadata requests
- (lp:856385)
+Subject: [PATCH] Add INPUT chain rule for EC2 metadata requests (lp:856385)
 
 On Fedora, the default policy for the INPUT chain in the filter table
 is DROP. This means that EC2 metadata requests from guests get dropped.
@@ -22,7 +21,7 @@ Change-Id: Ic99ba9249ce5219cd2631184154add82d25d9d6d
  1 files changed, 4 insertions(+), 0 deletions(-)
 
 diff --git a/nova/network/linux_net.py b/nova/network/linux_net.py
-index c0be962..fd51e9b 100755
+index a6aea8a..df43f54 100755
 --- a/nova/network/linux_net.py
 +++ b/nova/network/linux_net.py
 @@ -378,6 +378,10 @@ def metadata_forward():
@@ -37,5 +36,5 @@ index c0be962..fd51e9b 100755
  
  
 -- 
-1.7.6.4
+1.7.6.5
 

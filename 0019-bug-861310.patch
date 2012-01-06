@@ -1,7 +1,7 @@
-From 1def4abeeb6e03ad82906aaa6975c753d1649747 Mon Sep 17 00:00:00 2001
+From 213739f404e67de320aeafc6c95db2b38db85ef6 Mon Sep 17 00:00:00 2001
 From: Sateesh Chodapuneedi <sateesh.chodapuneedi@citrix.com>
 Date: Wed, 28 Sep 2011 18:07:22 +0530
-Subject: [PATCH 19/40] bug 861310
+Subject: [PATCH] bug 861310
 
 Check if host list is not empty before trying to weigh the hosts.
 
@@ -27,5 +27,5 @@ index e9c078b..a9ec556 100644
          hosts = [dict(weight=1, hostname=hostname, capabilities=capabilities)
                   for hostname, capabilities in hosts]
 -- 
-1.7.6.4
+1.7.6.5
 

@@ -1,0 +1,47 @@
+From cf9ece2b61ef7ffe50d22fb46c87edc0cb423319 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Fran=C3=A7ois=20Charlier?= <francois.charlier@enovance.com>
+Date: Fri, 2 Dec 2011 16:55:21 +0100
+Subject: [PATCH] Pass '-r' option to 'collie cluster status'.
+
+The  'collie  cluster  status'  default output  is  more  verbose  since
+sheepdog 0.24.  The '-r' (raw)  option has  been added for  less verbose
+output but won't be used to ensure compatibility with pre-0.24 sheepdog.
+
+Change-Id: Ie31bdded928772250515e439016fc5c5beb00d83
+---
+ Authors               |    1 +
+ nova/volume/driver.py |    5 ++++-
+ 2 files changed, 5 insertions(+), 1 deletions(-)
+
+diff --git a/Authors b/Authors
+index 9c0f5c5..c8d3d54 100644
+--- a/Authors
++++ b/Authors
+@@ -43,6 +43,7 @@ Eldar Nugaev <reldan@oscloud.ru>
+ Eric Day <eday@oddments.org>
+ Eric Windisch <eric@cloudscaling.com>
+ Ewan Mellor <ewan.mellor@citrix.com>
++François Charlier <francois.charlier@enovance.com>
+ Gabe Westmaas <gabe.westmaas@rackspace.com>
+ Hisaharu Ishii <ishii.hisaharu@lab.ntt.co.jp>
+ Hisaki Ohara <hisaki.ohara@intel.com>
+diff --git a/nova/volume/driver.py b/nova/volume/driver.py
+index e5bb498..bb56956 100644
+--- a/nova/volume/driver.py
++++ b/nova/volume/driver.py
+@@ -690,8 +690,11 @@ class SheepdogDriver(VolumeDriver):
+     def check_for_setup_error(self):
+         """Returns an error if prerequisites aren't met"""
+         try:
++            #NOTE(francois-charlier) Since 0.24 'collie cluster info -r'
++            #  gives short output, but for compatibility reason we won't
++            #  use it and just check if 'running' is in the output.
+             (out, err) = self._execute('collie', 'cluster', 'info')
+-            if not out.startswith('running'):
++            if not 'running' in out.split():
+                 raise exception.Error(_("Sheepdog is not working: %s") % out)
+         except exception.ProcessExecutionError:
+             raise exception.Error(_("Sheepdog is not working"))
+-- 
+1.7.6.5
+

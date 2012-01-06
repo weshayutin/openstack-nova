@@ -1,7 +1,7 @@
-From 5d4b9111caa80258d1aff4b68d9524915d711838 Mon Sep 17 00:00:00 2001
+From b44ac53106e99cb4b87220e2672ec516c2de26b0 Mon Sep 17 00:00:00 2001
 From: Johannes Erdfelt <johannes.erdfelt@rackspace.com>
 Date: Wed, 28 Sep 2011 02:53:58 +0000
-Subject: [PATCH 16/40] Make snapshots private by default
+Subject: [PATCH] Make snapshots private by default
 
 Fixes bug 850389
 
@@ -26,5 +26,5 @@ index 3f12c2e..4302c84 100755
          'x-image-meta-disk-format': 'vhd',
          'x-image-meta-container-format': 'ovf',
 -- 
-1.7.6.4
+1.7.6.5
 

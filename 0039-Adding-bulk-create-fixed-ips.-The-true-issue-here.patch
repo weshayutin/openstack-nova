@@ -1,0 +1,98 @@
+From b038f5668dcb3b95de326d142fed74a2c10ff8ba Mon Sep 17 00:00:00 2001
+From: Aaron Lee <aaron.lee@rackspace.com>
+Date: Thu, 27 Oct 2011 17:37:34 -0500
+Subject: [PATCH] Adding bulk create fixed ips. The true issue here is the
+ creation of IPs in the DB that are not currently used(we
+ are building the entire block). This fix is just a bandaid,
+ but it does cut ~25 seconds off of the quantum tests on my
+ laptop.
+
+(pre)$ ./run_tests.sh -N nova.tests.test_quantum:QuantumNovaIPAMTestCase
+QuantumNovaIPAMTestCase
+    test_allocate_and_deallocate_instance_dynamic               OK  11.36
+    test_allocate_and_deallocate_instance_static                OK  11.27
+    test_create_and_delete_nets                                 OK  10.35
+    test_validate_bad_network                                   OK  0.10
+
+(post)$ ./run_tests.sh -N nova.tests.test_quantum:QuantumNovaIPAMTestCase
+QuantumNovaIPAMTestCase
+    test_allocate_and_deallocate_instance_dynamic               OK  2.94
+    test_allocate_and_deallocate_instance_static                OK  3.12
+    test_create_and_delete_nets                                 OK  1.86
+    test_validate_bad_network                                   OK  0.11
+
+(cherry picked from commit fcbb8780386b3ff48653da23a1ffb3f5aa0c8b13)
+
+Change-Id: I46b629f9ca6e019c7c4c6aa8e869c551e5c13fb8
+---
+ nova/db/api.py            |    5 +++++
+ nova/db/sqlalchemy/api.py |   10 ++++++++++
+ nova/network/manager.py   |    9 ++++++---
+ 3 files changed, 21 insertions(+), 3 deletions(-)
+
+diff --git a/nova/db/api.py b/nova/db/api.py
+index 05d81d8..c0e44d2 100644
+--- a/nova/db/api.py
++++ b/nova/db/api.py
+@@ -352,6 +352,11 @@ def fixed_ip_create(context, values):
+     return IMPL.fixed_ip_create(context, values)
+ 
+ 
++def fixed_ip_bulk_create(context, ips):
++    """Create a lot of fixed ips from the values dictionary."""
++    return IMPL.fixed_ip_bulk_create(context, ips)
++
++
+ def fixed_ip_disassociate(context, address):
+     """Disassociate a fixed ip from an instance by address."""
+     return IMPL.fixed_ip_disassociate(context, address)
+diff --git a/nova/db/sqlalchemy/api.py b/nova/db/sqlalchemy/api.py
+index 6cc678a..665bdc1 100644
+--- a/nova/db/sqlalchemy/api.py
++++ b/nova/db/sqlalchemy/api.py
+@@ -750,6 +750,16 @@ def fixed_ip_create(_context, values):
+ 
+ 
+ @require_context
++def fixed_ip_bulk_create(_context, ips):
++    session = get_session()
++    with session.begin():
++        for ip in ips:
++            model = models.FixedIp()
++            model.update(ip)
++            session.add(model)
++
++
++@require_context
+ def fixed_ip_disassociate(context, address):
+     session = get_session()
+     with session.begin():
+diff --git a/nova/network/manager.py b/nova/network/manager.py
+index ef3dbd6..cab6f88 100644
+--- a/nova/network/manager.py
++++ b/nova/network/manager.py
+@@ -838,15 +838,18 @@ class NetworkManager(manager.SchedulerDependentManager):
+         top_reserved = self._top_reserved_ips
+         project_net = netaddr.IPNetwork(network['cidr'])
+         num_ips = len(project_net)
++        ips = []
+         for index in range(num_ips):
+             address = str(project_net[index])
+             if index < bottom_reserved or num_ips - index < top_reserved:
+                 reserved = True
+             else:
+                 reserved = False
+-            self.db.fixed_ip_create(context, {'network_id': network_id,
+-                                              'address': address,
+-                                              'reserved': reserved})
++
++            ips.append({'network_id': network_id,
++                        'address': address,
++                        'reserved': reserved})
++        self.db.fixed_ip_bulk_create(context, ips)
+ 
+     def _allocate_fixed_ips(self, context, instance_id, host, networks,
+                             **kwargs):
+-- 
+1.7.6.5
+

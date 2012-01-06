@@ -1,7 +1,7 @@
-From 3a63bd53aa0e37c1ba5520b4031b2d1293592263 Mon Sep 17 00:00:00 2001
+From 24839ef2b4c72b87d1c2aed011553a19330a2524 Mon Sep 17 00:00:00 2001
 From: Mark McLoughlin <markmc@redhat.com>
 Date: Wed, 12 Oct 2011 13:46:02 +0100
-Subject: [PATCH 01/40] Add tools/rfc.sh from master
+Subject: [PATCH] Add tools/rfc.sh from master
 
 We'll be managing the diablo branch using gerrit, so we'll need this
 script.
@@ -171,5 +171,5 @@ index 0000000..0c578f1
 +
 +main "$@"
 -- 
-1.7.6.4
+1.7.6.5
 

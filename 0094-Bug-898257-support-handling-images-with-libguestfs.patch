@@ -1,7 +1,7 @@
-From 89e0437aff4bf039568e04f05f95b5142e392c04 Mon Sep 17 00:00:00 2001
+From cd01dc63868c61ebdc209c574fa67825d32ad98a Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?P=C3=A1draig=20Brady?= <pbrady@redhat.com>
 Date: Wed, 30 Nov 2011 17:00:17 +0000
-Subject: [PATCH 2/2] Bug#898257 support handling images with libguestfs
+Subject: [PATCH] Bug#898257 support handling images with libguestfs
 
 http://libguestfs.org/ provides both utilities and libraries
 to manipulate image files containing various operating systems.
@@ -154,5 +154,5 @@ index 0000000..6323dc8
 +        utils.execute('fusermount', '-u', self.mount_dir, run_as_root=True)
 +        self.mounted = False
 -- 
-1.7.6.4
+1.7.6.5
 

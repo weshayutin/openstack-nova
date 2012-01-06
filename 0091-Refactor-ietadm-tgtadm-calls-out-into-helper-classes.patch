@@ -1,7 +1,7 @@
-From fa75aca613a531a39e4a30a064e5d549ba26b7ac Mon Sep 17 00:00:00 2001
+From 4260879ccb158a64911a48362b546a2b53f7cf23 Mon Sep 17 00:00:00 2001
 From: Mark McLoughlin <markmc@redhat.com>
 Date: Sun, 18 Sep 2011 16:02:43 +0100
-Subject: [PATCH 40/40] Refactor ietadm/tgtadm calls out into helper classes
+Subject: [PATCH] Refactor ietadm/tgtadm calls out into helper classes
  (lp:819997)
 
 Add a new TargetAdmin abstract base class and implement it using ietadm
@@ -19,7 +19,7 @@ Change-Id: I1c0064e5d35483a6c4059cfc61a484f5f576b2da
  create mode 100644 nova/volume/iscsi.py
 
 diff --git a/nova/flags.py b/nova/flags.py
-index 7e59ddc..56bc797 100644
+index 2280222..792407b 100644
 --- a/nova/flags.py
 +++ b/nova/flags.py
 @@ -416,9 +416,6 @@ DEFINE_string('root_helper', 'sudo',
@@ -155,7 +155,7 @@ index 0000000..d7aed0f
 +ietadm --op delete --tid=%(tid)s
 +"""
 diff --git a/nova/tests/test_volume.py b/nova/tests/test_volume.py
-index 86a03d9..a087975 100644
+index 8a80aeb..7c9a978 100644
 --- a/nova/tests/test_volume.py
 +++ b/nova/tests/test_volume.py
 @@ -270,7 +270,7 @@ class DriverTestCase(test.TestCase):
@@ -167,7 +167,7 @@ index 86a03d9..a087975 100644
  
          log = logging.getLogger()
          self.stream = cStringIO.StringIO()
-@@ -410,13 +410,10 @@ class ISCSITestCase(DriverTestCase):
+@@ -438,13 +438,10 @@ class ISCSITestCase(DriverTestCase):
          """No log message when all the vblade processes are running."""
          volume_id_list = self._attach_volume()
  
@@ -183,7 +183,7 @@ index 86a03d9..a087975 100644
  
          self.stream.truncate(0)
          self.mox.ReplayAll()
-@@ -433,11 +430,9 @@ class ISCSITestCase(DriverTestCase):
+@@ -461,11 +458,9 @@ class ISCSITestCase(DriverTestCase):
  
          # the first vblade process isn't running
          tid = db.volume_get_iscsi_target_num(self.context, volume_id_list[0])
@@ -199,7 +199,7 @@ index 86a03d9..a087975 100644
          self.mox.ReplayAll()
          self.assertRaises(exception.ProcessExecutionError,
 diff --git a/nova/volume/driver.py b/nova/volume/driver.py
-index 8468602..3c2b80b 100644
+index 67ea423..82f0106 100644
 --- a/nova/volume/driver.py
 +++ b/nova/volume/driver.py
 @@ -28,6 +28,7 @@ from nova import exception
@@ -557,5 +557,5 @@ index 0000000..d50dd5f
 +    else:
 +        return IetAdm()
 -- 
-1.7.6.4
+1.7.6.5
 

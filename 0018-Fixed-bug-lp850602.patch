@@ -1,8 +1,8 @@
-From 744a0d8e7aa2c16fe55098c96cf9e46984838a4f Mon Sep 17 00:00:00 2001
+From 4f9c1ff04f3fb359e361756097eb7f7367676487 Mon Sep 17 00:00:00 2001
 From: Kei Masumoto <masumotok@nttdata.co.jp>
 Date: Wed, 28 Sep 2011 15:05:54 -0400
-Subject: [PATCH 18/40] Fixed bug lp850602. Adding backing file copy operation
- on kvm block migration.
+Subject: [PATCH] Fixed bug lp850602. Adding backing file copy operation on
+ kvm block migration.
 
 (cherry picked from commit b9aac1181581b9036c98f5aa493731fdc74be7e1)
 
@@ -13,10 +13,10 @@ Change-Id: Ia2311ef0e65e97bad7e425ad6affdb5f864043ea
  2 files changed, 39 insertions(+), 6 deletions(-)
 
 diff --git a/nova/tests/test_libvirt.py b/nova/tests/test_libvirt.py
-index 8d28590..0f01de8 100644
+index 51e584d..0673af2 100644
 --- a/nova/tests/test_libvirt.py
 +++ b/nova/tests/test_libvirt.py
-@@ -794,7 +794,8 @@ class LibvirtConnTestCase(test.TestCase):
+@@ -835,7 +835,8 @@ class LibvirtConnTestCase(test.TestCase):
  
          # Test data
          instance_ref = db.instance_create(self.context, self.test_instance)
@@ -26,7 +26,7 @@ index 8d28590..0f01de8 100644
  
          # Preparing mocks
          # qemu-img should be mockd since test environment might not have
-@@ -835,7 +836,10 @@ class LibvirtConnTestCase(test.TestCase):
+@@ -876,7 +877,10 @@ class LibvirtConnTestCase(test.TestCase):
                      "</devices></domain>")
  
          ret = ("image: /test/disk\nfile format: raw\n"
@@ -38,7 +38,7 @@ index 8d28590..0f01de8 100644
  
          # Preparing mocks
          vdmock = self.mox.CreateMock(libvirt.virDomain)
-@@ -865,7 +869,9 @@ class LibvirtConnTestCase(test.TestCase):
+@@ -906,7 +910,9 @@ class LibvirtConnTestCase(test.TestCase):
                          info[0]['path'] == '/test/disk' and
                          info[1]['path'] == '/test/disk.local' and
                          info[0]['local_gb'] == '10G' and
@@ -50,10 +50,10 @@ index 8d28590..0f01de8 100644
          db.instance_destroy(self.context, instance_ref['id'])
  
 diff --git a/nova/virt/libvirt/connection.py b/nova/virt/libvirt/connection.py
-index 9290c5e..00be545 100644
+index 4b45515..7baeb69 100644
 --- a/nova/virt/libvirt/connection.py
 +++ b/nova/virt/libvirt/connection.py
-@@ -1722,9 +1722,31 @@ class LibvirtConnection(driver.ComputeDriver):
+@@ -1729,9 +1729,31 @@ class LibvirtConnection(driver.ComputeDriver):
  
          for info in disk_info:
              base = os.path.basename(info['path'])
@@ -87,7 +87,7 @@ index 9290c5e..00be545 100644
                            instance_disk, info['local_gb'])
  
          # if image has kernel and ramdisk, just download
-@@ -1815,12 +1837,17 @@ class LibvirtConnection(driver.ComputeDriver):
+@@ -1822,12 +1844,17 @@ class LibvirtConnection(driver.ComputeDriver):
                  driver_nodes[cnt].get_properties().get_next().getContent()
              if disk_type == 'raw':
                  size = int(os.path.getsize(path))
@@ -105,7 +105,7 @@ index 9290c5e..00be545 100644
              # block migration needs same/larger size of empty image on the
              # destination host. since qemu-img creates bit smaller size image
              # depending on original image size, fixed value is necessary.
-@@ -1836,7 +1863,7 @@ class LibvirtConnection(driver.ComputeDriver):
+@@ -1843,7 +1870,7 @@ class LibvirtConnection(driver.ComputeDriver):
                  break
  
              disk_info.append({'type': disk_type, 'path': path,
@@ -115,5 +115,5 @@ index 9290c5e..00be545 100644
          return utils.dumps(disk_info)
  
 -- 
-1.7.6.4
+1.7.6.5
 

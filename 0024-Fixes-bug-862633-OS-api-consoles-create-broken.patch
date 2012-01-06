@@ -1,7 +1,7 @@
-From b797f1ddffe331d6663f6f53f8a823442c8c3650 Mon Sep 17 00:00:00 2001
+From ada9e22742581f11f36af02de531a9899c97ed59 Mon Sep 17 00:00:00 2001
 From: Chris Behrens <cbehrens@codestud.com>
 Date: Thu, 29 Sep 2011 20:54:19 +0000
-Subject: [PATCH 24/40] Fixes bug 862633 -- OS api consoles create() broken
+Subject: [PATCH] Fixes bug 862633 -- OS api consoles create() broken
 
 Fixed and added tests for OS API consoles.py which didn't exist.
 
@@ -266,5 +266,5 @@ index 0000000..28c04d0
 +        res = req.get_response(fakes.wsgi_app())
 +        self.assertEqual(res.status_int, 404)
 -- 
-1.7.6.4
+1.7.6.5
 

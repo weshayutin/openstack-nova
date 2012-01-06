@@ -1,0 +1,30 @@
+From bdba48f394cecebacdd11b1a899e8ec3de2339d9 Mon Sep 17 00:00:00 2001
+From: Ewan Mellor <ewan.mellor@citrix.com>
+Date: Mon, 31 Oct 2011 17:21:54 -0700
+Subject: [PATCH] Bug 884527: ajax_console_proxy_port needs to be an integer
+
+Fix declaration of ajax_console_proxy_port flag.
+
+(cherry picked from commit 44d9647e7ff59c907bfe7e3eb3873159556809db)
+
+Change-Id: If949878a81339def2be5dba67ad1415180db4715
+---
+ nova/flags.py |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/nova/flags.py b/nova/flags.py
+index 55a56f2..11ac9f6 100644
+--- a/nova/flags.py
++++ b/nova/flags.py
+@@ -290,7 +290,7 @@ DEFINE_string('ajax_console_proxy_url',
+               'http://127.0.0.1:8000',
+               'location of ajax console proxy, \
+                in the form "http://127.0.0.1:8000"')
+-DEFINE_string('ajax_console_proxy_port',
++DEFINE_integer('ajax_console_proxy_port',
+                8000, 'port that ajax_console_proxy binds')
+ DEFINE_string('vsa_topic', 'vsa', 'the topic that nova-vsa service listens on')
+ DEFINE_bool('verbose', False, 'show debug output')
+-- 
+1.7.6.5
+

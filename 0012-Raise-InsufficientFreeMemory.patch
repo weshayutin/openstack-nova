@@ -1,7 +1,7 @@
-From 410a8df435fb424105872dc0a39f68eed902fbf2 Mon Sep 17 00:00:00 2001
+From e7485702d8da8440c4d4f43cd4f22887ba14a9a7 Mon Sep 17 00:00:00 2001
 From: Aaron Lee <aaron.lee@rackspace.com>
 Date: Mon, 26 Sep 2011 18:22:03 -0500
-Subject: [PATCH 12/40] Raise InsufficientFreeMemory
+Subject: [PATCH] Raise InsufficientFreeMemory
 
 Kind of fixes bug 851374 & bug 858679
 
@@ -65,5 +65,5 @@ index b0833f1..f483758 100644
          disk_image_type = VMHelper.determine_disk_image_type(instance, context)
          kernel = None
 -- 
-1.7.6.4
+1.7.6.5
 
