@@ -1,7 +1,7 @@
-From 847ffd8028dd9941a7982109593240847af8b999 Mon Sep 17 00:00:00 2001
+From 80d73a2df2c33212217c59783f62d74673776ebb Mon Sep 17 00:00:00 2001
 From: Kiall Mac Innes <kiall@managedit.ie>
 Date: Fri, 4 Nov 2011 19:43:50 +0000
-Subject: [PATCH 34/44] Fixes bug 834633 - Auto assigning floating IPs
+Subject: [PATCH 34/94] Fixes bug 834633 - Auto assigning floating IPs
 
 Details:
 

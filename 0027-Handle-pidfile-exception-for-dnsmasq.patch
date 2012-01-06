@@ -1,0 +1,51 @@
+From ad4eef0a0b296652f8ce08d86a10dea8a40b005b Mon Sep 17 00:00:00 2001
+From: Yun Shen <Yun.Shen@hp.com>
+Date: Thu, 29 Sep 2011 12:09:37 +0100
+Subject: [PATCH 27/94] Handle pidfile exception for dnsmasq
+
+Capture the exception in dnsmasq_pid_for method. If the pidfile cannot be read
+for some reason, it should be treated as if it does not exist. This prevents
+issues where the filesystem write delay leaves the file created but empty.
+Fixes bug 865399.
+
+(cherry picked from commit a25f106c2f824d7d03bf1161da72f66fe4be5a9c)
+
+Change-Id: Ifd79c7143060702bfe359f0e0a35867c685e27df
+---
+ Authors                   |    1 +
+ nova/network/linux_net.py |    7 +++++--
+ 2 files changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/Authors b/Authors
+index cc1fb78..adb2bbc 100644
+--- a/Authors
++++ b/Authors
+@@ -120,6 +120,7 @@ Vladimir Popovski <vladimir@zadarastorage.com>
+ William Wolf <throughnothing@gmail.com>
+ Yoshiaki Tamura <yoshi@midokura.jp>
+ Youcef Laribi <Youcef.Laribi@eu.citrix.com>
++Yun Shen <Yun.Shen@hp.com>
+ Yuriy Taraday <yorik.sar@gmail.com>
+ Zhixue Wu <Zhixue.Wu@citrix.com>
+ Zed Shaw <zedshaw@zedshaw.com>
+diff --git a/nova/network/linux_net.py b/nova/network/linux_net.py
+index 5370f37..c0be962 100755
+--- a/nova/network/linux_net.py
++++ b/nova/network/linux_net.py
+@@ -793,8 +793,11 @@ def _dnsmasq_pid_for(dev):
+     pid_file = _dhcp_file(dev, 'pid')
+ 
+     if os.path.exists(pid_file):
+-        with open(pid_file, 'r') as f:
+-            return int(f.read())
++        try:
++            with open(pid_file, 'r') as f:
++                return int(f.read())
++        except (ValueError, IOError):
++            return None
+ 
+ 
+ def _ra_pid_for(dev):
+-- 
+1.7.6.5
+

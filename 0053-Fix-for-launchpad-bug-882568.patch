@@ -1,0 +1,41 @@
+From 95b56105b2fc66de2c1cbaad773955a65ed30fa0 Mon Sep 17 00:00:00 2001
+From: Brad Hall <brad@nicira.com>
+Date: Thu, 27 Oct 2011 17:45:23 -0700
+Subject: [PATCH 53/94] Fix for launchpad bug #882568
+
+Use tunctl to create the tap device if we are on a system where the ip command
+is too old (and doesn't have support for tuntap).
+
+(cherry picked from commit e4c74596bfaf1cee1a6f8cbb0d97aa067d9a4317)
+
+Change-Id: I9e22010e4c7dd2671267de6d0e7a7bc9ae76a854
+---
+ nova/virt/libvirt/vif.py |   11 ++++++++++-
+ 1 files changed, 10 insertions(+), 1 deletions(-)
+
+diff --git a/nova/virt/libvirt/vif.py b/nova/virt/libvirt/vif.py
+index 077c324..96cf2e7 100644
+--- a/nova/virt/libvirt/vif.py
++++ b/nova/virt/libvirt/vif.py
+@@ -107,8 +107,17 @@ class LibvirtOpenVswitchDriver(VIFDriver):
+         iface_id = mapping['vif_uuid']
+         dev = self.get_dev_name(iface_id)
+         if not linux_net._device_exists(dev):
+-            utils.execute('ip', 'tuntap', 'add', dev, 'mode', 'tap',
++            # Older version of the command 'ip' from the iproute2 package
++            # don't have support for the tuntap option (lp:882568).  If it
++            # turns out we're on an old version we work around this by using
++            # tunctl.
++            try:
++                # First, try with 'ip'
++                utils.execute('ip', 'tuntap', 'add', dev, 'mode', 'tap',
+                           run_as_root=True)
++            except exception.ProcessExecutionError:
++                # Second option: tunctl
++                utils.execute('tunctl', '-b', '-t', dev, run_as_root=True)
+             utils.execute('ip', 'link', 'set', dev, 'up', run_as_root=True)
+         utils.execute('ovs-vsctl', '--', '--may-exist', 'add-port',
+                 FLAGS.libvirt_ovs_bridge, dev,
+-- 
+1.7.6.5
+

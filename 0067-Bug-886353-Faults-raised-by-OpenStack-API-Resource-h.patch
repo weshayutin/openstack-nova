@@ -1,0 +1,35 @@
+From 1270e11ef9fb3723e4a86bfe99d500ffbe615a4d Mon Sep 17 00:00:00 2001
+From: Ewan Mellor <ewan.mellor@citrix.com>
+Date: Fri, 4 Nov 2011 14:00:37 -0700
+Subject: [PATCH 67/94] Bug #886353: Faults raised by OpenStack API Resource
+ handlers fail to be reported properly
+
+In Resource.__call__, catch any faults.Fault that are thrown by the request
+handler, and make those the action_result.  This means that the Fault doesn't
+fall into the exception handler below (faults.Fault is a subclass of
+webob.exc.HTTPException) and so we don't attempt to wrap a Fault in a Fault.
+
+(cherry picked from commit 01150b5d0d482a83a1065c2a6d62f4963c9f838d)
+
+Change-Id: Ica31723ddd621332ec4be75db0d675bc98905e43
+---
+ nova/api/openstack/wsgi.py |    3 +++
+ 1 files changed, 3 insertions(+), 0 deletions(-)
+
+diff --git a/nova/api/openstack/wsgi.py b/nova/api/openstack/wsgi.py
+index 8641e96..72e8f1b 100644
+--- a/nova/api/openstack/wsgi.py
++++ b/nova/api/openstack/wsgi.py
+@@ -492,6 +492,9 @@ class Resource(wsgi.Application):
+ 
+         try:
+             action_result = self.dispatch(request, action, args)
++        except faults.Fault as ex:
++            LOG.info(_("Fault thrown: %s"), unicode(ex))
++            action_result = ex
+         except webob.exc.HTTPException as ex:
+             LOG.info(_("HTTP exception thrown: %s"), unicode(ex))
+             action_result = faults.Fault(ex)
+-- 
+1.7.6.5
+

@@ -2,7 +2,7 @@
 
 Name:             openstack-nova
 Version:          2011.3
-Release:          15%{?dist}
+Release:          16%{?dist}
 Summary:          OpenStack Compute (nova)
 
 Group:            Applications/System
@@ -48,44 +48,92 @@ Patch09:          0009-Fix-the-grantee-group-loading-for-source-groups.patch
 Patch10:          0010-Call-endheaders-when-auth_token-is-None.-Fixes-bug-8.patch
 Patch11:          0011-Removed-db_pool-complexities-from-nova.db.sqlalchemy.patch
 Patch12:          0012-Raise-InsufficientFreeMemory.patch
-Patch13:          0013-Add-missing-author.patch
-Patch14:          0014-Make-snapshots-private-by-default.patch
-Patch15:          0015-Snapshots-backups-can-no-longer-happen-simultaneousl.patch
-Patch16:          0016-Fixed-bug-lp850602.patch
-Patch17:          0017-bug-861310.patch
-Patch18:          0018-Enforce-snapshot-cleanup.patch
-Patch19:          0019-bug-lp845714.patch
-Patch20:          0020-Added-1.0.4-version-specifier-to-kombu-in-pip-requir.patch
-Patch21:          0021-Adds-the-tenant-id-to-the-create-images-response-Loc.patch
-Patch22:          0022-Fixes-bug-862633-OS-api-consoles-create-broken.patch
-Patch23:          0023-Deallocate-ip-if-build-fails.patch
-Patch24:          0024-Stop-returning-correct-password-on-api-calls.patch
-Patch25:          0025-Handle-pidfile-exception-for-dnsmasq.patch
-Patch26:          0026-Make-sure-unknown-extensions-return-404.patch
-Patch27:          0027-Include-original-exception-in-ClassNotFound-exceptio.patch
-Patch28:          0028-Ensure-non-default-FLAGS.logfile_mode-is-properly-co.patch
-Patch29:          0029-Don-t-leak-exceptions-out-to-users.patch
-Patch30:          0030-Makes-snapshots-work-for-amis.-Fixes-bug-873156.patch
+Patch13:          0013-Don-t-leak-exceptions-out-to-users.patch
+Patch14:          0014-Makes-snapshots-work-for-amis.-Fixes-bug-873156.patch
+Patch15:          0015-Add-missing-author.patch
+Patch16:          0016-Make-snapshots-private-by-default.patch
+Patch17:          0017-Snapshots-backups-can-no-longer-happen-simultaneousl.patch
+Patch18:          0018-Fixed-bug-lp850602.patch
+Patch19:          0019-bug-861310.patch
+Patch20:          0020-Enforce-snapshot-cleanup.patch
+Patch21:          0021-bug-lp845714.patch
+Patch22:          0022-Added-1.0.4-version-specifier-to-kombu-in-pip-requir.patch
+Patch23:          0023-Adds-the-tenant-id-to-the-create-images-response-Loc.patch
+Patch24:          0024-Fixes-bug-862633-OS-api-consoles-create-broken.patch
+Patch25:          0025-Deallocate-ip-if-build-fails.patch
+Patch26:          0026-Stop-returning-correct-password-on-api-calls.patch
+Patch27:          0027-Handle-pidfile-exception-for-dnsmasq.patch
+Patch28:          0028-Make-sure-unknown-extensions-return-404.patch
+Patch29:          0029-Include-original-exception-in-ClassNotFound-exceptio.patch
+Patch30:          0030-Ensure-non-default-FLAGS.logfile_mode-is-properly-co.patch
 Patch31:          0031-Explicit-errors-on-confirm-revertResize-failures.patch
 Patch32:          0032-Adds-ext4-and-reiserfs-to-_mount_filesystem.patch
 Patch33:          0033-Improve-access-check-on-images.patch
 Patch34:          0034-Fixes-bug-834633-Auto-assigning-floating-IPs.patch
 Patch35:          0035-fixes-bug-883233.patch
-
-# This is a security fix
-Patch36:          0036-Sanitize-EC2-manifests-and-image-tarballs.patch
+Patch36:          0036-Fix-deletion-of-instances-without-fixed-ips.patch
+Patch37:          0037-Fix-file-injection-for-OSAPI-rebuilds.-Fixes-881649.patch
+Patch38:          0038-Add-.gitreview-config-file-for-gerrit.patch
+Patch39:          0039-Adding-bulk-create-fixed-ips.-The-true-issue-here.patch
+Patch40:          0040-Retry-failed-SQL-connections-LP-876663.patch
+Patch41:          0041-Updated-NoAuth-to-account-for-requests-ending-in.patch
+Patch42:          0042-Make-sure-networks-returned-from-get_instance_nw_inf.patch
+Patch43:          0043-Bug-884527-ajax_console_proxy_port-needs-to-be-an-in.patch
+Patch44:          0044-Fix-lp-861160-newly-created-network-has-no-uuid.patch
+Patch45:          0045-Fix-KeyError-when-passed-unknown-format-of-time.patch
+Patch46:          0046-Add-local-storage-of-context-for-logging.patch
+Patch47:          0047-Bug-884863-nova-logs-everything-to-syslog-twice.patch
+Patch48:          0048-Bug-884534-nova-ajax-console-proxy-crashes-on-shutdo.patch
+Patch49:          0049-exception.KeypairNotFound-usage-correction.patch
+Patch50:          0050-fix-bug-816630.patch
+Patch51:          0051-Log-the-exception-when-we-get-one.patch
+Patch52:          0052-Change-floating-snat-to-float-snat.patch
+Patch53:          0053-Fix-for-launchpad-bug-882568.patch
+Patch54:          0054-Undefine-libvirt-saved-instances.patch
+Patch55:          0055-Log-original-dropped-exception-when-a-new-exception-.patch
+Patch56:          0056-Fix-exception-reraising-in-volume-manager.patch
+Patch57:          0057-Make-run-instances-respect-availability-zone.patch
+Patch58:          0058-Makes-rpc_allocate_fixed_ip-return-properly.patch
+Patch59:          0059-Update-exception.wrap_exception-so-that-all-exceptio.patch
+Patch60:          0060-Move-failed-instances-to-error-state.patch
+Patch61:          0061-Fixes-LP878319.patch
+Patch62:          0062-Fixes-bug-871877.patch
+Patch63:          0063-nova-manage-exit-with-status-1-if-an-image-registrat.patch
+Patch64:          0064-Fix-a-notification-bug-when-creating-instances.patch
+Patch65:          0065-fix-rebuild-sha1-not-string-error.patch
+Patch66:          0066-Verify-security-group-parameters.patch
+Patch67:          0067-Bug-886353-Faults-raised-by-OpenStack-API-Resource-h.patch
+Patch68:          0068-Makes-sure-gateways-forward-properly.patch
+Patch69:          0069-Fix-a-minor-memory-leak.patch
+Patch70:          0070-Fixes-bug-886263.patch
+Patch71:          0071-Fix-for-bug-894431.patch
+Patch72:          0072-Bug-897091-nova-actions-fails-with-HTTP-400-TypeErro.patch
+Patch73:          0073-removed-logic-of-throwing-exception-if-no-floating-i.patch
+Patch74:          0074-Fix-RPC-responses-to-allow-None-response-correctly.patch
+Patch75:          0075-Sanitize-EC2-manifests-and-image-tarballs.patch
+Patch76:          0076-Rename-.nova-venv-to-.venv.patch
+Patch77:          0077-Fix-issue-in-test_s3_malicious_tarballs.patch
+Patch78:          0078-Fixes-bug-888649.patch
+Patch79:          0079-Fixes-bug-767947.patch
+Patch80:          0080-Add-Support-to-delete-VMs-in-error-state.patch
+Patch81:          0081-Fix-to-correctly-report-memory-on-Linux-3.X.patch
+Patch82:          0082-avoid-error-and-trace-on-dom.vcpus-in-lxc.patch
+Patch83:          0083-Bug-751229-Floating-address-range-fixed.patch
+Patch84:          0084-Bug-820059-bin-nova-manage.py-VpnCommands.spawn-call.patch
+Patch85:          0085-Pass-r-option-to-collie-cluster-status.patch
+Patch86:          0086-Fixing-snapshot-failure-task_state.patch
 
 # These are Fedora specific backports from master
-Patch37:          0037-Add-INPUT-chain-rule-for-EC2-metadata-requests-lp-85.patch
-Patch38:          0038-Have-nova-api-add-the-INPUT-rule-for-EC2-metadata-lp.patch
-Patch39:          0039-Allow-the-user-to-choose-either-ietadm-or-tgtadm-lp-.patch
-Patch40:          0040-Remove-VolumeDriver.sync_exec-method-lp-819997.patch
-Patch41:          0041-Refactor-ietadm-tgtadm-calls-out-into-helper-classes.patch
-Patch42:          0042-Bug-898257-abstract-out-disk-image-access-methods.patch
-Patch43:          0043-Bug-898257-support-handling-images-with-libguestfs.patch
+Patch87:          0087-Add-INPUT-chain-rule-for-EC2-metadata-requests-lp-85.patch
+Patch88:          0088-Have-nova-api-add-the-INPUT-rule-for-EC2-metadata-lp.patch
+Patch89:          0089-Allow-the-user-to-choose-either-ietadm-or-tgtadm-lp-.patch
+Patch90:          0090-Remove-VolumeDriver.sync_exec-method-lp-819997.patch
+Patch91:          0091-Refactor-ietadm-tgtadm-calls-out-into-helper-classes.patch
+Patch92:          0092-Bug-898257-abstract-out-disk-image-access-methods.patch
+Patch93:          0093-Bug-898257-support-handling-images-with-libguestfs.patch
 
 # This is Fedora specific and not upstream
-Patch44:          0044-Ensure-we-don-t-access-the-net-when-building-docs.patch
+Patch94:          0094-Ensure-we-don-t-access-the-net-when-building-docs.patch
 
 BuildArch:        noarch
 BuildRequires:    intltool
@@ -264,6 +312,56 @@ This package contains documentation files for nova.
 %patch42 -p1
 %patch43 -p1
 %patch44 -p1
+%patch45 -p1
+%patch46 -p1
+%patch47 -p1
+%patch48 -p1
+%patch49 -p1
+%patch50 -p1
+%patch51 -p1
+%patch52 -p1
+%patch53 -p1
+%patch54 -p1
+%patch55 -p1
+%patch56 -p1
+%patch57 -p1
+%patch58 -p1
+%patch59 -p1
+%patch60 -p1
+%patch61 -p1
+%patch62 -p1
+%patch63 -p1
+%patch64 -p1
+%patch65 -p1
+%patch66 -p1
+%patch67 -p1
+%patch68 -p1
+%patch69 -p1
+%patch70 -p1
+%patch71 -p1
+%patch72 -p1
+%patch73 -p1
+%patch74 -p1
+%patch75 -p1
+%patch76 -p1
+%patch77 -p1
+%patch78 -p1
+%patch79 -p1
+%patch80 -p1
+%patch81 -p1
+%patch82 -p1
+%patch83 -p1
+%patch84 -p1
+%patch85 -p1
+%patch86 -p1
+%patch87 -p1
+%patch88 -p1
+%patch89 -p1
+%patch90 -p1
+%patch91 -p1
+%patch92 -p1
+%patch93 -p1
+%patch94 -p1
 
 find . \( -name .gitignore -o -name .placeholder \) -delete
 
@@ -450,6 +548,9 @@ fi
 %endif
 
 %changelog
+* Fri Jan  6 2012 Mark McLoughlin <markmc@redhat.com> - 2011.3-16
+- Rebase to latest upstream stable/diablo, pulling in ~50 patches
+
 * Fri Jan  6 2012 Mark McLoughlin <markmc@redhat.com> - 2011.3-15
 - Move recent patches into git (no functional changes)
 

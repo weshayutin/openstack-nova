@@ -1,0 +1,30 @@
+From 18d0c9a59d94fc23b3fdf03b609ed11e6597e717 Mon Sep 17 00:00:00 2001
+From: Brad Hall <brad@nicira.com>
+Date: Thu, 24 Nov 2011 07:44:02 -0800
+Subject: [PATCH 71/94] Fix for bug 894431
+
+Make sure we set the correct interface id
+
+(cherry picked from commit 94ed3e71ac5ea79fc4746d5d1b0c758744316cc6)
+
+Change-Id: I427284182cc0a5a456b43b777faba0a74f3816e7
+---
+ nova/network/linux_net.py |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/nova/network/linux_net.py b/nova/network/linux_net.py
+index a55ba2c..e685b4b 100755
+--- a/nova/network/linux_net.py
++++ b/nova/network/linux_net.py
+@@ -993,7 +993,7 @@ class LinuxOVSInterfaceDriver(LinuxNetInterfaceDriver):
+                         '--', '--may-exist', 'add-port', bridge, dev,
+                         '--', 'set', 'Interface', dev, "type=internal",
+                         '--', 'set', 'Interface', dev,
+-                                "external-ids:iface-id=nova-%s" % dev,
++                                "external-ids:iface-id=%s" % dev,
+                         '--', 'set', 'Interface', dev,
+                                 "external-ids:iface-status=active",
+                         '--', 'set', 'Interface', dev,
+-- 
+1.7.6.5
+

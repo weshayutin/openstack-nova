@@ -1,0 +1,29 @@
+From e2b450c00fd7491b09109fdc13efe02ee5765fbc Mon Sep 17 00:00:00 2001
+From: Ewan Mellor <ewan.mellor@citrix.com>
+Date: Tue, 1 Nov 2011 11:33:44 -0700
+Subject: [PATCH 51/94] Log the exception when we get one.
+
+(cherry picked from commit 46152102a0f5900e1a2cc0800ec850aa7191a3d6)
+
+Change-Id: Iee478c8f300b608dd153e3400bd17866f52543c5
+---
+ bin/nova-ajax-console-proxy |    3 ++-
+ 1 files changed, 2 insertions(+), 1 deletions(-)
+
+diff --git a/bin/nova-ajax-console-proxy b/bin/nova-ajax-console-proxy
+index 23fb42f..5546e37 100755
+--- a/bin/nova-ajax-console-proxy
++++ b/bin/nova-ajax-console-proxy
+@@ -102,7 +102,8 @@ class AjaxConsoleProxy(object):
+                           % (req_url, str(env)))
+             start_response("401 NOT AUTHORIZED", [])
+             return "Not Authorized"
+-        except Exception:
++        except Exception, exc:
++            LOG.exception(exc)
+             start_response("500 ERROR", [])
+             return "Server Error"
+ 
+-- 
+1.7.6.5
+

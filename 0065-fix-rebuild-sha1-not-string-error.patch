@@ -1,0 +1,61 @@
+From ce4ea1f35c2d73b644498f4f06b46c75abd9b08d Mon Sep 17 00:00:00 2001
+From: David Subiros <david.perez5@hp.com>
+Date: Tue, 4 Oct 2011 13:12:40 +0100
+Subject: [PATCH 65/94] fix rebuild sha1 not string error
+
+fixes bug #889164
+The sha1() parameter is converted to a string
+before calling the funcion.
+
+(cherry picked from commit 17ae2d2662ca9af6eee0cf96fe48d3951593dc6b)
+
+Change-Id: I9cb6ff43c106c214e027d3bdacb795b4b0269f94
+---
+ nova/tests/test_libvirt.py      |   10 ++++++++--
+ nova/virt/libvirt/connection.py |    2 +-
+ 2 files changed, 9 insertions(+), 3 deletions(-)
+
+diff --git a/nova/tests/test_libvirt.py b/nova/tests/test_libvirt.py
+index f59b2f7..b44bde2 100644
+--- a/nova/tests/test_libvirt.py
++++ b/nova/tests/test_libvirt.py
+@@ -926,7 +926,10 @@ class LibvirtConnTestCase(test.TestCase):
+             return
+ 
+         self.create_fake_libvirt_mock()
+-        instance = db.instance_create(self.context, self.test_instance)
++
++        instance_ref = self.test_instance
++        instance_ref['image_ref'] = 123456  # we send an int to test sha1 call
++        instance = db.instance_create(self.context, instance_ref)
+ 
+         # Start test
+         self.mox.ReplayAll()
+@@ -939,7 +942,10 @@ class LibvirtConnTestCase(test.TestCase):
+         try:
+             conn.spawn(self.context, instance, network_info)
+         except Exception, e:
+-            count = (0 <= str(e.message).find('Unexpected method call'))
++            # assert that no exception is raised due to sha1 receiving an int
++            self.assertEqual(-1, str(e).find('must be string or buffer'
++                                             ', not int'))
++            count = (0 <= str(e).find('Unexpected method call'))
+ 
+         shutil.rmtree(os.path.join(FLAGS.instances_path, instance.name))
+         shutil.rmtree(os.path.join(FLAGS.instances_path, '_base'))
+diff --git a/nova/virt/libvirt/connection.py b/nova/virt/libvirt/connection.py
+index ba1dc86..333ae49 100644
+--- a/nova/virt/libvirt/connection.py
++++ b/nova/virt/libvirt/connection.py
+@@ -866,7 +866,7 @@ class LibvirtConnection(driver.ComputeDriver):
+                                   user_id=inst['user_id'],
+                                   project_id=inst['project_id'])
+ 
+-        root_fname = hashlib.sha1(disk_images['image_id']).hexdigest()
++        root_fname = hashlib.sha1(str(disk_images['image_id'])).hexdigest()
+         size = FLAGS.minimum_root_size
+ 
+         inst_type_id = inst['instance_type_id']
+-- 
+1.7.6.5
+

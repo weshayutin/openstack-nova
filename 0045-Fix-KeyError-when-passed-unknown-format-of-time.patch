@@ -1,0 +1,32 @@
+From bf439484c07944c5558fc833502164b9593a85bf Mon Sep 17 00:00:00 2001
+From: Johannes Erdfelt <johannes.erdfelt@rackspace.com>
+Date: Tue, 1 Nov 2011 15:31:30 +0000
+Subject: [PATCH 45/94] Fix KeyError when passed unknown format of time
+
+Fixes bug 883253
+
+ISO_FORMATS should be iso_formats
+
+(cherry picked from commit af5ee6855b17acca3ec182650a26c3d2d33bcad9)
+
+Change-Id: I3cd122176b72c84570d6b24315526540f8f860b9
+---
+ nova/image/glance.py |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/nova/image/glance.py b/nova/image/glance.py
+index 5b6ec87..cd97268 100644
+--- a/nova/image/glance.py
++++ b/nova/image/glance.py
+@@ -379,7 +379,7 @@ def _parse_glance_iso8601_timestamp(timestamp):
+             pass
+ 
+     raise ValueError(_('%(timestamp)s does not follow any of the '
+-                       'signatures: %(ISO_FORMATS)s') % locals())
++                       'signatures: %(iso_formats)s') % locals())
+ 
+ 
+ # TODO(yamahata): use block-device-mapping extension to glance
+-- 
+1.7.6.5
+

@@ -1,0 +1,29 @@
+From 9a00aea7fc49522ab8628383e8a3fde3f0aa83db Mon Sep 17 00:00:00 2001
+From: Ewan Mellor <ewan.mellor@citrix.com>
+Date: Mon, 31 Oct 2011 17:33:47 -0700
+Subject: [PATCH 48/94] Bug #884534: nova-ajax-console-proxy crashes on
+ shutdown
+
+Close the correct connection, when shutting down.  self is not defined in
+this context.
+
+(cherry picked from commit 826888de038d5ba58c133c5fa1471ec9bfe0f52d)
+
+Change-Id: I0dc84a1c7de468a381f5765ccba589acbc8173dd
+---
+ bin/nova-ajax-console-proxy |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/bin/nova-ajax-console-proxy b/bin/nova-ajax-console-proxy
+index 23fb42f..4770a8a 100755
+--- a/bin/nova-ajax-console-proxy
++++ b/bin/nova-ajax-console-proxy
+@@ -141,4 +141,4 @@ if __name__ == '__main__':
+     server = wsgi.Server("AJAX Console Proxy", acp, port=acp_port)
+     service.serve(server)
+     service.wait()
+-    self.conn.close()
++    acp.conn.close()
+-- 
+1.7.6.5
+

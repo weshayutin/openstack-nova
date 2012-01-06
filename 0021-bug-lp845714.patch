@@ -1,0 +1,100 @@
+From 45b48835d8edb4c6caa597eb05c959b394434f92 Mon Sep 17 00:00:00 2001
+From: Aaron Lee <aaron.lee@rackspace.com>
+Date: Thu, 22 Sep 2011 17:07:27 -0500
+Subject: [PATCH 21/94] bug lp845714
+
+Kind of fixes it, this calls resize on the instance. The space will be
+available, but the partition won't be resized to use this space.
+Running fdisk -l will show the additional space(after a discussion here
+I was told this solution was best for the moment).
+
+Adding myself to Authors
+
+(cherry picked from commit 2dd0445dd60e5f0e845c49adbfb81acbebfc3ea8)
+
+Change-Id: I563bb92934445799892e1064a78c1c7e29a7237c
+---
+ nova/tests/test_xenapi.py  |    3 +++
+ nova/tests/xenapi/stubs.py |    3 ---
+ nova/virt/xenapi/fake.py   |    6 ++++++
+ nova/virt/xenapi/vmops.py  |    5 +++++
+ 4 files changed, 14 insertions(+), 3 deletions(-)
+
+diff --git a/nova/tests/test_xenapi.py b/nova/tests/test_xenapi.py
+index e4fde88..82226e6 100644
+--- a/nova/tests/test_xenapi.py
++++ b/nova/tests/test_xenapi.py
+@@ -82,6 +82,7 @@ class XenAPIVolumeTestCase(test.TestCase):
+                   'image_ref': 1,
+                   'kernel_id': 2,
+                   'ramdisk_id': 3,
++                  'local_gb': 20,
+                   'instance_type_id': '3',  # m1.large
+                   'os_type': 'linux',
+                   'architecture': 'x86-64'}
+@@ -375,6 +376,7 @@ class XenAPIVMTestCase(test.TestCase):
+                       'image_ref': image_ref,
+                       'kernel_id': kernel_id,
+                       'ramdisk_id': ramdisk_id,
++                      'local_gb': 20,
+                       'instance_type_id': instance_type_id,
+                       'os_type': os_type,
+                       'hostname': hostname,
+@@ -651,6 +653,7 @@ class XenAPIVMTestCase(test.TestCase):
+             'image_ref': 1,
+             'kernel_id': 2,
+             'ramdisk_id': 3,
++            'local_gb': 20,
+             'instance_type_id': '3',  # m1.large
+             'os_type': 'linux',
+             'architecture': 'x86-64'}
+diff --git a/nova/tests/xenapi/stubs.py b/nova/tests/xenapi/stubs.py
+index 647a4c1..49cdc1f 100644
+--- a/nova/tests/xenapi/stubs.py
++++ b/nova/tests/xenapi/stubs.py
+@@ -282,9 +282,6 @@ class FakeSessionForMigrationTests(fake.SessionBase):
+     def VDI_get_by_uuid(self, *args):
+         return 'hurr'
+ 
+-    def VDI_resize_online(self, *args):
+-        pass
+-
+     def VM_start(self, _1, ref, _2, _3):
+         vm = fake.get_record('VM', ref)
+         if vm['power_state'] != 'Halted':
+diff --git a/nova/virt/xenapi/fake.py b/nova/virt/xenapi/fake.py
+index 97dfd9f..475ed54 100644
+--- a/nova/virt/xenapi/fake.py
++++ b/nova/virt/xenapi/fake.py
+@@ -378,6 +378,12 @@ class SessionBase(object):
+     def host_call_plugin(self, *args):
+         return 'herp'
+ 
++    def VDI_resize_online(self, *args):
++        return 'derp'
++
++    def VM_clean_reboot(self, *args):
++        return 'burp'
++
+     def network_get_all_records_where(self, _1, filter):
+         return self.xenapi.network.get_all_records()
+ 
+diff --git a/nova/virt/xenapi/vmops.py b/nova/virt/xenapi/vmops.py
+index f483758..446b623 100644
+--- a/nova/virt/xenapi/vmops.py
++++ b/nova/virt/xenapi/vmops.py
+@@ -140,6 +140,11 @@ class VMOps(object):
+                 instance, instance.image_ref,
+                 instance.user_id, instance.project_id,
+                 disk_image_type)
++
++        for vdi in vdis:
++            if vdi["vdi_type"] == "os":
++                self.resize_instance(instance, vdi["vdi_uuid"])
++
+         return vdis
+ 
+     def spawn(self, context, instance, network_info):
+-- 
+1.7.6.5
+

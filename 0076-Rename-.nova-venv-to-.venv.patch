@@ -1,0 +1,128 @@
+From 18a5ca1c20729e4f3309dc1785999ecf3255616f Mon Sep 17 00:00:00 2001
+From: "James E. Blair" <jeblair@hp.com>
+Date: Thu, 8 Dec 2011 15:14:48 -0800
+Subject: [PATCH 76/94] Rename .nova-venv to .venv.
+
+This simplifies a number of Jenkins jobs which currently, other
+than directory names, could be the same for all OpenStack
+projects. By renaming the virtualenv directory, the redundant
+Jenkins virtualenv build and copy jobs can be eliminated.
+
+Cherry-picked from 5235106e95681a2942a083aff7c00d385bd10489
+
+Conflicts:
+
+	.gitignore
+	doc/source/devref/development.environment.rst
+
+Change-Id: Ieaf1dac3207ecb34b911c7edcd2086809abdf49e
+---
+ .gitignore                                    |    1 +
+ .mailmap                                      |    2 ++
+ Authors                                       |    2 +-
+ doc/source/devref/development.environment.rst |    3 +--
+ run_tests.sh                                  |    2 +-
+ tools/install_venv.py                         |    4 ++--
+ tools/with_venv.sh                            |    2 +-
+ 7 files changed, 9 insertions(+), 7 deletions(-)
+
+diff --git a/.gitignore b/.gitignore
+index 2afc7a3..8bc8497 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -10,3 +10,4 @@ build/*
+ build-stamp
+ nova.egg-info
+ .nova-venv
++.venv
+diff --git a/.mailmap b/.mailmap
+index f2f59d8..9b6127c 100644
+--- a/.mailmap
++++ b/.mailmap
+@@ -22,6 +22,8 @@
+ <jake@ansolabs.com> <jake@markupisart.com>
+ <jake@ansolabs.com> <admin@jakedahn.com>
+ <jaypipes@gmail.com> <jpipes@serialcoder>
++<jeblair@hp.com> <james.blair@rackspace.com>
++<jeblair@hp.com> <corvus@inaugust.com>
+ <jmckenty@gmail.com> <jmckenty@joshua-mckentys-macbook-pro.local>
+ <jmckenty@gmail.com> <jmckenty@yyj-dhcp171.corp.flock.com>
+ <jmckenty@gmail.com> <joshua.mckenty@nasa.gov>
+diff --git a/Authors b/Authors
+index 08403b8..9cb7ba8 100644
+--- a/Authors
++++ b/Authors
+@@ -48,7 +48,7 @@ Hisaki Ohara <hisaki.ohara@intel.com>
+ Ilya Alekseyev <ilyaalekseyev@acm.org>
+ Isaku Yamahata <yamahata@valinux.co.jp>
+ Jake Dahn <jake@ansolabs.com>
+-James E. Blair <james.blair@rackspace.com>
++James E. Blair <jeblair@hp.com>
+ Jason Cannavale <jason.cannavale@rackspace.com>
+ Jason Koelker <jason@koelker.net>
+ Jay Pipes <jaypipes@gmail.com>
+diff --git a/doc/source/devref/development.environment.rst b/doc/source/devref/development.environment.rst
+index 09f1eb2..6c9f2e6 100644
+--- a/doc/source/devref/development.environment.rst
++++ b/doc/source/devref/development.environment.rst
+@@ -85,11 +85,10 @@ Here's how to get the latest code::
+ 
+   cd nova
+   bzr pull # get the latest stuff...
+-  source .nova_venv/bin/activate
++  source .venv/bin/activate
+   ./run_tests.sh
+ 
+ Then you can do cleaning work or hack hack hack with a branched named cleaning.  
+-
+ Contributing Your Work
+ ----------------------
+ 
+diff --git a/run_tests.sh b/run_tests.sh
+index 9a69195..18589cd 100755
+--- a/run_tests.sh
++++ b/run_tests.sh
+@@ -40,7 +40,7 @@ function process_option {
+   esac
+ }
+ 
+-venv=.nova-venv
++venv=.venv
+ with_venv=tools/with_venv.sh
+ always_venv=0
+ never_venv=0
+diff --git a/tools/install_venv.py b/tools/install_venv.py
+index 3c2f697..601ce27 100644
+--- a/tools/install_venv.py
++++ b/tools/install_venv.py
+@@ -29,7 +29,7 @@ import sys
+ 
+ 
+ ROOT = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+-VENV = os.path.join(ROOT, '.nova-venv')
++VENV = os.path.join(ROOT, '.venv')
+ PIP_REQUIRES = os.path.join(ROOT, 'tools', 'pip-requires')
+ PY_VERSION = "python%s.%s" % (sys.version_info[0], sys.version_info[1])
+ 
+@@ -123,7 +123,7 @@ def print_help():
+     To activate the Nova virtualenv for the extent of your current shell
+     session you can run:
+ 
+-    $ source .nova-venv/bin/activate
++    $ source .venv/bin/activate
+ 
+     Or, if you prefer, you can run commands in the virtualenv on a case by case
+     basis by running:
+diff --git a/tools/with_venv.sh b/tools/with_venv.sh
+index 99d1ac1..c8d2940 100755
+--- a/tools/with_venv.sh
++++ b/tools/with_venv.sh
+@@ -1,4 +1,4 @@
+ #!/bin/bash
+ TOOLS=`dirname $0`
+-VENV=$TOOLS/../.nova-venv
++VENV=$TOOLS/../.venv
+ source $VENV/bin/activate && $@
+-- 
+1.7.6.5
+

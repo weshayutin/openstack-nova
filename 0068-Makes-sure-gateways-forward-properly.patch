@@ -1,0 +1,111 @@
+From e9f427fc2e8014eeba3f46284c38414209fb0b7e Mon Sep 17 00:00:00 2001
+From: Vishvananda Ishaya <vishvananda@gmail.com>
+Date: Wed, 16 Nov 2011 10:17:23 -0800
+Subject: [PATCH 68/94] Makes sure gateways forward properly
+
+ * Fixes bug 890195
+ * Fixes missing context in dhcp call
+ * Adds test to verify call is correct
+
+(cherry picked from commit 41af372219793556e6ba335d765761fa277107df)
+
+Change-Id: Ic099082a18d9fd8f48c338e092cd4a2d227b927b
+---
+ nova/network/linux_net.py    |   12 +++++++-----
+ nova/tests/test_linux_net.py |   24 ++++++++++++++++++++----
+ 2 files changed, 27 insertions(+), 9 deletions(-)
+
+diff --git a/nova/network/linux_net.py b/nova/network/linux_net.py
+index a55ba2c..2d011dd 100755
+--- a/nova/network/linux_net.py
++++ b/nova/network/linux_net.py
+@@ -876,6 +876,8 @@ class LinuxBridgeInterfaceDriver(LinuxNetInterfaceDriver):
+                           network['bridge_interface'],
+                           network)
+ 
++        # NOTE(vish): applying here so we don't get a lock conflict
++        iptables_manager.apply()
+         return network['bridge']
+ 
+     def unplug(self, network):
+@@ -946,14 +948,14 @@ class LinuxBridgeInterfaceDriver(LinuxNetInterfaceDriver):
+ 
+             # NOTE(vish): This will break if there is already an ip on the
+             #             interface, so we move any ips to the bridge
+-            gateway = None
++            old_gateway = None
+             out, err = _execute('route', '-n', run_as_root=True)
+             for line in out.split('\n'):
+                 fields = line.split()
+                 if fields and fields[0] == '0.0.0.0' and \
+                                 fields[-1] == interface:
+-                    gateway = fields[1]
+-                    _execute('route', 'del', 'default', 'gw', gateway,
++                    old_gateway = fields[1]
++                    _execute('route', 'del', 'default', 'gw', old_gateway,
+                              'dev', interface, check_exit_code=False,
+                              run_as_root=True)
+             out, err = _execute('ip', 'addr', 'show', 'dev', interface,
+@@ -966,8 +968,8 @@ class LinuxBridgeInterfaceDriver(LinuxNetInterfaceDriver):
+                                 run_as_root=True)
+                     _execute(*_ip_bridge_cmd('add', params, bridge),
+                                 run_as_root=True)
+-            if gateway:
+-                _execute('route', 'add', 'default', 'gw', gateway,
++            if old_gateway:
++                _execute('route', 'add', 'default', 'gw', old_gateway,
+                             run_as_root=True)
+ 
+             if (err and err != "device %s is already a member of a bridge;"
+diff --git a/nova/tests/test_linux_net.py b/nova/tests/test_linux_net.py
+index 0e933ef..0f5862f 100755
+--- a/nova/tests/test_linux_net.py
++++ b/nova/tests/test_linux_net.py
+@@ -15,17 +15,15 @@
+ # License for the specific language governing permissions and limitations
+ # under the License.
+ 
+-from nova import context
++import mox
++
+ from nova import db
+-from nova import exception
+ from nova import flags
+ from nova import log as logging
+ from nova import test
+ from nova import utils
+-from nova.network import manager as network_manager
+ from nova.network import linux_net
+ 
+-import mox
+ 
+ FLAGS = flags.FLAGS
+ 
+@@ -346,6 +344,24 @@ class LinuxNetworkTestCase(test.TestCase):
+         actual = self.driver._host_dhcp(fixed_ips[0])
+         self.assertEquals(actual, expected)
+ 
++    def test_linux_bridge_driver_plug(self):
++        """Makes sure plug doesn't drop FORWARD by default.
++
++        Ensures bug 890195 doesn't reappear."""
++
++        def fake_execute(*args, **kwargs):
++            return "", ""
++        self.stubs.Set(utils, 'execute', fake_execute)
++
++        def verify_add_rule(chain, rule):
++            self.assertEqual(chain, 'FORWARD')
++            self.assertIn('ACCEPT', rule)
++        self.stubs.Set(linux_net.iptables_manager.ipv4['filter'],
++                       'add_rule', verify_add_rule)
++        driver = linux_net.LinuxBridgeInterfaceDriver()
++        driver.plug({"bridge": "br100", "bridge_interface": "eth0"},
++                    "fakemac")
++
+     def _test_initialize_gateway(self, existing, expected, routes=''):
+         self.flags(fake_network=False)
+         executes = []
+-- 
+1.7.6.5
+

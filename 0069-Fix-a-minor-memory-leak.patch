@@ -1,0 +1,31 @@
+From d2ae5bef3d6dc253e942e284ed9149c3912b2385 Mon Sep 17 00:00:00 2001
+From: "Kevin L. Mitchell" <kevin.mitchell@rackspace.com>
+Date: Fri, 18 Nov 2011 14:49:41 -0600
+Subject: [PATCH 69/94] Fix a minor memory leak
+
+Fixes a minor memory leak caused by a self-referential data structure
+with a __del__() method by explicitly breaking the cycle.
+
+(cherry picked from commit a594f4d34418c27197fe7f82eab150bc7cb70478)
+
+Change-Id: Ic2c896d3067f8a2205abc8a43ec290fdbd92ef09
+---
+ nova/rpc/impl_kombu.py |    2 ++
+ 1 files changed, 2 insertions(+), 0 deletions(-)
+
+diff --git a/nova/rpc/impl_kombu.py b/nova/rpc/impl_kombu.py
+index b994a6a..cc1c864 100644
+--- a/nova/rpc/impl_kombu.py
++++ b/nova/rpc/impl_kombu.py
+@@ -682,6 +682,8 @@ class MulticallWaiter(object):
+ 
+     def done(self):
+         self._done = True
++        self._iterator.close()
++        self._iterator = None
+         self._connection.close()
+ 
+     def __call__(self, data):
+-- 
+1.7.6.5
+

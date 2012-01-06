@@ -1,0 +1,66 @@
+From d05c2e6d33f40dac1aa373fcceb819d97d9e3467 Mon Sep 17 00:00:00 2001
+From: Dan Prince <dan.prince@rackspace.com>
+Date: Thu, 15 Sep 2011 22:53:42 -0400
+Subject: [PATCH 59/94] Update exception.wrap_exception so that all exceptions
+ (not just Error and NovaException types) get logged
+ correctly.
+
+(cherry picked from commit 19b3b7a0c50dd6a68238daf8827519fd83a395cc)
+
+Change-Id: I37aef06551a5ea4e29960bd80aeb0415d945fe95
+---
+ nova/exception.py            |    7 -------
+ nova/tests/test_exception.py |    7 +++----
+ 2 files changed, 3 insertions(+), 11 deletions(-)
+
+diff --git a/nova/exception.py b/nova/exception.py
+index 50477af..7b1531b 100644
+--- a/nova/exception.py
++++ b/nova/exception.py
+@@ -123,13 +123,6 @@ def wrap_exception(notifier=None, publisher_id=None, event_type=None,
+                     notifier.notify(publisher_id, temp_type, temp_level,
+                                     payload)
+ 
+-                if (not isinstance(e, Error) and
+-                    not isinstance(e, NovaException)):
+-                    #exc_type, exc_value, exc_traceback = sys.exc_info()
+-                    LOG.exception(_('Uncaught exception'))
+-                    #logging.error(traceback.extract_stack(exc_traceback))
+-                    raise Error(str(e))
+-
+                 # re-raise original exception since it may have been clobbered
+                 raise exc_info[0], exc_info[1], exc_info[2]
+ 
+diff --git a/nova/tests/test_exception.py b/nova/tests/test_exception.py
+index cd74f88..d3bc1f6 100644
+--- a/nova/tests/test_exception.py
++++ b/nova/tests/test_exception.py
+@@ -74,14 +74,13 @@ class WrapExceptionTestCase(test.TestCase):
+ 
+     def test_wrap_exception_throws_exception(self):
+         wrapped = exception.wrap_exception()
+-        # Note that Exception is converted to Error ...
+-        self.assertRaises(exception.Error, wrapped(bad_function_exception))
++        self.assertRaises(Exception, wrapped(bad_function_exception))
+ 
+     def test_wrap_exception_with_notifier(self):
+         notifier = FakeNotifier()
+         wrapped = exception.wrap_exception(notifier, "publisher", "event",
+                                            "level")
+-        self.assertRaises(exception.Error, wrapped(bad_function_exception))
++        self.assertRaises(Exception, wrapped(bad_function_exception))
+         self.assertEquals(notifier.provided_publisher, "publisher")
+         self.assertEquals(notifier.provided_event, "event")
+         self.assertEquals(notifier.provided_priority, "level")
+@@ -91,7 +90,7 @@ class WrapExceptionTestCase(test.TestCase):
+     def test_wrap_exception_with_notifier_defaults(self):
+         notifier = FakeNotifier()
+         wrapped = exception.wrap_exception(notifier)
+-        self.assertRaises(exception.Error, wrapped(bad_function_exception))
++        self.assertRaises(Exception, wrapped(bad_function_exception))
+         self.assertEquals(notifier.provided_publisher, None)
+         self.assertEquals(notifier.provided_event, "bad_function_exception")
+         self.assertEquals(notifier.provided_priority, notifier.ERROR)
+-- 
+1.7.6.5
+

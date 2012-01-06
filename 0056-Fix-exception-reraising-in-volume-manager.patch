@@ -1,0 +1,78 @@
+From 3f0196a2cb2e708442de6f2676113e4e9417ba2b Mon Sep 17 00:00:00 2001
+From: Yuriy Taraday <yorik.sar@gmail.com>
+Date: Thu, 27 Oct 2011 13:57:59 +0400
+Subject: [PATCH 56/94] Fix exception reraising in volume manager.
+
+Cherry-picked from ad710f2743f4671927fd72387e10527ac1778362.
+
+Change-Id: Id75bdd6531acf492df4c8d96723b8303406bffe0
+---
+ nova/volume/manager.py |   31 ++++++++++++++++---------------
+ 1 files changed, 16 insertions(+), 15 deletions(-)
+
+diff --git a/nova/volume/manager.py b/nova/volume/manager.py
+index caa5298..7276915 100644
+--- a/nova/volume/manager.py
++++ b/nova/volume/manager.py
+@@ -126,10 +126,10 @@ class VolumeManager(manager.SchedulerDependentManager):
+             if model_update:
+                 self.db.volume_update(context, volume_ref['id'], model_update)
+         except Exception:
+-            self.db.volume_update(context,
+-                                  volume_ref['id'], {'status': 'error'})
+-            self._notify_vsa(context, volume_ref, 'error')
+-            raise
++            with utils.save_and_reraise_exception():
++                self.db.volume_update(context,
++                                      volume_ref['id'], {'status': 'error'})
++                self._notify_vsa(context, volume_ref, 'error')
+ 
+         now = utils.utcnow()
+         self.db.volume_update(context,
+@@ -181,10 +181,10 @@ class VolumeManager(manager.SchedulerDependentManager):
+                                   {'status': 'available'})
+             return True
+         except Exception:
+-            self.db.volume_update(context,
+-                                  volume_ref['id'],
+-                                  {'status': 'error_deleting'})
+-            raise
++            with utils.save_and_reraise_exception():
++                self.db.volume_update(context,
++                                      volume_ref['id'],
++                                      {'status': 'error_deleting'})
+ 
+         self.db.volume_destroy(context, volume_id)
+         LOG.debug(_("volume %s: deleted successfully"), volume_ref['name'])
+@@ -205,9 +205,10 @@ class VolumeManager(manager.SchedulerDependentManager):
+                                         model_update)
+ 
+         except Exception:
+-            self.db.snapshot_update(context,
+-                                    snapshot_ref['id'], {'status': 'error'})
+-            raise
++            with utils.save_and_reraise_exception():
++                self.db.snapshot_update(context,
++                                        snapshot_ref['id'],
++                                        {'status': 'error'})
+ 
+         self.db.snapshot_update(context,
+                                 snapshot_ref['id'], {'status': 'available',
+@@ -224,10 +225,10 @@ class VolumeManager(manager.SchedulerDependentManager):
+             LOG.debug(_("snapshot %s: deleting"), snapshot_ref['name'])
+             self.driver.delete_snapshot(snapshot_ref)
+         except Exception:
+-            self.db.snapshot_update(context,
+-                                    snapshot_ref['id'],
+-                                    {'status': 'error_deleting'})
+-            raise
++            with utils.save_and_reraise_exception():
++                self.db.snapshot_update(context,
++                                        snapshot_ref['id'],
++                                        {'status': 'error_deleting'})
+ 
+         self.db.snapshot_destroy(context, snapshot_id)
+         LOG.debug(_("snapshot %s: deleted successfully"), snapshot_ref['name'])
+-- 
+1.7.6.5
+
