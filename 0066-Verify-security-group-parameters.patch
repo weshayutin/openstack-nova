@@ -1,7 +1,7 @@
 From bcf241259246179035f20649f947b99b21d7978a Mon Sep 17 00:00:00 2001
 From: Ahmad Hassan <ahmad.hassan@hp.com>
 Date: Fri, 30 Sep 2011 15:10:33 +0100
-Subject: [PATCH 66/94] Verify security group parameters
+Subject: [PATCH 66/95] Verify security group parameters
 
 Introduced various sanity checks before adding security group rule
 into the database. The checks have been implemented both in EC2 and

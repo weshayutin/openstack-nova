@@ -1,7 +1,7 @@
 From 39fdf335961f19903f87a4d09fd49a777c9838f2 Mon Sep 17 00:00:00 2001
 From: Ewan Mellor <ewan.mellor@citrix.com>
 Date: Wed, 9 Nov 2011 23:24:25 -0800
-Subject: [PATCH 63/94] nova-manage: exit with status 1 if an image
+Subject: [PATCH 63/95] nova-manage: exit with status 1 if an image
  registration fails
 
 This indicates the failure to the user through the exit status.

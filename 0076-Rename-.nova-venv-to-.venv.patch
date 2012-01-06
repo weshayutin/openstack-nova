@@ -1,7 +1,7 @@
 From 18a5ca1c20729e4f3309dc1785999ecf3255616f Mon Sep 17 00:00:00 2001
 From: "James E. Blair" <jeblair@hp.com>
 Date: Thu, 8 Dec 2011 15:14:48 -0800
-Subject: [PATCH 76/94] Rename .nova-venv to .venv.
+Subject: [PATCH 76/95] Rename .nova-venv to .venv.
 
 This simplifies a number of Jenkins jobs which currently, other
 than directory names, could be the same for all OpenStack

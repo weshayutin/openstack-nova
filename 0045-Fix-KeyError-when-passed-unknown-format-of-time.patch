@@ -1,7 +1,7 @@
 From bf439484c07944c5558fc833502164b9593a85bf Mon Sep 17 00:00:00 2001
 From: Johannes Erdfelt <johannes.erdfelt@rackspace.com>
 Date: Tue, 1 Nov 2011 15:31:30 +0000
-Subject: [PATCH 45/94] Fix KeyError when passed unknown format of time
+Subject: [PATCH 45/95] Fix KeyError when passed unknown format of time
 
 Fixes bug 883253
 

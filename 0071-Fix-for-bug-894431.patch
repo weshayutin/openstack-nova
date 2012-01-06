@@ -1,7 +1,7 @@
 From 18d0c9a59d94fc23b3fdf03b609ed11e6597e717 Mon Sep 17 00:00:00 2001
 From: Brad Hall <brad@nicira.com>
 Date: Thu, 24 Nov 2011 07:44:02 -0800
-Subject: [PATCH 71/94] Fix for bug 894431
+Subject: [PATCH 71/95] Fix for bug 894431
 
 Make sure we set the correct interface id
 

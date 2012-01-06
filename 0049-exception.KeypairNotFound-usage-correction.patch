@@ -1,7 +1,7 @@
 From 81d956786f3d8c10569064fdc288637327098bd6 Mon Sep 17 00:00:00 2001
 From: Brian Waldon <brian.waldon@rackspace.com>
 Date: Thu, 3 Nov 2011 09:22:35 -0400
-Subject: [PATCH 49/94] exception.KeypairNotFound usage correction
+Subject: [PATCH 49/95] exception.KeypairNotFound usage correction
 
 Fixes bug 885462
 

@@ -1,7 +1,7 @@
 From 43e0b44db00b3aece584978dace0bcc84e0eef52 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Fran=C3=A7ois=20Charlier?= <francois.charlier@enovance.com>
 Date: Fri, 2 Dec 2011 16:55:21 +0100
-Subject: [PATCH 85/94] Pass '-r' option to 'collie cluster status'.
+Subject: [PATCH 85/95] Pass '-r' option to 'collie cluster status'.
 
 The  'collie  cluster  status'  default output  is  more  verbose  since
 sheepdog 0.24.  The '-r' (raw)  option has  been added for  less verbose

@@ -1,7 +1,7 @@
 From f286a4b29d4386f8fe93f9c58fe1486f859c1317 Mon Sep 17 00:00:00 2001
 From: Johannes Erdfelt <johannes.erdfelt@rackspace.com>
 Date: Mon, 31 Oct 2011 15:11:36 +0000
-Subject: [PATCH 55/94] Log original dropped exception when a new exception
+Subject: [PATCH 55/95] Log original dropped exception when a new exception
  occurs
 
 If a exception is caught while processing a previous exception, make sure

@@ -1,7 +1,7 @@
 From be3f35b9ead65419e548ca13d5d463deb9da3a9d Mon Sep 17 00:00:00 2001
 From: Joe Gordon <jogo@cloudscaling.com>
 Date: Tue, 1 Nov 2011 12:22:13 -0700
-Subject: [PATCH 50/94] fix bug 816630
+Subject: [PATCH 50/95] fix bug 816630
 
 Off by one error fixed
 With test case

@@ -1,7 +1,7 @@
 From ec2bfe91b7bf7424eb34ad371ec25eec62cd3d24 Mon Sep 17 00:00:00 2001
 From: Brian Waldon <brian.waldon@rackspace.com>
 Date: Mon, 26 Sep 2011 13:57:34 -0400
-Subject: [PATCH 31/94] Explicit errors on confirm/revertResize failures
+Subject: [PATCH 31/95] Explicit errors on confirm/revertResize failures
 
 Fixing bug 856527
 

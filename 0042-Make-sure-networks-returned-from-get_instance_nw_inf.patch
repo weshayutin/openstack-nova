@@ -1,7 +1,7 @@
 From 029ee3023ec258e5900ec1918c5488bcaf6e677c Mon Sep 17 00:00:00 2001
 From: Brad Hall <brad@nicira.com>
 Date: Mon, 3 Oct 2011 12:07:50 -0700
-Subject: [PATCH 42/94] Make sure networks returned from get_instance_nw_info
+Subject: [PATCH 42/95] Make sure networks returned from get_instance_nw_info
  have a label
 
 (cherry picked from commit 606827f92e74d8ff5ae13e3210abedd511fd4518)

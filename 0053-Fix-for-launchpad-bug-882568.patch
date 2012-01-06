@@ -1,7 +1,7 @@
 From 95b56105b2fc66de2c1cbaad773955a65ed30fa0 Mon Sep 17 00:00:00 2001
 From: Brad Hall <brad@nicira.com>
 Date: Thu, 27 Oct 2011 17:45:23 -0700
-Subject: [PATCH 53/94] Fix for launchpad bug #882568
+Subject: [PATCH 53/95] Fix for launchpad bug #882568
 
 Use tunctl to create the tap device if we are on a system where the ip command
 is too old (and doesn't have support for tuntap).

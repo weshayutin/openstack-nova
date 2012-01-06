@@ -1,7 +1,7 @@
 From 3f0196a2cb2e708442de6f2676113e4e9417ba2b Mon Sep 17 00:00:00 2001
 From: Yuriy Taraday <yorik.sar@gmail.com>
 Date: Thu, 27 Oct 2011 13:57:59 +0400
-Subject: [PATCH 56/94] Fix exception reraising in volume manager.
+Subject: [PATCH 56/95] Fix exception reraising in volume manager.
 
 Cherry-picked from ad710f2743f4671927fd72387e10527ac1778362.
 

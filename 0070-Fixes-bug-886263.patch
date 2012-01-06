@@ -1,7 +1,7 @@
 From a6aee7386eb68d749668193547c18e2e4d661724 Mon Sep 17 00:00:00 2001
 From: Nachi Ueno <ueno.nachi@lab.ntt.co.jp>
 Date: Thu, 10 Nov 2011 10:35:57 +0900
-Subject: [PATCH 70/94] Fixes bug 886263.
+Subject: [PATCH 70/95] Fixes bug 886263.
 
 IndexError: pop index out of range on replace_uuid_with_id
 

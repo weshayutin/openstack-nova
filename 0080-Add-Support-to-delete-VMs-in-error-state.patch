@@ -1,7 +1,7 @@
 From 400095e7f37020b8d671a1559452d88512fd60e8 Mon Sep 17 00:00:00 2001
 From: Joe Gordon <jogo@cloudscaling.com>
 Date: Mon, 2 Jan 2012 17:16:06 -0800
-Subject: [PATCH 80/94] Add Support to delete VMs in error state.
+Subject: [PATCH 80/95] Add Support to delete VMs in error state.
 
 Already supported in master
 

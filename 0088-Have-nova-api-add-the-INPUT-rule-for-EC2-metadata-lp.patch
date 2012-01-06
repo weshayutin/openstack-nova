@@ -1,7 +1,7 @@
 From ec3c303f4e240c04400bc3c7d6e9171bc76457dc Mon Sep 17 00:00:00 2001
 From: Mark McLoughlin <markmc@redhat.com>
 Date: Thu, 8 Sep 2011 14:29:49 +0100
-Subject: [PATCH 88/94] Have nova-api add the INPUT rule for EC2 metadata
+Subject: [PATCH 88/95] Have nova-api add the INPUT rule for EC2 metadata
  (lp:856385)
 
 It makes no sense to have nova-network add an iptables rule for the EC2

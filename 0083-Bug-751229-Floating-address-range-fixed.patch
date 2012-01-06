@@ -1,7 +1,7 @@
 From 1085e9d0fdc81eea734482e42a5fcb6ae1f4e8f7 Mon Sep 17 00:00:00 2001
 From: Ivan Kolodyazhny <e0ne@e0ne.info>
 Date: Wed, 28 Dec 2011 23:30:35 +0200
-Subject: [PATCH 83/94] Bug 751229: Floating address range fixed
+Subject: [PATCH 83/95] Bug 751229: Floating address range fixed
 
 Change-Id: I4c7ab8512fe3a00dd555d3a183b2c2348cef9e21
 ---

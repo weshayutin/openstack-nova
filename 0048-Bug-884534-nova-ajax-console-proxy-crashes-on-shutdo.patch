@@ -1,7 +1,7 @@
 From 9a00aea7fc49522ab8628383e8a3fde3f0aa83db Mon Sep 17 00:00:00 2001
 From: Ewan Mellor <ewan.mellor@citrix.com>
 Date: Mon, 31 Oct 2011 17:33:47 -0700
-Subject: [PATCH 48/94] Bug #884534: nova-ajax-console-proxy crashes on
+Subject: [PATCH 48/95] Bug #884534: nova-ajax-console-proxy crashes on
  shutdown
 
 Close the correct connection, when shutting down.  self is not defined in

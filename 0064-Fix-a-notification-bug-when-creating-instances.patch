@@ -1,7 +1,7 @@
 From d565f3ad5917e90ab50a4b8ae9fe5079f70ed591 Mon Sep 17 00:00:00 2001
 From: "Kevin L. Mitchell" <kevin.mitchell@rackspace.com>
 Date: Thu, 10 Nov 2011 17:35:44 -0600
-Subject: [PATCH 64/94] Fix a notification bug when creating instances
+Subject: [PATCH 64/95] Fix a notification bug when creating instances
 
 Fixes a notifier bug that caused 'launched_at' to be empty and
 state to be reported as 'building', due to failure to refresh

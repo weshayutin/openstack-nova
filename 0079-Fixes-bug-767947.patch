@@ -1,7 +1,7 @@
 From add84707ec40bc4de1de5616da41b2ac5f4a9537 Mon Sep 17 00:00:00 2001
 From: Alvaro Lopez Garcia <aloga@ifca.unican.es>
 Date: Wed, 30 Nov 2011 12:25:00 +0100
-Subject: [PATCH 79/94] Fixes bug 767947
+Subject: [PATCH 79/95] Fixes bug 767947
 
 If libvirt was restarted, a libvirt.libvirtError was raised with error
 domain libvirt.VIR_FROM_RPC when trying to use the existing connection.

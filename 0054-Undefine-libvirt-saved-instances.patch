@@ -1,7 +1,7 @@
 From 27b0ff5ccd66eaaeda2ac2a013815c4d34cf9ec9 Mon Sep 17 00:00:00 2001
 From: Derek Higgins <higginsd@gmail.com>
 Date: Fri, 4 Nov 2011 00:25:34 +0000
-Subject: [PATCH 54/94] Undefine libvirt saved instances
+Subject: [PATCH 54/95] Undefine libvirt saved instances
 
 Fixes bug 814561
 

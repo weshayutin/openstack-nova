@@ -1,7 +1,7 @@
 From 98877f9c3f633225315dadd8ea8e580ab623506a Mon Sep 17 00:00:00 2001
 From: Thierry Carrez <thierry@openstack.org>
 Date: Tue, 13 Dec 2011 17:10:44 +0100
-Subject: [PATCH 77/94] Fix issue in test_s3_malicious_tarballs
+Subject: [PATCH 77/95] Fix issue in test_s3_malicious_tarballs
 
 The previous commit backported a master commit which added a test
 that cannot run successfully on stable/diablo due to a missing

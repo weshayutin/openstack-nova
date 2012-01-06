@@ -1,7 +1,7 @@
 From 744a0d8e7aa2c16fe55098c96cf9e46984838a4f Mon Sep 17 00:00:00 2001
 From: Kei Masumoto <masumotok@nttdata.co.jp>
 Date: Wed, 28 Sep 2011 15:05:54 -0400
-Subject: [PATCH 18/94] Fixed bug lp850602. Adding backing file copy operation
+Subject: [PATCH 18/95] Fixed bug lp850602. Adding backing file copy operation
  on kvm block migration.
 
 (cherry picked from commit b9aac1181581b9036c98f5aa493731fdc74be7e1)

@@ -1,7 +1,7 @@
 From 2aa5bb969256b5a447b37704d9a2076f2c5bf48d Mon Sep 17 00:00:00 2001
 From: Alex Meade <alex.meade@rackspace.com>
 Date: Fri, 28 Oct 2011 12:32:47 -0400
-Subject: [PATCH 41/94] Updated NoAuth to account for requests ending in /
+Subject: [PATCH 41/95] Updated NoAuth to account for requests ending in /
 
 Fixes bug 882742
 

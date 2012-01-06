@@ -1,7 +1,7 @@
 From 8be66ace12f3af6bbc7cdbe651a78fd9ab363eeb Mon Sep 17 00:00:00 2001
 From: Mark McLoughlin <markmc@redhat.com>
 Date: Mon, 5 Sep 2011 07:10:52 +0100
-Subject: [PATCH 87/94] Add INPUT chain rule for EC2 metadata requests
+Subject: [PATCH 87/95] Add INPUT chain rule for EC2 metadata requests
  (lp:856385)
 
 On Fedora, the default policy for the INPUT chain in the filter table

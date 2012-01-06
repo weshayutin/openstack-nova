@@ -1,7 +1,7 @@
 From 26434ef46761b6e1303f394c32031057b7fec4fd Mon Sep 17 00:00:00 2001
 From: Mark McLoughlin <markmc@redhat.com>
 Date: Tue, 25 Oct 2011 06:19:27 +0100
-Subject: [PATCH 15/94] Add missing author
+Subject: [PATCH 15/95] Add missing author
 
 Add Aaron Lee to Authors for the previous patch which somehow got
 past Jenkins.

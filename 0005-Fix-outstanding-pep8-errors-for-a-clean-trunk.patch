@@ -1,7 +1,7 @@
 From d6137fb2442ad1f0e675deeb33e5cc456574e7d6 Mon Sep 17 00:00:00 2001
 From: Monty Taylor <mordred@inaugust.com>
 Date: Thu, 22 Sep 2011 18:22:42 -0400
-Subject: [PATCH 05/94] Fix outstanding pep8 errors for a clean trunk.
+Subject: [PATCH 05/95] Fix outstanding pep8 errors for a clean trunk.
 
 Also, add an option to run_tests.sh to skip running pep8. We have a separate
 job in Jenkins which runs pep8, so there's no need to spin our wheels on it

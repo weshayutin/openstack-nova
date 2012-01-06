@@ -1,7 +1,7 @@
 From 2e85c05390a8d4f195659e993200a3b71011c832 Mon Sep 17 00:00:00 2001
 From: "James E. Blair" <james.blair@rackspace.com>
 Date: Thu, 20 Oct 2011 13:48:18 -0400
-Subject: [PATCH 38/94] Add .gitreview config file for gerrit.
+Subject: [PATCH 38/95] Add .gitreview config file for gerrit.
 
 The CI team is developing a new tool, git-review:
 

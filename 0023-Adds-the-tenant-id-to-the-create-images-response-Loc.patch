@@ -1,7 +1,7 @@
 From 6f96fa65aa73e7803c9ba82d7a4f3b49b310e1b7 Mon Sep 17 00:00:00 2001
 From: Alex Meade <alex.meade@rackspace.com>
 Date: Thu, 29 Sep 2011 15:58:43 -0400
-Subject: [PATCH 23/94] Adds the tenant id to the create images response
+Subject: [PATCH 23/95] Adds the tenant id to the create images response
  Location header Fixes bug 862672
 
 (cherry picked from commit f3fb16a7935e91f8c9034d1da84a2b17cbe186f8)

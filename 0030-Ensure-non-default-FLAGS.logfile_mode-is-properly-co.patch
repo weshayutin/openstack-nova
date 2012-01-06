@@ -1,7 +1,7 @@
 From fdcfe762a52e30e09223f4128a5f4da530aefcf9 Mon Sep 17 00:00:00 2001
 From: Adam Gandelman <adamg@canonical.com>
 Date: Thu, 29 Sep 2011 21:06:06 -0700
-Subject: [PATCH 30/94] Ensure non-default FLAGS.logfile_mode is properly
+Subject: [PATCH 30/95] Ensure non-default FLAGS.logfile_mode is properly
  converted to an octet.
 
 Fixes bug 862969.

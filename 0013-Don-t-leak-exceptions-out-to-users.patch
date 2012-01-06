@@ -1,7 +1,7 @@
 From 03c9f40f1d7be54e62b129edf41a3c729049ce0c Mon Sep 17 00:00:00 2001
 From: Johannes Erdfelt <johannes.erdfelt@rackspace.com>
 Date: Tue, 18 Oct 2011 22:08:49 +0000
-Subject: [PATCH 13/94] Don't leak exceptions out to users
+Subject: [PATCH 13/95] Don't leak exceptions out to users
 
 Fixed bug 874472
 

@@ -1,7 +1,7 @@
 From c067876e587ac55cd139f054900ca5219089ae22 Mon Sep 17 00:00:00 2001
 From: Mandell Degerness <mdegerne@gmail.com>
 Date: Mon, 21 Nov 2011 23:54:36 +0000
-Subject: [PATCH 81/94] Fix to correctly report memory on Linux 3.X.
+Subject: [PATCH 81/95] Fix to correctly report memory on Linux 3.X.
 
 If sys is compiled on a Linux 3.X system, it returns LINUX3 instead of
 LINUX2 for sys.platform.upper().

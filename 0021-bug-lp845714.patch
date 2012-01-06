@@ -1,7 +1,7 @@
 From 45b48835d8edb4c6caa597eb05c959b394434f92 Mon Sep 17 00:00:00 2001
 From: Aaron Lee <aaron.lee@rackspace.com>
 Date: Thu, 22 Sep 2011 17:07:27 -0500
-Subject: [PATCH 21/94] bug lp845714
+Subject: [PATCH 21/95] bug lp845714
 
 Kind of fixes it, this calls resize on the instance. The space will be
 available, but the partition won't be resized to use this space.

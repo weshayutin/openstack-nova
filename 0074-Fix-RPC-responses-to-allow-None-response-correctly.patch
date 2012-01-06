@@ -1,7 +1,7 @@
 From 475f3624245500c5382faf5b2708a59fcec2c9ad Mon Sep 17 00:00:00 2001
 From: Chris Behrens <cbehrens@codestud.com>
 Date: Tue, 29 Nov 2011 09:01:16 -0800
-Subject: [PATCH 74/94] Fix RPC responses to allow None response correctly.
+Subject: [PATCH 74/95] Fix RPC responses to allow None response correctly.
 
 Fixes bug 897155
 

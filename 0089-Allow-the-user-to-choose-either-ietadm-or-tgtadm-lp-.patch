@@ -1,7 +1,7 @@
 From 8593b6efeb2650c4630f86caff9008c5360b0ad4 Mon Sep 17 00:00:00 2001
 From: Mark McLoughlin <markmc@redhat.com>
 Date: Thu, 11 Aug 2011 07:44:38 -0400
-Subject: [PATCH 89/94] Allow the user to choose either ietadm or tgtadm
+Subject: [PATCH 89/95] Allow the user to choose either ietadm or tgtadm
  (lp:819997)
 
 (Actually authored by Chuck Short <zulcss@ubuntu.com> but Gerrit won't

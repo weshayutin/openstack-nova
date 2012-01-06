@@ -1,7 +1,7 @@
 From 6b5a94149cc471c277883f390c122969a2e743f5 Mon Sep 17 00:00:00 2001
 From: Ewan Mellor <ewan.mellor@citrix.com>
 Date: Mon, 31 Oct 2011 17:21:54 -0700
-Subject: [PATCH 43/94] Bug 884527: ajax_console_proxy_port needs to be an
+Subject: [PATCH 43/95] Bug 884527: ajax_console_proxy_port needs to be an
  integer
 
 Fix declaration of ajax_console_proxy_port flag.

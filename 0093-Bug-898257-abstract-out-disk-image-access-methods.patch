@@ -1,7 +1,7 @@
-From 463a14c7c722d1cbd51b0deaf23c1b0179f870f8 Mon Sep 17 00:00:00 2001
+From a905d77d8dcf1e90c7a55a5823853bddcc904c67 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?P=C3=A1draig=20Brady?= <pbrady@redhat.com>
 Date: Wed, 30 Nov 2011 17:00:17 +0000
-Subject: [PATCH 92/94] Bug#898257 abstract out disk image access methods
+Subject: [PATCH 93/95] Bug#898257 abstract out disk image access methods
 
 Rather than providing two mutually exlusive image
 access methods (loop and qemu-nbd), try each in turn.

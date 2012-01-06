@@ -1,7 +1,7 @@
 From 78e81f1b7c0c2cc9b1e447cf3dce47d3b6ed0ce3 Mon Sep 17 00:00:00 2001
 From: Jesse Andrews <anotherjesse@gmail.com>
 Date: Mon, 28 Nov 2011 17:00:47 -0800
-Subject: [PATCH 73/94] removed logic of throwing exception if no floating ip
+Subject: [PATCH 73/95] removed logic of throwing exception if no floating ip
 
 fixes 897089
 

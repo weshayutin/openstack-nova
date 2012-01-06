@@ -1,7 +1,7 @@
 From 1270e11ef9fb3723e4a86bfe99d500ffbe615a4d Mon Sep 17 00:00:00 2001
 From: Ewan Mellor <ewan.mellor@citrix.com>
 Date: Fri, 4 Nov 2011 14:00:37 -0700
-Subject: [PATCH 67/94] Bug #886353: Faults raised by OpenStack API Resource
+Subject: [PATCH 67/95] Bug #886353: Faults raised by OpenStack API Resource
  handlers fail to be reported properly
 
 In Resource.__call__, catch any faults.Fault that are thrown by the request

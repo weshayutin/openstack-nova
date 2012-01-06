@@ -1,7 +1,7 @@
 From 5423f1a88c105ac2214e6d77d99cbc0efb582282 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Jason=20K=C3=B6lker?= <jason@koelker.net>
 Date: Fri, 4 Nov 2011 16:37:09 -0500
-Subject: [PATCH 61/94] Fixes LP878319
+Subject: [PATCH 61/95] Fixes LP878319
 
 * Adds lookup of host version in XenAPI session
 * Add call to determine function name of resize

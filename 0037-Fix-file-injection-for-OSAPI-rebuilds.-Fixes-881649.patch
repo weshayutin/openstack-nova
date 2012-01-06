@@ -1,7 +1,7 @@
 From 2a09eb2d26383ac815b0ce48a4747e60e8c4ac3d Mon Sep 17 00:00:00 2001
 From: Dan Prince <dan.prince@rackspace.com>
 Date: Tue, 25 Oct 2011 16:22:51 -0400
-Subject: [PATCH 37/94] Fix file injection for OSAPI rebuilds. Fixes 881649.
+Subject: [PATCH 37/95] Fix file injection for OSAPI rebuilds. Fixes 881649.
 
 (cherry picked from commit 3dd04ee508e626822a50858bb8dcc05c6cacfca1)
 

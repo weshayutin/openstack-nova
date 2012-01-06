@@ -1,7 +1,7 @@
 From 5d319531552689e4842a84adce01c81899cdfb17 Mon Sep 17 00:00:00 2001
 From: Ollie Leahy <oliver.leahy@hp.com>
 Date: Thu, 24 Nov 2011 15:56:08 +0000
-Subject: [PATCH 78/94] Fixes bug 888649
+Subject: [PATCH 78/95] Fixes bug 888649
 
 Change exception.VolumeIsBusy to derive from NovaException instead of
 Error, so that an 'unexpected keyword' exception is not thrown when

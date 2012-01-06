@@ -1,7 +1,7 @@
 From 852b9307ac86b20cbe870aa5bbfaf121226f5440 Mon Sep 17 00:00:00 2001
 From: Brian Lamar <brian.lamar@rackspace.com>
 Date: Mon, 26 Sep 2011 23:41:28 -0400
-Subject: [PATCH 17/94] Snapshots/backups can no longer happen simultaneously.
+Subject: [PATCH 17/95] Snapshots/backups can no longer happen simultaneously.
  Tests included.
 
 Implemented exception.InstanceBusy when attempting to snapshot/backup an

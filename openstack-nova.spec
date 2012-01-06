@@ -2,7 +2,7 @@
 
 Name:             openstack-nova
 Version:          2011.3
-Release:          16%{?dist}
+Release:          17%{?dist}
 Summary:          OpenStack Compute (nova)
 
 Group:            Applications/System
@@ -129,11 +129,12 @@ Patch88:          0088-Have-nova-api-add-the-INPUT-rule-for-EC2-metadata-lp.patc
 Patch89:          0089-Allow-the-user-to-choose-either-ietadm-or-tgtadm-lp-.patch
 Patch90:          0090-Remove-VolumeDriver.sync_exec-method-lp-819997.patch
 Patch91:          0091-Refactor-ietadm-tgtadm-calls-out-into-helper-classes.patch
-Patch92:          0092-Bug-898257-abstract-out-disk-image-access-methods.patch
-Patch93:          0093-Bug-898257-support-handling-images-with-libguestfs.patch
+Patch92:          0092-Fix-tgtadm-off-by-one-error.-Fixes-bug-871278.patch
+Patch93:          0093-Bug-898257-abstract-out-disk-image-access-methods.patch
+Patch94:          0094-Bug-898257-support-handling-images-with-libguestfs.patch
 
 # This is Fedora specific and not upstream
-Patch94:          0094-Ensure-we-don-t-access-the-net-when-building-docs.patch
+Patch95:          0095-Ensure-we-don-t-access-the-net-when-building-docs.patch
 
 BuildArch:        noarch
 BuildRequires:    intltool
@@ -362,6 +363,7 @@ This package contains documentation files for nova.
 %patch92 -p1
 %patch93 -p1
 %patch94 -p1
+%patch95 -p1
 
 find . \( -name .gitignore -o -name .placeholder \) -delete
 
@@ -548,6 +550,9 @@ fi
 %endif
 
 %changelog
+* Fri Jan  6 2012 Mark McLoughlin <markmc@redhat.com> - 2011.3-17
+- Backport tgtadm off-by-one fix from upstream (#752709)
+
 * Fri Jan  6 2012 Mark McLoughlin <markmc@redhat.com> - 2011.3-16
 - Rebase to latest upstream stable/diablo, pulling in ~50 patches
 

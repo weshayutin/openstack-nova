@@ -1,7 +1,7 @@
 From 476c3259b1bb7cfe647aed4ac4a523d6fadff475 Mon Sep 17 00:00:00 2001
 From: Joe Gordon <jogo@cloudscaling.com>
 Date: Wed, 2 Nov 2011 16:21:21 -0700
-Subject: [PATCH 35/94] fixes bug 883233.
+Subject: [PATCH 35/95] fixes bug 883233.
 
 fix typo in scheduler/driver.py assert_compute_node_has_enough_memory.
 

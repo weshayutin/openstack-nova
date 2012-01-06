@@ -1,7 +1,7 @@
 From fc37582812747887ebcce766fd80541da98c3b43 Mon Sep 17 00:00:00 2001
 From: Ivan Kolodyazhny <e0ne@e0ne.info>
 Date: Thu, 24 Nov 2011 14:54:30 +0200
-Subject: [PATCH 84/94] Bug 820059: bin/nova-manage.py VpnCommands.spawn calls
+Subject: [PATCH 84/95] Bug 820059: bin/nova-manage.py VpnCommands.spawn calls
  non-existant method VpnCommands._vpn_for - fixed
 
 Change-Id: I86c509d98fac685a5d658f397d0672f71b4bc175

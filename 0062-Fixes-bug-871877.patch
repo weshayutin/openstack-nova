@@ -1,7 +1,7 @@
 From 60cb0496c25f71d748bc8634cc13c8614d970df1 Mon Sep 17 00:00:00 2001
 From: Alvaro Lopez <aloga@ifca.unican.es>
 Date: Wed, 9 Nov 2011 16:18:39 +0100
-Subject: [PATCH 62/94] Fixes bug 871877
+Subject: [PATCH 62/95] Fixes bug 871877
 
 Added an aditional testunit to the VlanNetworkTestCase to check
 if the FixedIpNotFoundForNetwork exception is raised properly.

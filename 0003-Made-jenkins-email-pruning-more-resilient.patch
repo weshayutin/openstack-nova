@@ -1,7 +1,7 @@
 From 6503923b235590e363d366375f3d2747e4d516b1 Mon Sep 17 00:00:00 2001
 From: Monty Taylor <mordred@inaugust.com>
 Date: Fri, 23 Sep 2011 17:37:29 -0400
-Subject: [PATCH 03/94] Made jenkins email pruning more resilient.
+Subject: [PATCH 03/95] Made jenkins email pruning more resilient.
 
 (cherry picked from commit c586e4ed23846420177802c164f594e021cceea8)
 
