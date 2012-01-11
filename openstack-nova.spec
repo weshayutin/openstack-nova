@@ -123,6 +123,7 @@ Patch83:          0083-Bug-751229-Floating-address-range-fixed.patch
 Patch84:          0084-Bug-820059-bin-nova-manage.py-VpnCommands.spawn-call.patch
 Patch85:          0085-Pass-r-option-to-collie-cluster-status.patch
 Patch86:          0086-Fixing-snapshot-failure-task_state.patch
+Patch97:          0097-Do-not-overwrite-project_id-from-request-params.patch
 
 # These are Fedora specific backports from master
 Patch87:          0087-Add-INPUT-chain-rule-for-EC2-metadata-requests-lp-85.patch
@@ -367,6 +368,7 @@ This package contains documentation files for nova.
 %patch94 -p1
 %patch95 -p1
 %patch96 -p1
+%patch97 -p1
 
 find . \( -name .gitignore -o -name .placeholder \) -delete
 
@@ -555,6 +557,7 @@ fi
 %changelog
 * Wed Jan 11 2012 Pádraig Brady <P@draigBrady.com> - 2011.3-19
 - Fix libguestfs support for specified partitions
+- Fix tenant bypass by authenticated users using API (#772202, CVE-2012-0030)
 
 * Fri Jan  6 2012 Mark McLoughlin <markmc@redhat.com> - 2011.3-18
 - Fix up recent patches which don't apply
