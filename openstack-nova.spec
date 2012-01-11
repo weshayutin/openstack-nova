@@ -2,7 +2,7 @@
 
 Name:             openstack-nova
 Version:          2011.3
-Release:          18%{?dist}
+Release:          19%{?dist}
 Summary:          OpenStack Compute (nova)
 
 Group:            Applications/System
@@ -133,6 +133,7 @@ Patch91:          0091-Refactor-ietadm-tgtadm-calls-out-into-helper-classes.patc
 Patch92:          0092-Fix-tgtadm-off-by-one-error.-Fixes-bug-871278.patch
 Patch93:          0093-Bug-898257-abstract-out-disk-image-access-methods.patch
 Patch94:          0094-Bug-898257-support-handling-images-with-libguestfs.patch
+Patch96:          0096-Fix-libguestfs-operation-with-specified-partitions.patch
 
 # This is Fedora specific and not upstream
 Patch95:          0095-Ensure-we-don-t-access-the-net-when-building-docs.patch
@@ -365,6 +366,7 @@ This package contains documentation files for nova.
 %patch93 -p1
 %patch94 -p1
 %patch95 -p1
+%patch96 -p1
 
 find . \( -name .gitignore -o -name .placeholder \) -delete
 
@@ -551,6 +553,9 @@ fi
 %endif
 
 %changelog
+* Wed Jan 11 2012 Pádraig Brady <P@draigBrady.com> - 2011.3-19
+- Fix libguestfs support for specified partitions
+
 * Fri Jan  6 2012 Mark McLoughlin <markmc@redhat.com> - 2011.3-18
 - Fix up recent patches which don't apply
 
