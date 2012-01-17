@@ -5,7 +5,7 @@
 
 Name:             openstack-nova
 Version:          2011.3.1
-Release:          0.2.%{revno}%{?dist}
+Release:          0.3.%{revno}%{?dist}
 Summary:          OpenStack Compute (nova)
 
 Group:            Applications/System
@@ -222,8 +222,8 @@ rm -fr build/html/.doctrees build/html/.buildinfo
 popd
 
 # Give stack, instance-usage-audit and clear_rabbit_queues a reasonable prefix
+mv %{buildroot}%{_bindir}/stack %{buildroot}%{_bindir}/nova-stack
 # Disabled while waiting for https://bugs.launchpad.net/nova/+bug/917676
-#  mv %{buildroot}%{_bindir}/stack %{buildroot}%{_bindir}/nova-stack
 #  mv %{buildroot}%{_bindir}/instance-usage-audit %{buildroot}%{_bindir}/nova-instance-usage-audit
 #  mv %{buildroot}%{_bindir}/clear_rabbit_queues %{buildroot}%{_bindir}/nova-clear-rabbit-queues
 
@@ -381,6 +381,9 @@ fi
 %endif
 
 %changelog
+* Tue Jan 17 2012 Mark McLoughlin <markmc@redhat.com> - 2011.3.1-0.3.10814
+- nova-stack isn't missing after all
+
 * Tue Jan 17 2012 Mark McLoughlin <markmc@redhat.com> - 2011.3.1-0.2.10814
 - nova-{stack,clear-rabbit-queues,instance-usage-audit} temporarily removed because of lp#917676
 
