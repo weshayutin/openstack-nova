@@ -1,4 +1,4 @@
-From 4260879ccb158a64911a48362b546a2b53f7cf23 Mon Sep 17 00:00:00 2001
+From b79a50d5d6922a174f7ca1a767b822c8cb3ca83d Mon Sep 17 00:00:00 2001
 From: Mark McLoughlin <markmc@redhat.com>
 Date: Sun, 18 Sep 2011 16:02:43 +0100
 Subject: [PATCH] Refactor ietadm/tgtadm calls out into helper classes

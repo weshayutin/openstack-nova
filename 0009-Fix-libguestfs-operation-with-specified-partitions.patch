@@ -1,5 +1,5 @@
-From e988f431d86660318b46729dea6e772083f2248d Mon Sep 17 00:00:00 2001
-From: =?utf8?q?P=C3=A1draig=20Brady?= <pbrady@redhat.com>
+From a7d3b295dc3468a3a7c9b256434dc9e6fa2becdb Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?P=C3=A1draig=20Brady?= <pbrady@redhat.com>
 Date: Tue, 10 Jan 2012 10:54:21 +0000
 Subject: [PATCH] Fix libguestfs operation with specified partitions
 
@@ -39,5 +39,5 @@ index 6323dc8..20e3eda 100644
              # We don't resort to -i for this case yet,
              # as some older versions of libguestfs
 -- 
-1.7.4.1
+1.7.6.5
 
