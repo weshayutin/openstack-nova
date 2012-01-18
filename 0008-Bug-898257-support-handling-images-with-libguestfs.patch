@@ -1,4 +1,4 @@
-From cd01dc63868c61ebdc209c574fa67825d32ad98a Mon Sep 17 00:00:00 2001
+From e240840e3cbc4cdbed11b5a3e257328e775edcf5 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?P=C3=A1draig=20Brady?= <pbrady@redhat.com>
 Date: Wed, 30 Nov 2011 17:00:17 +0000
 Subject: [PATCH] Bug#898257 support handling images with libguestfs
