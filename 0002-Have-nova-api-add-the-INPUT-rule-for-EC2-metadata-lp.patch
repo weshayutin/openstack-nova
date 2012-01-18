@@ -1,4 +1,4 @@
-From 97f7fb494176135272bdd8a7f158732c2fa45409 Mon Sep 17 00:00:00 2001
+From 87ebe9d79c40cefbec595a4684289af058bb1c48 Mon Sep 17 00:00:00 2001
 From: Mark McLoughlin <markmc@redhat.com>
 Date: Thu, 8 Sep 2011 14:29:49 +0100
 Subject: [PATCH] Have nova-api add the INPUT rule for EC2 metadata

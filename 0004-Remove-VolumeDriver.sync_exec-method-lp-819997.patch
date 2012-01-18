@@ -1,4 +1,4 @@
-From 0c09b416d34bcd37e4bc6fa55b15180e0b5711f3 Mon Sep 17 00:00:00 2001
+From 0116537957ea1bae7a7c2092c2974250ed8ea10f Mon Sep 17 00:00:00 2001
 From: Mark McLoughlin <markmc@redhat.com>
 Date: Sun, 18 Sep 2011 12:04:46 +0100
 Subject: [PATCH] Remove VolumeDriver.sync_exec method (lp:819997)

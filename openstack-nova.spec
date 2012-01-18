@@ -1,11 +1,11 @@
 %global with_doc %{!?_without_doc:1}%{?_without_doc:0}
 
-%global revno 10814
+%global revno 10818
 %global snapshot ~20120117.%{revno}
 
 Name:             openstack-nova
 Version:          2011.3.1
-Release:          0.3.%{revno}%{?dist}
+Release:          0.4.%{revno}%{?dist}
 Summary:          OpenStack Compute (nova)
 
 Group:            Applications/System
@@ -33,7 +33,7 @@ Source23:         openstack-nova-db-setup
 #
 # Patches managed here: https://github.com/markmc/nova/tree/fedora-patches
 #
-#   $> git format-patch -N 2011.3.1-20120117.10814
+#   $> git format-patch -N 2011.3.1-20120117.10818
 #   $> for p in 00*.patch; do filterdiff -x '*/.gitignore' -x '*/.mailmap' $p | sponge $p; done
 #   $> for p in 00*.patch; do echo "Patch${p:2:2}:          $p"; done
 #   $> for p in 00*.patch; do echo "%patch${p:2:2} -p1"; done
@@ -223,9 +223,8 @@ popd
 
 # Give stack, instance-usage-audit and clear_rabbit_queues a reasonable prefix
 mv %{buildroot}%{_bindir}/stack %{buildroot}%{_bindir}/nova-stack
-# Disabled while waiting for https://bugs.launchpad.net/nova/+bug/917676
-#  mv %{buildroot}%{_bindir}/instance-usage-audit %{buildroot}%{_bindir}/nova-instance-usage-audit
-#  mv %{buildroot}%{_bindir}/clear_rabbit_queues %{buildroot}%{_bindir}/nova-clear-rabbit-queues
+mv %{buildroot}%{_bindir}/instance-usage-audit %{buildroot}%{_bindir}/nova-instance-usage-audit
+mv %{buildroot}%{_bindir}/clear_rabbit_queues %{buildroot}%{_bindir}/nova-clear-rabbit-queues
 
 # Setup directories
 install -d -m 755 %{buildroot}%{_sharedstatedir}/nova
@@ -381,6 +380,10 @@ fi
 %endif
 
 %changelog
+* Wed Jan 18 2012 Mark McLoughlin <markmc@redhat.com> - 2011.3.1-0.4.10818%{?dist}
+- Update to latest 2011.3.1 release candidate
+- Re-add nova-{clear-rabbit-queues,instance-usage-audit}
+
 * Tue Jan 17 2012 Mark McLoughlin <markmc@redhat.com> - 2011.3.1-0.3.10814
 - nova-stack isn't missing after all
 

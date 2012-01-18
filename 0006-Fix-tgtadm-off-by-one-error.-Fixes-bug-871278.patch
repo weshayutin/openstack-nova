@@ -1,4 +1,4 @@
-From 36b2cf2443eb570920d08c282213ccf54586519a Mon Sep 17 00:00:00 2001
+From 0c93e4c4873fde83ec0e572615d9307404e391b2 Mon Sep 17 00:00:00 2001
 From: Chuck Short <chuck.short@canonical.com>
 Date: Tue, 13 Dec 2011 13:45:43 -0500
 Subject: [PATCH] Fix tgtadm off by one error. Fixes bug #871278
