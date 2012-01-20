@@ -379,6 +379,8 @@ fi
 %changelog
 * Fri Jan 20 2012 Pádraig Brady <P@draigBrady.com> - 2011.3.1-1
 - Update to 2011.3.1 release
+- Allow empty mysql root password in mysql setup script
+- Enable mysqld at boot in mysql setup script
 
 * Wed Jan 18 2012 Mark McLoughlin <markmc@redhat.com> - 2011.3.1-0.4.10818%{?dist}
 - Update to latest 2011.3.1 release candidate
