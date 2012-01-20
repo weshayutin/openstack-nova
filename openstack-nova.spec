@@ -1,17 +1,14 @@
 %global with_doc %{!?_without_doc:1}%{?_without_doc:0}
 
-%global revno 10818
-%global snapshot ~20120117.%{revno}
-
 Name:             openstack-nova
 Version:          2011.3.1
-Release:          0.4.%{revno}%{?dist}
+Release:          1%{?dist}
 Summary:          OpenStack Compute (nova)
 
 Group:            Applications/System
 License:          ASL 2.0
 URL:              http://openstack.org/projects/compute/
-Source0:          http://launchpad.net/nova/diablo/2011.3/+download/nova-%{version}%{snapshot}.tar.gz
+Source0:          http://launchpad.net/nova/diablo/%{version}/+download/nova-%{version}.tar.gz
 Source1:          nova.conf
 Source6:          nova.logrotate
 
@@ -33,7 +30,7 @@ Source23:         openstack-nova-db-setup
 #
 # Patches managed here: https://github.com/markmc/nova/tree/fedora-patches
 #
-#   $> git format-patch -N 2011.3.1-20120117.10818
+#   $> git format-patch -N 2011.3.1
 #   $> for p in 00*.patch; do filterdiff -x '*/.gitignore' -x '*/.mailmap' $p | sponge $p; done
 #   $> for p in 00*.patch; do echo "Patch${p:2:2}:          $p"; done
 #   $> for p in 00*.patch; do echo "%patch${p:2:2} -p1"; done
@@ -382,6 +379,11 @@ fi
 %endif
 
 %changelog
+* Fri Jan 20 2012 Pádraig Brady <P@draigBrady.com> - 2011.3.1-1
+- Update to 2011.3.1 release
+- Allow empty mysql root password in mysql setup script
+- Enable mysqld at boot in mysql setup script
+
 * Wed Jan 18 2012 Mark McLoughlin <markmc@redhat.com> - 2011.3.1-0.4.10818%{?dist}
 - Update to latest 2011.3.1 release candidate
 - Re-add nova-{clear-rabbit-queues,instance-usage-audit}

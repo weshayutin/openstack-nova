@@ -64,7 +64,6 @@ start_mysql_server() {
 	service mysqld start
 }
 
-MYSQL_ROOT_PW=""
 MYSQL_NOVA_PW_DEFAULT="nova"
 MYSQL_NOVA_PW=${MYSQL_NOVA_PW_DEFAULT}
 NOVA_CONFIG="/etc/nova/nova.conf"
@@ -143,6 +142,9 @@ then
 	fi
 
 	start_mysql_server
+
+	# If we both installed and started, ensure it starts at boot
+	[ $NEW_MYSQL_INSTALL -eq 1 ] && chkconfig mysqld on
 fi
 
 
@@ -150,7 +152,7 @@ fi
 
 if [ $NEW_MYSQL_INSTALL -eq 1 ]
 then
-	if [ -z "${MYSQL_ROOT_PW}" ] ; then
+	if [ ! "${MYSQL_ROOT_PW+defined}" ] ; then
 		echo "Since this is a fresh installation of MySQL, please set a password for the 'root' mysql user."
 
 		PW_MATCH=0
@@ -175,7 +177,7 @@ then
 		echo "Failed to set password for 'root' MySQL user."
 		exit 1
 	fi
-elif [ -z "${MYSQL_ROOT_PW}" ] ; then
+elif [ ! "${MYSQL_ROOT_PW+defined}" ] ; then
 	printf "Please enter the password for the 'root' MySQL user: "
 	read -s MYSQL_ROOT_PW
 	echo
@@ -185,7 +187,7 @@ fi
 # Sanity check MySQL credentials.
 
 MYSQL_ROOT_PW_ARG=""
-if [ -n "${MYSQL_ROOT_PW}" ]
+if [ "${MYSQL_ROOT_PW+defined}" ]
 then
 	MYSQL_ROOT_PW_ARG="--password=${MYSQL_ROOT_PW}"
 fi
