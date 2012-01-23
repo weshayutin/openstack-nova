@@ -2,7 +2,7 @@
 
 Name:             openstack-nova
 Version:          2011.3.1
-Release:          1%{?dist}
+Release:          2%{?dist}
 Summary:          OpenStack Compute (nova)
 
 Group:            Applications/System
@@ -381,7 +381,7 @@ fi
 %endif
 
 %changelog
-* Fri Jan 20 2012 Pádraig Brady <P@draigBrady.com> - 2011.3.1-2
+* Mon Jan 23 2012 Pádraig Brady <P@draigBrady.com> - 2011.3.1-2
 - Fix a REST API v1.0 bug causing a regression with deltacloud
 
 * Fri Jan 20 2012 Pádraig Brady <P@draigBrady.com> - 2011.3.1-1
