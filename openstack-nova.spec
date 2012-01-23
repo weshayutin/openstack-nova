@@ -37,6 +37,7 @@ Source23:         openstack-nova-db-setup
 #
 
 # These are from stable/diablo
+Patch11:          0011-Bug-920497-fix-X-Server-Management-Url-for-v1.0-noauth.patch
 
 # These are Fedora specific backports from master
 Patch01:          0001-Add-INPUT-chain-rule-for-EC2-metadata-requests-lp-85.patch
@@ -193,6 +194,7 @@ This package contains documentation files for nova.
 %patch08 -p1
 %patch09 -p1
 %patch10 -p1
+%patch11 -p1
 
 # Apply EPEL patch
 %patch100 -p1
@@ -379,6 +381,9 @@ fi
 %endif
 
 %changelog
+* Fri Jan 20 2012 Pádraig Brady <P@draigBrady.com> - 2011.3.1-2
+- Fix a REST API v1.0 bug causing a regression with deltacloud
+
 * Fri Jan 20 2012 Pádraig Brady <P@draigBrady.com> - 2011.3.1-1
 - Update to 2011.3.1 release
 - Allow empty mysql root password in mysql setup script
