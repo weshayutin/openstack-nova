@@ -1,4 +1,4 @@
-From e48106a2a5086c933d98043952d63c50c25df10b Mon Sep 17 00:00:00 2001
+From e00e78a187882a3af2cb2729d4658a66cb9b8dc6 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?P=C3=A1draig=20Brady?= <pbrady@redhat.com>
 Date: Mon, 23 Jan 2012 15:49:08 +0000
 Subject: [PATCH] Bug #920497 fix X-Server-Management-Url for v1.0 noauth API
@@ -43,5 +43,5 @@ index d435f83..d8dbb68 100644
              # NOTE(vish): This is expecting and returning Auth(1.1), whereas
              #             keystone uses 2.0 auth.  We should probably allow
 -- 
-1.7.6.4
+1.7.6.5
 

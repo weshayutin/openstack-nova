@@ -1,4 +1,4 @@
-From b72b3577c6974b2fe52c2076260a332f7233f752 Mon Sep 17 00:00:00 2001
+From 7674cb87528fc40f330bc501fd246e945e14d276 Mon Sep 17 00:00:00 2001
 From: Mark McLoughlin <markmc@redhat.com>
 Date: Thu, 11 Aug 2011 07:44:38 -0400
 Subject: [PATCH] Allow the user to choose either ietadm or tgtadm (lp:819997)

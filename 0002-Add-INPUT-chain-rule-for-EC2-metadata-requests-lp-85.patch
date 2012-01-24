@@ -1,4 +1,4 @@
-From 8574faa359ca09cd99c54483e413eebaf7479277 Mon Sep 17 00:00:00 2001
+From 464b843bcd4c014b7a8940184727ad764a397443 Mon Sep 17 00:00:00 2001
 From: Mark McLoughlin <markmc@redhat.com>
 Date: Mon, 5 Sep 2011 07:10:52 +0100
 Subject: [PATCH] Add INPUT chain rule for EC2 metadata requests (lp:856385)

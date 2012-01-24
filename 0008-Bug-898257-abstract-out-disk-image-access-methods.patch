@@ -1,4 +1,4 @@
-From 7646652683d45bc34e01a2b1e19157b924fee8a9 Mon Sep 17 00:00:00 2001
+From b89cb44fd42849f8f94d22efa651f935b6ae376f Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?P=C3=A1draig=20Brady?= <pbrady@redhat.com>
 Date: Wed, 30 Nov 2011 17:00:17 +0000
 Subject: [PATCH] Bug#898257 abstract out disk image access methods

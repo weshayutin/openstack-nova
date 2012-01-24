@@ -28,30 +28,19 @@ Source22:         nova-ifc-template
 Source23:         openstack-nova-db-setup
 
 #
-# Patches managed here: https://github.com/markmc/nova/tree/fedora-patches
+# patches_base=2011.3.1
 #
-#   $> git format-patch -N 2011.3.1
-#   $> for p in 00*.patch; do filterdiff -x '*/.gitignore' -x '*/.mailmap' $p | sponge $p; done
-#   $> for p in 00*.patch; do echo "Patch${p:2:2}:          $p"; done
-#   $> for p in 00*.patch; do echo "%patch${p:2:2} -p1"; done
-#
-
-# These are from stable/diablo
-Patch11:          0011-Bug-920497-fix-X-Server-Management-Url-for-v1.0-noauth.patch
-
-# These are Fedora specific backports from master
-Patch01:          0001-Add-INPUT-chain-rule-for-EC2-metadata-requests-lp-85.patch
-Patch02:          0002-Have-nova-api-add-the-INPUT-rule-for-EC2-metadata-lp.patch
-Patch03:          0003-Allow-the-user-to-choose-either-ietadm-or-tgtadm-lp-.patch
-Patch04:          0004-Remove-VolumeDriver.sync_exec-method-lp-819997.patch
-Patch05:          0005-Refactor-ietadm-tgtadm-calls-out-into-helper-classes.patch
-Patch06:          0006-Fix-tgtadm-off-by-one-error.-Fixes-bug-871278.patch
-Patch07:          0007-Bug-898257-abstract-out-disk-image-access-methods.patch
-Patch08:          0008-Bug-898257-support-handling-images-with-libguestfs.patch
-Patch09:          0009-Fix-libguestfs-operation-with-specified-partitions.patch
-
-# This is Fedora specific and not upstream
-Patch10:          0010-Ensure-we-don-t-access-the-net-when-building-docs.patch
+Patch0001: 0001-Bug-920497-fix-X-Server-Management-Url-for-v1.0-noau.patch
+Patch0002: 0002-Add-INPUT-chain-rule-for-EC2-metadata-requests-lp-85.patch
+Patch0003: 0003-Have-nova-api-add-the-INPUT-rule-for-EC2-metadata-lp.patch
+Patch0004: 0004-Allow-the-user-to-choose-either-ietadm-or-tgtadm-lp-.patch
+Patch0005: 0005-Remove-VolumeDriver.sync_exec-method-lp-819997.patch
+Patch0006: 0006-Refactor-ietadm-tgtadm-calls-out-into-helper-classes.patch
+Patch0007: 0007-Fix-tgtadm-off-by-one-error.-Fixes-bug-871278.patch
+Patch0008: 0008-Bug-898257-abstract-out-disk-image-access-methods.patch
+Patch0009: 0009-Bug-898257-support-handling-images-with-libguestfs.patch
+Patch0010: 0010-Fix-libguestfs-operation-with-specified-partitions.patch
+Patch0011: 0011-Ensure-we-don-t-access-the-net-when-building-docs.patch
 
 # This is EPEL specific and not upstream
 Patch100:         openstack-nova-newdeps.patch
@@ -184,17 +173,17 @@ This package contains documentation files for nova.
 %prep
 %setup -q -n nova-%{version}
 
-%patch01 -p1
-%patch02 -p1
-%patch03 -p1
-%patch04 -p1
-%patch05 -p1
-%patch06 -p1
-%patch07 -p1
-%patch08 -p1
-%patch09 -p1
-%patch10 -p1
-%patch11 -p1
+%patch0001 -p1
+%patch0002 -p1
+%patch0003 -p1
+%patch0004 -p1
+%patch0005 -p1
+%patch0006 -p1
+%patch0007 -p1
+%patch0008 -p1
+%patch0009 -p1
+%patch0010 -p1
+%patch0011 -p1
 
 # Apply EPEL patch
 %patch100 -p1
