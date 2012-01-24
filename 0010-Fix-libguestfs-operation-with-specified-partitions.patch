@@ -1,4 +1,4 @@
-From 0f8980bcd3e6932c9ba57d3470b8a177e49e7554 Mon Sep 17 00:00:00 2001
+From 69fcb2df30ae3e1e406ca58080cf88aba5b8ab7b Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?P=C3=A1draig=20Brady?= <pbrady@redhat.com>
 Date: Tue, 10 Jan 2012 10:54:21 +0000
 Subject: [PATCH] Fix libguestfs operation with specified partitions
