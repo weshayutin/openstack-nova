@@ -39,7 +39,7 @@ git commit -m "Updated patches from ${patches_branch}" ${orig_patches}
 # Check out the ${branch}-patches branch and format the patches
 #
 git checkout "${patches_branch}"
-new_patches=$(git format-patch -N "${patches_base}")
+new_patches=$(git format-patch --no-signature -N "${patches_base}")
 
 #
 # Switch back to the original branch and add the patches
