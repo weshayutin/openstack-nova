@@ -35,6 +35,3 @@ index a6aea8a..df43f54 100755
      iptables_manager.apply()
  
  
--- 
-1.7.6.5
-

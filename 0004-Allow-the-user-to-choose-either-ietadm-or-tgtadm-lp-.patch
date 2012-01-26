@@ -231,6 +231,3 @@ index bb56956..781b1f2 100644
          except exception.ProcessExecutionError, e:
              # Instances remount read-only in this case.
              # /etc/init.d/iscsitarget restart and rebooting nova-volume
--- 
-1.7.6.5
-

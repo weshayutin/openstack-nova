@@ -231,6 +231,3 @@ index 781b1f2..67ea423 100644
          except exception.ProcessExecutionError:
              LOG.debug(_("Failed to retrieve QoS info"))
              return {}
--- 
-1.7.6.5
-

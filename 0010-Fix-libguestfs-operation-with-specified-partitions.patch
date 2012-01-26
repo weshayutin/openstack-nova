@@ -38,6 +38,3 @@ index 6323dc8..20e3eda 100644
          else:
              # We don't resort to -i for this case yet,
              # as some older versions of libguestfs
--- 
-1.7.6.5
-

@@ -153,6 +153,3 @@ index 0000000..6323dc8
 +        # but ordinary users do
 +        utils.execute('fusermount', '-u', self.mount_dir, run_as_root=True)
 +        self.mounted = False
--- 
-1.7.6.5
-
