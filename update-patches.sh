@@ -60,9 +60,6 @@ for p in ${new_patches}; do
     i=$((i+1))
 done
 
-cp "${patches_list}" list.patch
-cp "${patches_apply}" apply.patch
-
 sed -i -e "/# patches_base/ { N; r ${patches_list}" -e "}" "${spec}"
 sed -i -e "/%setup -q / { N; r ${patches_apply}" -e "}" "${spec}"
 
