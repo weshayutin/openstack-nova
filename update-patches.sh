@@ -18,6 +18,11 @@
 #   $> git push fedora-openstack +master-patches:master
 #
 
+git status -uno --porcelain | grep . && {
+    echo "The repo is not clean. Aborting" >&2
+    exit 1
+}
+
 spec=$(fedpkg gimmespec)
 branch=$(git branch | awk '/^\* / {print $2}')
 patches_branch="${branch}-patches"
