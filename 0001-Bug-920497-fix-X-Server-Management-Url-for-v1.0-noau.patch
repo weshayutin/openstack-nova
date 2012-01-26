@@ -42,6 +42,3 @@ index d435f83..d8dbb68 100644
              res = webob.Response()
              # NOTE(vish): This is expecting and returning Auth(1.1), whereas
              #             keystone uses 2.0 auth.  We should probably allow
--- 
-1.7.6.5
-

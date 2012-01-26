@@ -1078,6 +1078,3 @@ index 55cb31d..9abd330 100644
  
          if FLAGS.libvirt_type == 'uml':
              utils.execute('chown', 'root', basepath('disk'), run_as_root=True)
--- 
-1.7.6.5
-

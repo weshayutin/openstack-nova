@@ -23,6 +23,3 @@ index 996dfb0..f62ebf8 100644
  
  # autodoc generation is a bit aggressive and a nuisance when doing heavy text edit cycles.
  # execute "export SPHINX_DEBUG=1" in your terminal to disable
--- 
-1.7.6.5
-

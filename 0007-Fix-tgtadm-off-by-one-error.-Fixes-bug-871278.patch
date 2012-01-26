@@ -33,6 +33,3 @@ index 82f0106..7069626 100644
  
          # The /dev/disk/by-path/... node is not always present immediately
          # TODO(justinsb): This retry-with-delay is a pattern, move to utils?
--- 
-1.7.6.5
-
