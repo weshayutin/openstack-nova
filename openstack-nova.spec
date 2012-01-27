@@ -2,7 +2,7 @@
 
 Name:             openstack-nova
 Version:          2011.3.1
-Release:          2%{?dist}
+Release:          3%{?dist}
 Summary:          OpenStack Compute (nova)
 
 Group:            Applications/System
@@ -290,7 +290,7 @@ if ! getent passwd nova >/dev/null; then
   useradd -u 162 -r -g nova -G nova,nobody,qemu -d %{_sharedstatedir}/nova -s /sbin/nologin -c "OpenStack Nova Daemons" nova
 fi
 # Add nova to the fuse group (if present) to support guestmount
-if getent group fuse; then
+if getent group fuse >/dev/null; then
   usermod -a -G fuse nova
 fi
 exit 0
@@ -371,6 +371,9 @@ fi
 %endif
 
 %changelog
+* Fri Jan 27 2012 Pádraig Brady <P@draigBrady.com> - 2011.3.1-3
+- Suppress erroneous output to stdout on package install (#785115)
+
 * Mon Jan 23 2012 Pádraig Brady <P@draigBrady.com> - 2011.3.1-2
 - Fix a REST API v1.0 bug causing a regression with deltacloud
 
