@@ -1,14 +1,17 @@
 %global with_doc %{!?_without_doc:1}%{?_without_doc:0}
 
 Name:             openstack-nova
-Version:          2011.3.1
-Release:          2%{?dist}
+Version:          2012.1
+# The Release is in form 0.X.tag as per:
+#   http://fedoraproject.org/wiki/Packaging:NamingGuidelines#Pre-Release_packages
+# So for prereleases always increment X
+Release:          0.1.e3%{?dist}
 Summary:          OpenStack Compute (nova)
 
 Group:            Applications/System
 License:          ASL 2.0
 URL:              http://openstack.org/projects/compute/
-Source0:          http://launchpad.net/nova/diablo/%{version}/+download/nova-%{version}.tar.gz
+Source0:          http://launchpad.net/nova/essex/essex-3/+download/nova-%{version}~e3.tar.gz
 Source1:          nova.conf
 Source6:          nova.logrotate
 
@@ -28,19 +31,9 @@ Source22:         nova-ifc-template
 Source23:         openstack-nova-db-setup
 
 #
-# patches_base=2011.3.1
+# patches_base=essex-3
 #
-Patch0001: 0001-Bug-920497-fix-X-Server-Management-Url-for-v1.0-noau.patch
-Patch0002: 0002-Add-INPUT-chain-rule-for-EC2-metadata-requests-lp-85.patch
-Patch0003: 0003-Have-nova-api-add-the-INPUT-rule-for-EC2-metadata-lp.patch
-Patch0004: 0004-Allow-the-user-to-choose-either-ietadm-or-tgtadm-lp-.patch
-Patch0005: 0005-Remove-VolumeDriver.sync_exec-method-lp-819997.patch
-Patch0006: 0006-Refactor-ietadm-tgtadm-calls-out-into-helper-classes.patch
-Patch0007: 0007-Fix-tgtadm-off-by-one-error.-Fixes-bug-871278.patch
-Patch0008: 0008-Bug-898257-abstract-out-disk-image-access-methods.patch
-Patch0009: 0009-Bug-898257-support-handling-images-with-libguestfs.patch
-Patch0010: 0010-Fix-libguestfs-operation-with-specified-partitions.patch
-Patch0011: 0011-Ensure-we-don-t-access-the-net-when-building-docs.patch
+Patch0001: 0001-Ensure-we-don-t-access-the-net-when-building-docs.patch
 
 BuildArch:        noarch
 BuildRequires:    intltool
@@ -67,6 +60,7 @@ Requires:         MySQL-python
 Requires:         euca2ools
 Requires:         openssl
 Requires:         rabbitmq-server
+Requires:         python-qpid
 Requires:         sudo
 
 Requires(post):   systemd-units
@@ -172,16 +166,6 @@ This package contains documentation files for nova.
 %setup -q -n nova-%{version}
 
 %patch0001 -p1
-%patch0002 -p1
-%patch0003 -p1
-%patch0004 -p1
-%patch0005 -p1
-%patch0006 -p1
-%patch0007 -p1
-%patch0008 -p1
-%patch0009 -p1
-%patch0010 -p1
-%patch0011 -p1
 
 find . \( -name .gitignore -o -name .placeholder \) -delete
 
@@ -368,6 +352,9 @@ fi
 %endif
 
 %changelog
+* Thu Jan 26 2012 Pádraig Brady <P@draigBrady.com> - 2012.1-0.1.e3
+- Update to essex milestone 3
+
 * Mon Jan 23 2012 Pádraig Brady <P@draigBrady.com> - 2011.3.1-2
 - Fix a REST API v1.0 bug causing a regression with deltacloud
 
