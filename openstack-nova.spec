@@ -5,7 +5,7 @@ Version:          2012.1
 # The Release is in form 0.X.tag as per:
 #   http://fedoraproject.org/wiki/Packaging:NamingGuidelines#Pre-Release_packages
 # So for prereleases always increment X
-Release:          0.1.e3%{?dist}
+Release:          0.2.e3%{?dist}
 Summary:          OpenStack Compute (nova)
 
 Group:            Applications/System
@@ -268,7 +268,7 @@ if ! getent passwd nova >/dev/null; then
   useradd -u 162 -r -g nova -G nova,nobody,qemu -d %{_sharedstatedir}/nova -s /sbin/nologin -c "OpenStack Nova Daemons" nova
 fi
 # Add nova to the fuse group (if present) to support guestmount
-if getent group fuse; then
+if getent group fuse >/dev/null; then
   usermod -a -G fuse nova
 fi
 exit 0
@@ -353,6 +353,9 @@ fi
 %endif
 
 %changelog
+* Fri Jan 27 2012 Pádraig Brady <P@draigBrady.com> - 2012.1-0.2.e3
+- Suppress erroneous output to stdout on package install (#785115)
+
 * Thu Jan 26 2012 Pádraig Brady <P@draigBrady.com> - 2012.1-0.1.e3
 - Update to essex milestone 3
 
