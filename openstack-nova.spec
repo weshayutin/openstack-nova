@@ -57,6 +57,7 @@ Requires:         openstack-glance
 
 Requires:         python-paste
 Requires:         python-paste-deploy
+Requires:         python-setuptools
 
 Requires:         libguestfs-mount >= 1.7.17
 # The fuse dependency should be added to libguestfs-mount
