@@ -356,6 +356,10 @@ fi
 %changelog
 * Fri Jan 27 2012 Pádraig Brady <P@draigBrady.com> - 2012.1-0.2.e3
 - Suppress erroneous output to stdout on package install (#785115)
+- Specify a connection_type in nova.conf, needed by essex-3
+- Depend on python-carrot, currently needed by essex-3
+- Remove the rabbitmq-server dependency as it's now optional
+- Have python-nova depend on the messaging libs, not openstack-nova
 
 * Thu Jan 26 2012 Pádraig Brady <P@draigBrady.com> - 2012.1-0.1.e3
 - Update to essex milestone 3
