@@ -59,9 +59,6 @@ Requires:         MySQL-python
 
 Requires:         euca2ools
 Requires:         openssl
-# TODO: make these optional
-Requires:         python-qpid
-Requires:         python-carrot
 Requires:         sudo
 
 Requires(post):   systemd-units
@@ -91,6 +88,9 @@ Requires:         libvirt-python
 Requires:         python-anyjson
 Requires:         python-IPy
 Requires:         python-boto
+# TODO: make these messaging libs optional
+Requires:         python-qpid
+Requires:         python-carrot
 Requires:         python-kombu
 Requires:         python-amqplib
 Requires:         python-daemon
