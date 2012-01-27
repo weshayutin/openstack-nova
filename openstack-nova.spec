@@ -43,7 +43,6 @@ BuildRequires:    python-netaddr
 BuildRequires:    python-lockfile
 
 Requires:         python-nova = %{version}-%{release}
-Requires:         openstack-glance
 
 Requires:         python-paste
 Requires:         python-paste-deploy
@@ -108,6 +107,7 @@ Requires:         python-twisted-core
 Requires:         python-twisted-web
 Requires:         python-webob
 Requires:         python-netaddr
+# TODO: remove the following dependency which is minimal
 Requires:         python-glance
 Requires:         python-novaclient
 Requires:         python-paste-deploy
