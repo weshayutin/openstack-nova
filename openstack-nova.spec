@@ -59,8 +59,10 @@ Requires:         MySQL-python
 
 Requires:         euca2ools
 Requires:         openssl
+# TODO: make these optional
 Requires:         rabbitmq-server
 Requires:         python-qpid
+Requires:         python-carrot
 Requires:         sudo
 
 Requires(post):   systemd-units
