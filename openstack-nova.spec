@@ -5,7 +5,7 @@ Version:          2012.1
 # The Release is in form 0.X.tag as per:
 #   http://fedoraproject.org/wiki/Packaging:NamingGuidelines#Pre-Release_packages
 # So for prereleases always increment X
-Release:          0.2.e3%{?dist}
+Release:          0.3.e3%{?dist}
 Summary:          OpenStack Compute (nova)
 
 Group:            Applications/System
@@ -34,6 +34,7 @@ Source23:         openstack-nova-db-setup
 # patches_base=essex-3
 #
 Patch0001: 0001-Ensure-we-don-t-access-the-net-when-building-docs.patch
+Patch0002: 0002-fix-nova-manage-image-convert-exception.patch
 
 BuildArch:        noarch
 BuildRequires:    intltool
@@ -167,6 +168,7 @@ This package contains documentation files for nova.
 %setup -q -n nova-%{version}
 
 %patch0001 -p1
+%patch0002 -p1
 
 find . \( -name .gitignore -o -name .placeholder \) -delete
 
@@ -354,6 +356,9 @@ fi
 %endif
 
 %changelog
+* Mon Jan 30 2012 Pádraig Brady <P@draigBrady.com> - 2012.1-0.3.e3
+- Suppress a warning from `nova-manage image convert`
+
 * Fri Jan 27 2012 Pádraig Brady <P@draigBrady.com> - 2012.1-0.2.e3
 - Suppress erroneous output to stdout on package install (#785115)
 - Specify a connection_type in nova.conf, needed by essex-3
