@@ -358,10 +358,11 @@ fi
 %endif
 
 %changelog
-* Mon Jan 30 2012 Pádraig Brady <P@draigBrady.com> - 2012.1-0.3.e3
+* Thu Feb  2 2012 Pádraig Brady <P@draigBrady.com> - 2012.1-0.3.e3
 - Suppress a warning from `nova-manage image convert`
 - Add the openstack-nova-cert service which now handles the CA folder
 - Change the default message broker from rabbitmq to qpid
+- Enable the new rootwrap helper, to minimize sudo config
 
 * Fri Jan 27 2012 Pádraig Brady <P@draigBrady.com> - 2012.1-0.2.e3
 - Suppress erroneous output to stdout on package install (#785115)
