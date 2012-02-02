@@ -15,7 +15,8 @@ Source0:          http://launchpad.net/nova/essex/essex-3/+download/nova-%{versi
 Source1:          nova.conf
 Source6:          nova.logrotate
 
-Source11:         openstack-nova-api.service
+Source10:         openstack-nova-api.service
+Source11:         openstack-nova-cert.service
 Source12:         openstack-nova-compute.service
 Source13:         openstack-nova-network.service
 Source14:         openstack-nova-objectstore.service
@@ -225,7 +226,8 @@ install -d -m 755 %{buildroot}%{_sysconfdir}/nova
 install -p -D -m 640 %{SOURCE1} %{buildroot}%{_sysconfdir}/nova/nova.conf
 
 # Install initscripts for Nova services
-install -p -D -m 755 %{SOURCE11} %{buildroot}%{_unitdir}/openstack-nova-api.service
+install -p -D -m 755 %{SOURCE10} %{buildroot}%{_unitdir}/openstack-nova-api.service
+install -p -D -m 755 %{SOURCE11} %{buildroot}%{_unitdir}/openstack-nova-cert.service
 install -p -D -m 755 %{SOURCE12} %{buildroot}%{_unitdir}/openstack-nova-compute.service
 install -p -D -m 755 %{SOURCE13} %{buildroot}%{_unitdir}/openstack-nova-network.service
 install -p -D -m 755 %{SOURCE14} %{buildroot}%{_unitdir}/openstack-nova-objectstore.service
@@ -285,7 +287,7 @@ fi
 
 %preun
 if [ $1 -eq 0 ] ; then
-    for svc in api compute network objectstore scheduler volume direct-api ajax-console-proxy vncproxy; do
+    for svc in api cert compute network objectstore scheduler volume direct-api ajax-console-proxy vncproxy; do
         /bin/systemctl --no-reload disable openstack-nova-${svc}.service > /dev/null 2>&1 || :
         /bin/systemctl stop openstack-nova-${svc}.service > /dev/null 2>&1 || :
     done
@@ -295,7 +297,7 @@ fi
 /bin/systemctl daemon-reload >/dev/null 2>&1 || :
 if [ $1 -ge 1 ] ; then
     # Package upgrade, not uninstall
-    for svc in api compute network objectstore scheduler volume direct-api ajax-console-proxy vncproxy; do
+    for svc in api cert compute network objectstore scheduler volume direct-api ajax-console-proxy vncproxy; do
         /bin/systemctl try-restart openstack-nova-${svc}.service >/dev/null 2>&1 || :
     done
 fi
@@ -358,6 +360,7 @@ fi
 %changelog
 * Mon Jan 30 2012 Pádraig Brady <P@draigBrady.com> - 2012.1-0.3.e3
 - Suppress a warning from `nova-manage image convert`
+- Add the openstack-nova-cert service which now handles the CA folder
 
 * Fri Jan 27 2012 Pádraig Brady <P@draigBrady.com> - 2012.1-0.2.e3
 - Suppress erroneous output to stdout on package install (#785115)
