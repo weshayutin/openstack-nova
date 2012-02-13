@@ -2,7 +2,7 @@
 
 Name:             openstack-nova
 Version:          2011.3.1
-Release:          3%{?dist}
+Release:          4%{?dist}
 Summary:          OpenStack Compute (nova)
 
 Group:            Applications/System
@@ -55,6 +55,7 @@ Requires:         openstack-glance
 Requires:         python-paste
 Requires:         python-paste-deploy
 
+Requires:         dnsmasq-utils
 Requires:         libguestfs-mount >= 1.7.17
 # The fuse dependency should be added to libguestfs-mount
 Requires:         fuse
@@ -368,6 +369,9 @@ fi
 %endif
 
 %changelog
+* Mon Feb 13 2012 Pádraig Brady <P@draigBrady.com> - 2011.3.1-4
+- Support --force_dhcp_release (#788485)
+
 * Fri Jan 27 2012 Pádraig Brady <P@draigBrady.com> - 2011.3.1-3
 - Suppress erroneous output to stdout on package install (#785115)
 

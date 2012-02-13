@@ -38,6 +38,7 @@ Cmnd_Alias NOVACMDS = /bin/aoe-stat,                            \
                       /usr/bin/virsh,                           \
                       /usr/sbin/brctl,                          \
                       /usr/sbin/dnsmasq,                        \
+                      /usr/bin/dhcp_release,                    \
                       /usr/sbin/ietadm,		            		\
                       /usr/sbin/radvd,                          \
                       /usr/sbin/tgtadm,                         \
