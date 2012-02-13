@@ -5,7 +5,7 @@ Version:          2012.1
 # The Release is in form 0.X.tag as per:
 #   http://fedoraproject.org/wiki/Packaging:NamingGuidelines#Pre-Release_packages
 # So for prereleases always increment X
-Release:          0.3.e3%{?dist}
+Release:          0.4.e3%{?dist}
 Summary:          OpenStack Compute (nova)
 
 Group:            Applications/System
@@ -49,6 +49,7 @@ Requires:         python-nova = %{version}-%{release}
 Requires:         python-paste
 Requires:         python-paste-deploy
 
+Requires:         dnsmasq-utils
 Requires:         libguestfs-mount >= 1.7.17
 # The fuse dependency should be added to libguestfs-mount
 Requires:         fuse
@@ -358,6 +359,9 @@ fi
 %endif
 
 %changelog
+* Mon Feb 13 2012 Pádraig Brady <P@draigBrady.com> - 2012.1-0.4.e3
+- Support --force_dhcp_release (#788485)
+
 * Thu Feb  2 2012 Pádraig Brady <P@draigBrady.com> - 2012.1-0.3.e3
 - Suppress a warning from `nova-manage image convert`
 - Add the openstack-nova-cert service which now handles the CA folder
