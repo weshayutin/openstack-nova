@@ -480,7 +480,7 @@ fi
 - Switch from SysV init scripts to systemd units (#734345)
 
 * Mon Aug 29 2011 Mark McLoughlin <markmc@redhat.com> - 2011.3-0.4.d4
-- Don't generate root CA during %post (#707199)
+- Don't generate root CA during %%post (#707199)
 - The nobody group shouldn't own files in /var/lib/nova
 - Add workaround for sphinx-build segfault
 
@@ -492,7 +492,7 @@ fi
 - Rename stack to nova-stack
 - Fix openssl.cnf.tmpl script-without-shebang rpmlint warning
 - Really remove ajaxterm
-- Mark polkit file as %config
+- Mark polkit file as %%config
 
 * Mon Aug 22 2011 Mark McLoughlin <markmc@redhat.com> - 2011.3-0.2.1449bzr
 - Remove dependency on python-novaclient
