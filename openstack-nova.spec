@@ -42,6 +42,7 @@ BuildRequires:    python-setuptools
 BuildRequires:    python-distutils-extra >= 2.18
 BuildRequires:    python-netaddr
 BuildRequires:    python-lockfile
+BuildRequires:    python-sphinx
 
 Requires:         python-nova = %{version}-%{release}
 
@@ -358,7 +359,8 @@ fi
 
 %changelog
 * Mon Feb 13 2012 Derek Higgins <derekh@redhat.com> 
-- Patch 0002 no longer need, its been merged upstream
+- Patch 0002 no longer needed, its been merged upstream
+- python-sphinx is also used to build the man pages
 
 * Mon Feb 13 2012 Pádraig Brady <P@draigBrady.com> - 2012.1-0.4.e3
 - Support --force_dhcp_release (#788485)
