@@ -11,7 +11,7 @@ Summary:          OpenStack Compute (nova)
 Group:            Applications/System
 License:          ASL 2.0
 URL:              http://openstack.org/projects/compute/
-Source0:          http://launchpad.net/nova/essex/essex-3/+download/nova-%{version}~e3.tar.gz
+Source0:          novatarball.tar.gz
 Source1:          nova.conf
 Source6:          nova.logrotate
 
