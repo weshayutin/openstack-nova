@@ -35,7 +35,6 @@ Source23:         openstack-nova-db-setup
 # patches_base=essex-3
 #
 Patch0001: 0001-Ensure-we-don-t-access-the-net-when-building-docs.patch
-Patch0002: 0002-fix-nova-manage-image-convert-exception.patch
 
 BuildArch:        noarch
 BuildRequires:    intltool
@@ -170,7 +169,6 @@ This package contains documentation files for nova.
 %setup -q -n nova-%{version}
 
 %patch0001 -p1
-%patch0002 -p1
 
 find . \( -name .gitignore -o -name .placeholder \) -delete
 
@@ -359,6 +357,9 @@ fi
 %endif
 
 %changelog
+* Mon Feb 13 2012 Derek Higgins <derekh@redhat.com> 
+- Patch 0002 no longer need, its been merged upstream
+
 * Mon Feb 13 2012 Pádraig Brady <P@draigBrady.com> - 2012.1-0.4.e3
 - Support --force_dhcp_release (#788485)
 
