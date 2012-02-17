@@ -39,7 +39,7 @@ Patch0001: 0001-Ensure-we-don-t-access-the-net-when-building-docs.patch
 BuildArch:        noarch
 BuildRequires:    intltool
 BuildRequires:    python-setuptools
-BuildRequires:    python-distutils-extra >= 2.18
+BuildRequires:    python-babel
 BuildRequires:    python-netaddr
 BuildRequires:    python-lockfile
 BuildRequires:    python-sphinx
@@ -141,7 +141,7 @@ Requires:         %{name} = %{version}-%{release}
 BuildRequires:    systemd-units
 BuildRequires:    python-sphinx
 BuildRequires:    graphviz
-BuildRequires:    python-distutils-extra
+BuildRequires:    python-babel
 
 BuildRequires:    python-nose
 # Required to build module documents
@@ -180,6 +180,9 @@ find nova -name \*.py -exec sed -i '/\/usr\/bin\/env python/d' {} \;
 
 %install
 %{__python} setup.py install -O1 --skip-build --root %{buildroot}
+mkdir -p %{buildroot}/etc/nova/
+cp etc/nova/api-paste.ini %{buildroot}/etc/nova/
+cp etc/nova/policy.json %{buildroot}/etc/nova/
 
 # docs generation requires everything to be installed first
 export PYTHONPATH="$( pwd ):$PYTHONPATH"
@@ -358,6 +361,10 @@ fi
 %endif
 
 %changelog
+* Mon Feb 17 2012 Dan Prince <dprince@redhat.com> 
+- Swap distutils-extra for babel.
+- Explicitly copy in api-paste.ini and policy.json.
+
 * Mon Feb 13 2012 Derek Higgins <derekh@redhat.com> 
 - Patch 0002 no longer needed, its been merged upstream
 - python-sphinx is also used to build the man pages
