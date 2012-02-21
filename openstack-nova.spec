@@ -99,6 +99,7 @@ Requires:         python-daemon
 Requires:         python-eventlet
 Requires:         python-greenlet
 Requires:         python-gflags
+Requires:         python-iso8601
 Requires:         python-lockfile
 Requires:         python-lxml
 Requires:         python-mox
@@ -359,6 +360,10 @@ fi
 %endif
 
 %changelog
+* ... TBD ...
+- explicitly select the libvirt firewall driver in default nova.conf.
+- Add dependency on python-iso8601.
+
 * Mon Feb 13 2012 Pádraig Brady <P@draigBrady.com> - 2012.1-0.4.e3
 - Support --force_dhcp_release (#788485)
 
