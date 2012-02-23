@@ -363,6 +363,7 @@ fi
 * ... TBD ...
 - explicitly select the libvirt firewall driver in default nova.conf.
 - Add dependency on python-iso8601.
+- Enable --force_dhcp_release.
 
 * Mon Feb 13 2012 Pádraig Brady <P@draigBrady.com> - 2012.1-0.4.e3
 - Support --force_dhcp_release (#788485)
