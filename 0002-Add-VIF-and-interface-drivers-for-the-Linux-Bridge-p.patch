@@ -1,0 +1,195 @@
+From 7fb880b4db992f28a27cc18ea478338174fda93a Mon Sep 17 00:00:00 2001
+From: Sumit Naiksatam <snaiksat@cisco.com>
+Date: Mon, 27 Feb 2012 00:26:14 -0800
+Subject: [PATCH] Add VIF and interface drivers for the Linux Bridge plugin
+
+Fixes bug #941794
+Drivers have been reviewed earlier by Quantum reviewers and are being
+moved here on their request.
+
+Change-Id: If04807c473542e2f0259faa6d243c3e6e9539f64
+---
+ Authors                        |    1 +
+ nova/network/linux_net.py      |   82 ++++++++++++++++++++++++++++++++++++++++
+ nova/tests/test_libvirt_vif.py |   22 ++++++++++-
+ nova/virt/libvirt/vif.py       |   29 ++++++++++++++
+ 4 files changed, 133 insertions(+), 1 deletions(-)
+
+diff --git a/Authors b/Authors
+index 06416bf..f435fe1 100644
+--- a/Authors
++++ b/Authors
+@@ -162,6 +162,7 @@ Scott Moser <smoser@ubuntu.com>
+ Soren Hansen <soren.hansen@rackspace.com>
+ Stanislaw Pitucha <stanislaw.pitucha@hp.com>
+ Stephanie Reese <reese.sm@gmail.com>
++Sumit Naiksatam <snaiksat@cisco.com>
+ Thierry Carrez <thierry@openstack.org>
+ Tim Simpson <tim.simpson@rackspace.com>
+ Todd Willey <todd@ansolabs.com>
+diff --git a/nova/network/linux_net.py b/nova/network/linux_net.py
+index 46d2aad..4a8328a 100755
+--- a/nova/network/linux_net.py
++++ b/nova/network/linux_net.py
+@@ -1124,5 +1124,87 @@ class LinuxOVSInterfaceDriver(LinuxNetInterfaceDriver):
+         dev = "gw-" + str(network['uuid'][0:11])
+         return dev
+ 
++
++# plugs interfaces using Linux Bridge when using QuantumManager
++class QuantumLinuxBridgeInterfaceDriver(LinuxNetInterfaceDriver):
++
++    BRIDGE_NAME_PREFIX = "brq"
++    GATEWAY_INTERFACE_PREFIX = "gw-"
++
++    def plug(self, network, mac_address, gateway=True):
++        dev = self.get_dev(network)
++        bridge = self.get_bridge(network)
++        if not gateway:
++            # If we weren't instructed to act as a gateway then add the
++            # appropriate flows to block all non-dhcp traffic.
++            # .. and make sure iptbles won't forward it as well.
++            iptables_manager.ipv4['filter'].add_rule('FORWARD',
++                    '--in-interface %s -j DROP' % bridge)
++            iptables_manager.ipv4['filter'].add_rule('FORWARD',
++                    '--out-interface %s -j DROP' % bridge)
++            return bridge
++        else:
++            iptables_manager.ipv4['filter'].add_rule('FORWARD',
++                    '--in-interface %s -j ACCEPT' % bridge)
++            iptables_manager.ipv4['filter'].add_rule('FORWARD',
++                    '--out-interface %s -j ACCEPT' % bridge)
++
++        QuantumLinuxBridgeInterfaceDriver.create_tap_dev(dev, mac_address)
++
++        if not _device_exists(bridge):
++            LOG.debug(_("Starting bridge %s "), bridge)
++            utils.execute('brctl', 'addbr', bridge, run_as_root=True)
++            utils.execute('brctl', 'setfd', bridge, str(0), run_as_root=True)
++            utils.execute('brctl', 'stp', bridge, 'off', run_as_root=True)
++            utils.execute('ip', 'link', 'set', bridge, "address", mac_address,
++                          run_as_root=True)
++            utils.execute('ip', 'link', 'set', bridge, 'up', run_as_root=True)
++            LOG.debug(_("Done starting bridge %s"), bridge)
++
++        full_ip = '%s/%s' % (network['dhcp_server'],
++                             network['cidr'].rpartition('/')[2])
++        utils.execute('ip', 'address', 'add', full_ip, 'dev', bridge,
++                run_as_root=True)
++
++        return dev
++
++    def unplug(self, network):
++        dev = self.get_dev(network)
++
++        if not _device_exists(dev):
++            return None
++        else:
++            try:
++                utils.execute('ip', 'link', 'delete', dev, run_as_root=True)
++            except exception.ProcessExecutionError:
++                LOG.warning(_("Failed unplugging gateway interface '%s'"),
++                            dev)
++                raise
++            LOG.debug(_("Unplugged gateway interface '%s'"), dev)
++            return dev
++
++    @classmethod
++    def create_tap_dev(_self, dev, mac_address=None):
++        if not _device_exists(dev):
++            try:
++                # First, try with 'ip'
++                utils.execute('ip', 'tuntap', 'add', dev, 'mode', 'tap',
++                          run_as_root=True)
++            except exception.ProcessExecutionError:
++                # Second option: tunctl
++                utils.execute('tunctl', '-b', '-t', dev, run_as_root=True)
++            if mac_address:
++                utils.execute('ip', 'link', 'set', dev, "address", mac_address,
++                              run_as_root=True)
++            utils.execute('ip', 'link', 'set', dev, 'up', run_as_root=True)
++
++    def get_dev(self, network):
++        dev = self.GATEWAY_INTERFACE_PREFIX + str(network['uuid'][0:11])
++        return dev
++
++    def get_bridge(self, network):
++        bridge = self.BRIDGE_NAME_PREFIX + str(network['uuid'][0:11])
++        return bridge
++
+ iptables_manager = IptablesManager()
+ interface_driver = utils.import_object(FLAGS.linuxnet_interface_driver)
+diff --git a/nova/tests/test_libvirt_vif.py b/nova/tests/test_libvirt_vif.py
+index 3f9b8e1..8e0d662 100644
+--- a/nova/tests/test_libvirt_vif.py
++++ b/nova/tests/test_libvirt_vif.py
+@@ -23,7 +23,9 @@ from nova.virt import firewall
+ from nova.virt import vif
+ from nova.virt.libvirt import connection
+ from nova.virt.libvirt.vif import LibvirtBridgeDriver, \
+-                LibvirtOpenVswitchDriver, LibvirtOpenVswitchVirtualPortDriver
++                LibvirtOpenVswitchDriver, \
++                LibvirtOpenVswitchVirtualPortDriver, \
++                QuantumLinuxBridgeVIFDriver
+ 
+ FLAGS = flags.FLAGS
+ 
+@@ -157,3 +159,21 @@ class LibvirtVifTestCase(test.TestCase):
+ 
+         self.assertTrue(iface_id_found)
+         d.unplug(None, self.net, self.mapping)
++
++    def test_quantum_bridge_ethernet_driver(self):
++        d = QuantumLinuxBridgeVIFDriver()
++        xml = self._get_instance_xml(d, 'ethernet')
++
++        doc = ElementTree.fromstring(xml)
++        ret = doc.findall('./devices/interface')
++        self.assertEqual(len(ret), 1)
++        node = ret[0]
++        self.assertEqual(node.get("type"), "ethernet")
++        dev_name = node.find("target").get("dev")
++        self.assertTrue(dev_name.startswith("tap"))
++        mac = node.find("mac").get("address")
++        self.assertEqual(mac, self.mapping['mac'])
++        script = node.find("script").get("path")
++        self.assertEquals(script, "")
++
++        d.unplug(None, self.net, self.mapping)
+diff --git a/nova/virt/libvirt/vif.py b/nova/virt/libvirt/vif.py
+index 886eea7..a2c946b 100644
+--- a/nova/virt/libvirt/vif.py
++++ b/nova/virt/libvirt/vif.py
+@@ -172,3 +172,32 @@ class LibvirtOpenVswitchVirtualPortDriver(VIFDriver):
+     def unplug(self, instance, network, mapping):
+         """No action needed.  Libvirt takes care of cleanup"""
+         pass
++
++
++class QuantumLinuxBridgeVIFDriver(VIFDriver):
++    """VIF driver for Linux Bridge when running Quantum."""
++
++    def get_dev_name(self, iface_id):
++        return "tap" + iface_id[0:11]
++
++    def plug(self, instance, network, mapping):
++        iface_id = mapping['vif_uuid']
++        dev = self.get_dev_name(iface_id)
++        linux_net.QuantumLinuxBridgeInterfaceDriver.create_tap_dev(dev)
++
++        result = {
++            'script': '',
++            'name': dev,
++            'mac_address': mapping['mac']}
++        return result
++
++    def unplug(self, instance, network, mapping):
++        """Unplug the VIF from the network by deleting the port from
++        the bridge."""
++        dev = self.get_dev_name(mapping['vif_uuid'])
++        try:
++            utils.execute('ip', 'link', 'delete', dev, run_as_root=True)
++        except exception.ProcessExecutionError:
++            LOG.warning(_("Failed while unplugging vif of instance '%s'"),
++                        instance['name'])
++            raise

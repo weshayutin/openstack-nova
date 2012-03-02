@@ -35,6 +35,8 @@ Source23:         openstack-nova-db-setup
 # patches_base=essex-4
 #
 Patch0001: 0001-Ensure-we-don-t-access-the-net-when-building-docs.patch
+Patch0002: 0002-Add-VIF-and-interface-drivers-for-the-Linux-Bridge-p.patch
+Patch0003: 0003-Adds-soft-reboot-support-to-libvirt.patch
 
 BuildArch:        noarch
 BuildRequires:    intltool
@@ -170,6 +172,8 @@ This package contains documentation files for nova.
 %setup -q -n nova-%{version}
 
 %patch0001 -p1
+%patch0002 -p1
+%patch0003 -p1
 
 find . \( -name .gitignore -o -name .placeholder \) -delete
 
