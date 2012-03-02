@@ -5,13 +5,13 @@ Version:          2012.1
 # The Release is in form 0.X.tag as per:
 #   http://fedoraproject.org/wiki/Packaging:NamingGuidelines#Pre-Release_packages
 # So for prereleases always increment X
-Release:          0.4.e3%{?dist}
+Release:          0.5.e4%{?dist}
 Summary:          OpenStack Compute (nova)
 
 Group:            Applications/System
 License:          ASL 2.0
 URL:              http://openstack.org/projects/compute/
-Source0:          http://launchpad.net/nova/essex/essex-3/+download/nova-%{version}~e3.tar.gz
+Source0:          http://launchpad.net/nova/essex/essex-4/+download/nova-%{version}~e4.tar.gz
 Source1:          nova.conf
 Source6:          nova.logrotate
 
@@ -32,10 +32,9 @@ Source22:         nova-ifc-template
 Source23:         openstack-nova-db-setup
 
 #
-# patches_base=essex-3
+# patches_base=essex-4
 #
 Patch0001: 0001-Ensure-we-don-t-access-the-net-when-building-docs.patch
-Patch0002: 0002-fix-nova-manage-image-convert-exception.patch
 
 BuildArch:        noarch
 BuildRequires:    intltool
@@ -171,7 +170,6 @@ This package contains documentation files for nova.
 %setup -q -n nova-%{version}
 
 %patch0001 -p1
-%patch0002 -p1
 
 find . \( -name .gitignore -o -name .placeholder \) -delete
 
@@ -360,7 +358,8 @@ fi
 %endif
 
 %changelog
-* ... TBD ...
+* Fri Mar  2 2012 Pádraig Brady <P@draigBrady.com> - 2012.1-0.5.e4
+- Update to Essex milestone 4.
 - explicitly select the libvirt firewall driver in default nova.conf.
 - Add dependency on python-iso8601.
 - Enable --force_dhcp_release.
