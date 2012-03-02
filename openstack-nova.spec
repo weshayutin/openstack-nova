@@ -306,8 +306,6 @@ fi
 %doc LICENSE
 %dir %{_sysconfdir}/nova
 %config(noreplace) %attr(-, root, nova) %{_sysconfdir}/nova/nova.conf
-%config(noreplace) %{_sysconfdir}/nova/api-paste.ini
-%config(noreplace) %{_sysconfdir}/nova/policy.json
 %config(noreplace) %{_sysconfdir}/logrotate.d/openstack-nova
 %config(noreplace) %{_sysconfdir}/sudoers.d/nova
 %config(noreplace) %{_sysconfdir}/polkit-1/localauthority/50-local.d/50-nova.pkla
