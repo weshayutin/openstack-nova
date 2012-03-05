@@ -225,9 +225,11 @@ touch %{buildroot}%{_sharedstatedir}/nova/CA/{cacert.pem,crl.pem,index.txt,opens
 install -d -m 750 %{buildroot}%{_sharedstatedir}/nova/CA/private
 touch %{buildroot}%{_sharedstatedir}/nova/CA/private/cakey.pem
 
-# Install config file
+# Install config files
 install -d -m 755 %{buildroot}%{_sysconfdir}/nova
 install -p -D -m 640 %{SOURCE1} %{buildroot}%{_sysconfdir}/nova/nova.conf
+install -p -D -m 640 etc/nova/api-paste.ini %{buildroot}%{_sysconfdir}/nova/api-paste.ini
+install -p -D -m 640 etc/nova/policy.json %{buildroot}%{_sysconfdir}/nova/policy.json
 
 # Install initscripts for Nova services
 install -p -D -m 755 %{SOURCE10} %{buildroot}%{_unitdir}/openstack-nova-api.service
@@ -310,6 +312,8 @@ fi
 %doc LICENSE
 %dir %{_sysconfdir}/nova
 %config(noreplace) %attr(-, root, nova) %{_sysconfdir}/nova/nova.conf
+%config(noreplace) %{_sysconfdir}/nova/api-paste.ini
+%config(noreplace) %{_sysconfdir}/nova/policy.json
 %config(noreplace) %{_sysconfdir}/logrotate.d/openstack-nova
 %config(noreplace) %{_sysconfdir}/sudoers.d/nova
 %config(noreplace) %{_sysconfdir}/polkit-1/localauthority/50-local.d/50-nova.pkla
