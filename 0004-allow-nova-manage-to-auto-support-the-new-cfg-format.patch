@@ -1,0 +1,37 @@
+From 2cfdc6c1dee8a9b58585cf0c2c19f0f0693b221c Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?P=C3=A1draig=20Brady?= <P@draigBrady.com>
+Date: Mon, 5 Mar 2012 14:48:21 +0000
+Subject: [PATCH] allow nova-manage to auto support the new cfg format
+
+This is a temprorary work around to support the
+new config file format transparently.
+---
+ bin/nova-manage |   15 +++++++++++++++
+ 1 files changed, 15 insertions(+), 0 deletions(-)
+
+diff --git a/bin/nova-manage b/bin/nova-manage
+index 4927614..a8eaec4 100755
+--- a/bin/nova-manage
++++ b/bin/nova-manage
+@@ -97,6 +97,21 @@ from nova.compute import vm_states
+ from nova.db import migration
+ from nova.volume import volume_types
+ 
++# PB: Temp hack to support new config file format
++def handle_new_cfg_format():
++    flagfile=utils.default_flagfile()
++    ff=file(flagfile)
++    ini = '[DEFAULT]' in ff.read(64)
++    ff.close()
++    if ini and not any('--config-file' in i for i in sys.argv):
++        for i in range(len(sys.argv)):
++            if '--flagfile' in sys.argv[i]:
++                del sys.argv[i]
++                break
++        sys.argv.insert(1,'--config-file='+flagfile)
++        print sys.argv
++handle_new_cfg_format()
++
+ FLAGS = flags.FLAGS
+ flags.DECLARE('flat_network_bridge', 'nova.network.manager')
+ flags.DECLARE('num_networks', 'nova.network.manager')
