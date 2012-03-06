@@ -1,0 +1,58 @@
+From e2fb4f440b81b31fcf88dd5ea62eb6efff81d953 Mon Sep 17 00:00:00 2001
+From: Vishvananda Ishaya <vishvananda@gmail.com>
+Date: Mon, 5 Mar 2012 16:54:57 -0800
+Subject: [PATCH] Allows new style config to be used for --flagfile
+
+ * includes tests
+ * fixes bug 947549
+
+Change-Id: Ibf319ea75a2d6156c5d8f1112cd58a33e5a98fe0
+---
+ nova/compat/flagfile.py            |    4 ++++
+ nova/tests/test_compat_flagfile.py |    9 +++++++--
+ 2 files changed, 11 insertions(+), 2 deletions(-)
+
+diff --git a/nova/compat/flagfile.py b/nova/compat/flagfile.py
+index 02d571c..3b5845c 100644
+--- a/nova/compat/flagfile.py
++++ b/nova/compat/flagfile.py
+@@ -97,6 +97,10 @@ def _read_flagfile(arg, next_arg, tempdir=None):
+ 
+     args = _read_lines(flagfile)
+ 
++    if args and not args[0].startswith('--'):
++        # This is a config file, not a flagfile, so return it.
++        return ['--config-file=' + flagfile] + argp[1:]
++
+     #
+     # We're recursing here to convert any --flagfile arguments
+     # read from this flagfile into --config-file arguments
+diff --git a/nova/tests/test_compat_flagfile.py b/nova/tests/test_compat_flagfile.py
+index 1635e83..e787f37 100644
+--- a/nova/tests/test_compat_flagfile.py
++++ b/nova/tests/test_compat_flagfile.py
+@@ -18,7 +18,6 @@ import contextlib
+ import os
+ import shutil
+ import StringIO
+-import stubout
+ import textwrap
+ import tempfile
+ import unittest
+@@ -154,9 +153,15 @@ class CompatFlagfileTestCase(unittest.TestCase):
+         self._do_test_flagfile('--noverbose', 'verbose=false\n')
+ 
+     def test_flagfile_comments(self):
+-        self._do_test_flagfile('--bar=foo\n#foo\n--foo=bar\n//bar',
++        self._do_test_flagfile(' \n\n#foo\n--bar=foo\n--foo=bar\n//bar',
+                                'bar=foo\nfoo=bar\n')
+ 
++    def test_flagfile_is_config(self):
++        self.files['foo.flags'] = '\n\n#foo\n//bar\n[DEFAULT]\nbar=foo'
++        before = ['--flagfile=foo.flags']
++        after = flagfile.handle_flagfiles(before, tempdir=self.tempdir)
++        self.assertEquals(after, ['--config-file=foo.flags'])
++
+     def test_flagfile_nested(self):
+         self.files['bar.flags'] = '--foo=bar'
+ 

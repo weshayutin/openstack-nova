@@ -37,7 +37,7 @@ Source23:         openstack-nova-db-setup
 Patch0001: 0001-Ensure-we-don-t-access-the-net-when-building-docs.patch
 Patch0002: 0002-Add-VIF-and-interface-drivers-for-the-Linux-Bridge-p.patch
 Patch0003: 0003-Adds-soft-reboot-support-to-libvirt.patch
-Patch0004: 0004-allow-nova-manage-to-auto-support-the-new-cfg-format.patch
+Patch0004: 0004-Allows-new-style-config-to-be-used-for-flagfile.patch
 
 BuildArch:        noarch
 BuildRequires:    intltool
@@ -369,6 +369,7 @@ fi
 %changelog
 * Fri Mar  6 2012 Pádraig Brady <P@draigBrady.com> - 2012.1-0.6.e4
 - Depend on bridge-utils
+- Support fully transparent handling of the new ini config file
 
 * Fri Mar  2 2012 Pádraig Brady <P@draigBrady.com> - 2012.1-0.5.e4
 - Update to Essex milestone 4.
