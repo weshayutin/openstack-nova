@@ -2,7 +2,7 @@
 
 Name:             openstack-nova
 Version:          2011.3.1
-Release:          4%{?dist}
+Release:          5%{?dist}
 Summary:          OpenStack Compute (nova)
 
 Group:            Applications/System
@@ -55,6 +55,7 @@ Requires:         openstack-glance
 Requires:         python-paste
 Requires:         python-paste-deploy
 
+Requires:         bridge-utils
 Requires:         dnsmasq-utils
 Requires:         libguestfs-mount >= 1.7.17
 # The fuse dependency should be added to libguestfs-mount
@@ -369,6 +370,9 @@ fi
 %endif
 
 %changelog
+* Mon Mar  6 2012 Pádraig Brady <P@draigBrady.com> - 2011.3.1-5
+- Require bridge-utils
+
 * Mon Feb 13 2012 Pádraig Brady <P@draigBrady.com> - 2011.3.1-4
 - Support --force_dhcp_release (#788485)
 
