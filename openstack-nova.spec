@@ -5,7 +5,7 @@ Version:          2012.1
 # The Release is in form 0.X.tag as per:
 #   http://fedoraproject.org/wiki/Packaging:NamingGuidelines#Pre-Release_packages
 # So for prereleases always increment X
-Release:          0.5.e4%{?dist}
+Release:          0.6.e4%{?dist}
 Summary:          OpenStack Compute (nova)
 
 Group:            Applications/System
@@ -51,6 +51,7 @@ Requires:         python-nova = %{version}-%{release}
 Requires:         python-paste
 Requires:         python-paste-deploy
 
+Requires:         bridge-utils
 Requires:         dnsmasq-utils
 Requires:         libguestfs-mount >= 1.7.17
 # The fuse dependency should be added to libguestfs-mount
@@ -366,6 +367,9 @@ fi
 %endif
 
 %changelog
+* Fri Mar  6 2012 Pádraig Brady <P@draigBrady.com> - 2012.1-0.6.e4
+- Depend on bridge-utils
+
 * Fri Mar  2 2012 Pádraig Brady <P@draigBrady.com> - 2012.1-0.5.e4
 - Update to Essex milestone 4.
 - explicitly select the libvirt firewall driver in default nova.conf.
