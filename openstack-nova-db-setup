@@ -223,7 +223,7 @@ fi
 
 # Ask openstack-nova to sync the db.
 
-echo "Asking openstack-nova to sync the databse."
+echo "Asking openstack-nova to sync the database."
 nova-manage db sync
 
 
