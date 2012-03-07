@@ -5,7 +5,7 @@ Version:          2012.1
 # The Release is in form 0.X.tag as per:
 #   http://fedoraproject.org/wiki/Packaging:NamingGuidelines#Pre-Release_packages
 # So for prereleases always increment X
-Release:          0.6.e4%{?dist}
+Release:          0.7.e4%{?dist}
 Summary:          OpenStack Compute (nova)
 
 Group:            Applications/System
@@ -315,8 +315,8 @@ fi
 %doc LICENSE
 %dir %{_sysconfdir}/nova
 %config(noreplace) %attr(-, root, nova) %{_sysconfdir}/nova/nova.conf
-%config(noreplace) %{_sysconfdir}/nova/api-paste.ini
-%config(noreplace) %{_sysconfdir}/nova/policy.json
+%config(noreplace) %attr(-, root, nova) %{_sysconfdir}/nova/api-paste.ini
+%config(noreplace) %attr(-, root, nova) %{_sysconfdir}/nova/policy.json
 %config(noreplace) %{_sysconfdir}/logrotate.d/openstack-nova
 %config(noreplace) %{_sysconfdir}/sudoers.d/nova
 %config(noreplace) %{_sysconfdir}/polkit-1/localauthority/50-local.d/50-nova.pkla
@@ -367,6 +367,9 @@ fi
 %endif
 
 %changelog
+* Fri Mar  6 2012 Alan Pevec <apevec@redhat.com> - 2012.1-0.7.e4
+- Fixup permissions on nova config files
+
 * Fri Mar  6 2012 Pádraig Brady <P@draigBrady.com> - 2012.1-0.6.e4
 - Depend on bridge-utils
 - Support fully transparent handling of the new ini config file
