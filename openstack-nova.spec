@@ -5,7 +5,7 @@ Version:          2012.1
 # The Release is in form 0.X.tag as per:
 #   http://fedoraproject.org/wiki/Packaging:NamingGuidelines#Pre-Release_packages
 # So for prereleases always increment X
-Release:          0.7.e4%{?dist}
+Release:          0.8.e4%{?dist}
 Summary:          OpenStack Compute (nova)
 
 Group:            Applications/System
@@ -38,6 +38,7 @@ Patch0001: 0001-Ensure-we-don-t-access-the-net-when-building-docs.patch
 Patch0002: 0002-Add-VIF-and-interface-drivers-for-the-Linux-Bridge-p.patch
 Patch0003: 0003-Adds-soft-reboot-support-to-libvirt.patch
 Patch0004: 0004-Allows-new-style-config-to-be-used-for-flagfile.patch
+Patch0005: 0005-Fix-_sync_power_states-to-obtain-correct-state.patch
 
 BuildArch:        noarch
 BuildRequires:    intltool
@@ -177,6 +178,7 @@ This package contains documentation files for nova.
 %patch0002 -p1
 %patch0003 -p1
 %patch0004 -p1
+%patch0005 -p1
 
 find . \( -name .gitignore -o -name .placeholder \) -delete
 
@@ -367,6 +369,9 @@ fi
 %endif
 
 %changelog
+* Fri Mar  8 2012 Pádraig Brady <P@draigBrady.com> - 2012.1-0.8.e4
+- Include an upstream fix for errors logged when syncing power states
+
 * Fri Mar  6 2012 Alan Pevec <apevec@redhat.com> - 2012.1-0.7.e4
 - Fixup permissions on nova config files
 
