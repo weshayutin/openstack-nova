@@ -99,6 +99,7 @@ Requires:         python-daemon
 Requires:         python-eventlet
 Requires:         python-greenlet
 Requires:         python-gflags
+Requires:         python-iso8601
 Requires:         python-lockfile
 Requires:         python-lxml
 Requires:         python-mox
@@ -361,6 +362,9 @@ fi
 %endif
 
 %changelog
+* Fri Mar 16 2012 Derek Higgins <derekh@redhat.com> 
+- Add python-iso8601 as a dependency
+
 * Mon Feb 17 2012 Dan Prince <dprince@redhat.com> 
 - Swap distutils-extra for babel.
 - Explicitly copy in api-paste.ini and policy.json.
