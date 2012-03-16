@@ -41,6 +41,7 @@ Patch0004: 0004-Allows-new-style-config-to-be-used-for-flagfile.patch
 Patch0005: 0005-Fix-_sync_power_states-to-obtain-correct-state.patch
 Patch0006: 0006-nonblocking-libvirt-mode-using-tpool.patch
 Patch0007: 0007-Fixes-xml-representation-of-ext_srv_attr-extension.patch
+Patch0008: 0008-fix-useexisting-deprecation-warnings.patch
 
 BuildArch:        noarch
 BuildRequires:    intltool
@@ -183,6 +184,7 @@ This package contains documentation files for nova.
 %patch0005 -p1
 %patch0006 -p1
 %patch0007 -p1
+%patch0008 -p1
 
 find . \( -name .gitignore -o -name .placeholder \) -delete
 
@@ -377,6 +379,7 @@ fi
 - Include an upstream fix for errors logged when syncing power states
 - Support non blocking libvirt operations
 - Fix an exception when querying a server through the API (#803905)
+- Suppress deprecation warnings with db sync at install (#801302)
 
 * Fri Mar  6 2012 Alan Pevec <apevec@redhat.com> - 2012.1-0.7.e4
 - Fixup permissions on nova config files
