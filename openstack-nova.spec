@@ -39,6 +39,12 @@ Patch0002: 0002-Add-VIF-and-interface-drivers-for-the-Linux-Bridge-p.patch
 Patch0003: 0003-Adds-soft-reboot-support-to-libvirt.patch
 Patch0004: 0004-Allows-new-style-config-to-be-used-for-flagfile.patch
 Patch0005: 0005-Fix-_sync_power_states-to-obtain-correct-state.patch
+Patch0006: 0006-nonblocking-libvirt-mode-using-tpool.patch
+Patch0007: 0007-Fixes-xml-representation-of-ext_srv_attr-extension.patch
+Patch0008: 0008-fix-useexisting-deprecation-warnings.patch
+Patch0009: 0009-Fix-backing-file-cp-resize-race-condition.patch
+Patch0010: 0010-ensure-atomic-manipulation-of-libvirt-disk-images.patch
+Patch0011: 0011-allow-the-compute-service-to-start-with-missing-libv.patch
 
 BuildArch:        noarch
 BuildRequires:    intltool
@@ -179,6 +185,12 @@ This package contains documentation files for nova.
 %patch0003 -p1
 %patch0004 -p1
 %patch0005 -p1
+%patch0006 -p1
+%patch0007 -p1
+%patch0008 -p1
+%patch0009 -p1
+%patch0010 -p1
+%patch0011 -p1
 
 find . \( -name .gitignore -o -name .placeholder \) -delete
 
@@ -369,8 +381,12 @@ fi
 %endif
 
 %changelog
-* Fri Mar  8 2012 Pádraig Brady <P@draigBrady.com> - 2012.1-0.8.e4
+* Fri Mar 16 2012 Pádraig Brady <P@draigBrady.com> - 2012.1-0.8.e4
 - Include an upstream fix for errors logged when syncing power states
+- Support non blocking libvirt operations
+- Fix an exception when querying a server through the API (#803905)
+- Suppress deprecation warnings with db sync at install (#801302)
+- Avoid and cater for missing libvirt instance images (#801791)
 
 * Fri Mar  6 2012 Alan Pevec <apevec@redhat.com> - 2012.1-0.7.e4
 - Fixup permissions on nova config files

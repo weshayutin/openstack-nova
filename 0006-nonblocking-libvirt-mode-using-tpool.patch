@@ -1,0 +1,80 @@
+From a85610802a0646da3a88468de65aeda5f9ea1cef Mon Sep 17 00:00:00 2001
+From: Yun Mao <yunmao@gmail.com>
+Date: Tue, 13 Mar 2012 16:15:19 -0400
+Subject: [PATCH] nonblocking libvirt mode using tpool
+
+Add an option libvirt_nonblocking (disabled by default) to use a thread
+pool to execute all libvirt API calls. Previously all the calls except
+one in firewall.py are blocking in the eventlet thread model.
+
+Change-Id: I665ed7a629bb029011b181e8d2844fc2276502d9
+
+Conflicts:
+
+	etc/nova/nova.conf.sample
+---
+ nova/virt/libvirt/connection.py |   15 ++++++++++++++-
+ nova/virt/libvirt/firewall.py   |    8 +++++++-
+ 2 files changed, 21 insertions(+), 2 deletions(-)
+
+diff --git a/nova/virt/libvirt/connection.py b/nova/virt/libvirt/connection.py
+index d8f1465..2785a5d 100644
+--- a/nova/virt/libvirt/connection.py
++++ b/nova/virt/libvirt/connection.py
+@@ -49,6 +49,8 @@ import sys
+ import uuid
+ 
+ from eventlet import greenthread
++from eventlet import tpool
++
+ from xml.dom import minidom
+ from xml.etree import ElementTree
+ 
+@@ -156,6 +158,10 @@ libvirt_opts = [
+                help='Number of seconds to wait for instance to shut down after'
+                     ' soft reboot request is made. We fall back to hard reboot'
+                     ' if instance does not shutdown within this window.'),
++    cfg.BoolOpt('libvirt_nonblocking',
++                default=False,
++                help='Use a separated OS thread pool to realize non-blocking'
++                     ' libvirt calls')
+     ]
+ 
+ FLAGS = flags.FLAGS
+@@ -251,9 +257,16 @@ class LibvirtConnection(driver.ComputeDriver):
+     def _get_connection(self):
+         if not self._wrapped_conn or not self._test_connection():
+             LOG.debug(_('Connecting to libvirt: %s'), self.uri)
+-            self._wrapped_conn = self._connect(self.uri,
++            if not FLAGS.libvirt_nonblocking:
++                self._wrapped_conn = self._connect(self.uri,
+                                                self.read_only)
++            else:
++                self._wrapped_conn = tpool.proxy_call(
++                    (libvirt.virDomain, libvirt.virConnect),
++                    self._connect, self.uri, self.read_only)
++
+         return self._wrapped_conn
++
+     _conn = property(_get_connection)
+ 
+     def _test_connection(self):
+diff --git a/nova/virt/libvirt/firewall.py b/nova/virt/libvirt/firewall.py
+index 04b3cf4..dd491ea 100644
+--- a/nova/virt/libvirt/firewall.py
++++ b/nova/virt/libvirt/firewall.py
+@@ -144,7 +144,13 @@ class NWFilterFirewall(base_firewall.FirewallDriver):
+         if callable(xml):
+             xml = xml()
+         # execute in a native thread and block current greenthread until done
+-        tpool.execute(self._conn.nwfilterDefineXML, xml)
++        if not FLAGS.libvirt_nonblocking:
++            # NOTE(maoy): the original implementation is to have the API called
++            # in the thread pool no matter what.
++            tpool.execute(self._conn.nwfilterDefineXML, xml)
++        else:
++            # NOTE(maoy): self._conn is a eventlet.tpool.Proxy object
++            self._conn.nwfilterDefineXML(xml)
+ 
+     def unfilter_instance(self, instance, network_info):
+         """Clear out the nwfilter rules."""
