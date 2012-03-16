@@ -39,6 +39,7 @@ Patch0002: 0002-Add-VIF-and-interface-drivers-for-the-Linux-Bridge-p.patch
 Patch0003: 0003-Adds-soft-reboot-support-to-libvirt.patch
 Patch0004: 0004-Allows-new-style-config-to-be-used-for-flagfile.patch
 Patch0005: 0005-Fix-_sync_power_states-to-obtain-correct-state.patch
+Patch0006: 0006-nonblocking-libvirt-mode-using-tpool.patch
 
 BuildArch:        noarch
 BuildRequires:    intltool
@@ -179,6 +180,7 @@ This package contains documentation files for nova.
 %patch0003 -p1
 %patch0004 -p1
 %patch0005 -p1
+%patch0006 -p1
 
 find . \( -name .gitignore -o -name .placeholder \) -delete
 
@@ -371,6 +373,7 @@ fi
 %changelog
 * Fri Mar  8 2012 Pádraig Brady <P@draigBrady.com> - 2012.1-0.8.e4
 - Include an upstream fix for errors logged when syncing power states
+- Support non blocking libvirt operations
 
 * Fri Mar  6 2012 Alan Pevec <apevec@redhat.com> - 2012.1-0.7.e4
 - Fixup permissions on nova config files
