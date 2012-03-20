@@ -1,7 +1,7 @@
 %global with_doc %{!?_without_doc:1}%{?_without_doc:0}
 
 Name:             openstack-nova
-Version:          2012.1
+Version:          2012.2
 # The Release is in form 0.X.tag as per:
 #   http://fedoraproject.org/wiki/Packaging:NamingGuidelines#Pre-Release_packages
 # So for prereleases always increment X
@@ -362,14 +362,17 @@ fi
 %endif
 
 %changelog
-* Fri Mar 16 2012 Derek Higgins <derekh@redhat.com> 
+* Tue Mar 20 2012 Derek Higgins <derekh@redhat.com>
+- Update version to 2012.2
+
+* Fri Mar 16 2012 Derek Higgins <derekh@redhat.com>
 - Add python-iso8601 as a dependency
 
-* Mon Feb 17 2012 Dan Prince <dprince@redhat.com> 
+* Mon Feb 17 2012 Dan Prince <dprince@redhat.com>
 - Swap distutils-extra for babel.
 - Explicitly copy in api-paste.ini and policy.json.
 
-* Mon Feb 13 2012 Derek Higgins <derekh@redhat.com> 
+* Mon Feb 13 2012 Derek Higgins <derekh@redhat.com>
 - Patch 0002 no longer needed, its been merged upstream
 - python-sphinx is also used to build the man pages
 
