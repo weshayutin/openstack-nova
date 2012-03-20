@@ -5,13 +5,13 @@ Version:          2012.1
 # The Release is in form 0.X.tag as per:
 #   http://fedoraproject.org/wiki/Packaging:NamingGuidelines#Pre-Release_packages
 # So for prereleases always increment X
-Release:          0.8.e4%{?dist}
+Release:          0.8.rc1%{?dist}
 Summary:          OpenStack Compute (nova)
 
 Group:            Applications/System
 License:          ASL 2.0
 URL:              http://openstack.org/projects/compute/
-Source0:          http://launchpad.net/nova/essex/essex-4/+download/nova-%{version}~e4.tar.gz
+Source0:          http://launchpad.net/nova/essex/essex-rc1/+download/nova-%{version}~rc1.tar.gz
 Source1:          nova.conf
 Source6:          nova.logrotate
 
@@ -32,19 +32,11 @@ Source22:         nova-ifc-template
 Source23:         openstack-nova-db-setup
 
 #
-# patches_base=essex-4
+# patches_base=essex-rc1
 #
 Patch0001: 0001-Ensure-we-don-t-access-the-net-when-building-docs.patch
-Patch0002: 0002-Add-VIF-and-interface-drivers-for-the-Linux-Bridge-p.patch
-Patch0003: 0003-Adds-soft-reboot-support-to-libvirt.patch
-Patch0004: 0004-Allows-new-style-config-to-be-used-for-flagfile.patch
-Patch0005: 0005-Fix-_sync_power_states-to-obtain-correct-state.patch
-Patch0006: 0006-nonblocking-libvirt-mode-using-tpool.patch
-Patch0007: 0007-Fixes-xml-representation-of-ext_srv_attr-extension.patch
-Patch0008: 0008-fix-useexisting-deprecation-warnings.patch
-Patch0009: 0009-Fix-backing-file-cp-resize-race-condition.patch
-Patch0010: 0010-ensure-atomic-manipulation-of-libvirt-disk-images.patch
-Patch0011: 0011-allow-the-compute-service-to-start-with-missing-libv.patch
+Patch0002: 0002-fix-useexisting-deprecation-warnings.patch
+Patch0003: 0003-ensure-atomic-manipulation-of-libvirt-disk-images.patch
 
 BuildArch:        noarch
 BuildRequires:    intltool
@@ -183,14 +175,6 @@ This package contains documentation files for nova.
 %patch0001 -p1
 %patch0002 -p1
 %patch0003 -p1
-%patch0004 -p1
-%patch0005 -p1
-%patch0006 -p1
-%patch0007 -p1
-%patch0008 -p1
-%patch0009 -p1
-%patch0010 -p1
-%patch0011 -p1
 
 find . \( -name .gitignore -o -name .placeholder \) -delete
 
@@ -381,6 +365,9 @@ fi
 %endif
 
 %changelog
+* Tue Mar 20 2012 Pádraig Brady <P@draigBrady.com> - 2012.1-0.9.rc1
+- Update to Essex release candidate 1
+
 * Fri Mar 16 2012 Pádraig Brady <P@draigBrady.com> - 2012.1-0.8.e4
 - Include an upstream fix for errors logged when syncing power states
 - Support non blocking libvirt operations

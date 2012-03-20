@@ -1,4 +1,4 @@
-From 81ef3436c52f84816a341d19348a464412ce7dc9 Mon Sep 17 00:00:00 2001
+From 0ce9eb5dabd84f7566d54ad5c16b807d73c9274d Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?P=C3=A1draig=20Brady?= <pbrady@redhat.com>
 Date: Fri, 16 Mar 2012 03:43:49 +0000
 Subject: [PATCH] ensure atomic manipulation of libvirt disk images
@@ -25,7 +25,7 @@ Change-Id: I81a5407665a6998128c0dee41387ef00ebddeb4d
  3 files changed, 57 insertions(+), 49 deletions(-)
 
 diff --git a/nova/utils.py b/nova/utils.py
-index a224b38..3ca6aa1 100644
+index ef2b329..6b3ca10 100644
 --- a/nova/utils.py
 +++ b/nova/utils.py
 @@ -21,6 +21,7 @@
@@ -36,7 +36,7 @@ index a224b38..3ca6aa1 100644
  import functools
  import hashlib
  import inspect
-@@ -920,8 +921,8 @@ def cleanup_file_locks():
+@@ -1013,8 +1014,8 @@ def cleanup_file_locks():
              continue
          try:
              stat_info = os.stat(os.path.join(FLAGS.lock_path, filename))
@@ -47,7 +47,7 @@ index a224b38..3ca6aa1 100644
                  continue
              else:
                  raise
-@@ -940,8 +941,8 @@ def delete_if_exists(pathname):
+@@ -1033,8 +1034,8 @@ def delete_if_exists(pathname):
  
      try:
          os.unlink(pathname)
@@ -58,7 +58,7 @@ index a224b38..3ca6aa1 100644
              return
          else:
              raise
-@@ -1247,6 +1248,18 @@ def logging_error(message):
+@@ -1340,6 +1341,18 @@ def logging_error(message):
              LOG.exception(message)
  
  
@@ -78,10 +78,10 @@ index a224b38..3ca6aa1 100644
      """Return a path to a particular device.
  
 diff --git a/nova/virt/images.py b/nova/virt/images.py
-index 12510c7..4ae47d5 100644
+index 1e0ae0a..2c0b12c 100644
 --- a/nova/virt/images.py
 +++ b/nova/virt/images.py
-@@ -52,18 +52,10 @@ def fetch(context, image_href, path, _user_id, _project_id):
+@@ -51,18 +51,10 @@ def fetch(context, image_href, path, _user_id, _project_id):
      #             checked before we got here.
      (image_service, image_id) = nova.image.get_image_service(context,
                                                               image_href)
@@ -102,7 +102,7 @@ index 12510c7..4ae47d5 100644
  
  
  def fetch_to_raw(context, image_href, path, user_id, project_id):
-@@ -86,37 +78,36 @@ def fetch_to_raw(context, image_href, path, user_id, project_id):
+@@ -85,37 +77,36 @@ def fetch_to_raw(context, image_href, path, user_id, project_id):
  
          return(data)
  
@@ -169,10 +169,10 @@ index 12510c7..4ae47d5 100644
  
      return metadata
 diff --git a/nova/virt/libvirt/connection.py b/nova/virt/libvirt/connection.py
-index 6626ff6..9a8b094 100644
+index 3aabfde..ea94e1e 100644
 --- a/nova/virt/libvirt/connection.py
 +++ b/nova/virt/libvirt/connection.py
-@@ -998,7 +998,8 @@ class LibvirtConnection(driver.ComputeDriver):
+@@ -1028,7 +1028,8 @@ class LibvirtConnection(driver.ComputeDriver):
              @utils.synchronized(fname)
              def call_if_not_exists(base, fn, *args, **kwargs):
                  if not os.path.exists(base):
@@ -182,7 +182,7 @@ index 6626ff6..9a8b094 100644
  
              if cow or not generating:
                  call_if_not_exists(base, fn, *args, **kwargs)
-@@ -1014,8 +1015,9 @@ class LibvirtConnection(driver.ComputeDriver):
+@@ -1044,8 +1045,9 @@ class LibvirtConnection(driver.ComputeDriver):
                          size_gb = size / (1024 * 1024 * 1024)
                          cow_base += "_%d" % size_gb
                          if not os.path.exists(cow_base):
@@ -194,7 +194,7 @@ index 6626ff6..9a8b094 100644
                      libvirt_utils.create_cow_image(cow_base, target)
                  elif not generating:
                      libvirt_utils.copy_image(base, target)
-@@ -1025,7 +1027,8 @@ class LibvirtConnection(driver.ComputeDriver):
+@@ -1055,7 +1057,8 @@ class LibvirtConnection(driver.ComputeDriver):
                      if size:
                          disk.extend(target, size)
  
@@ -204,7 +204,7 @@ index 6626ff6..9a8b094 100644
  
      @staticmethod
      def _create_local(target, local_size, unit='G',
-@@ -1185,8 +1188,9 @@ class LibvirtConnection(driver.ComputeDriver):
+@@ -1215,8 +1218,9 @@ class LibvirtConnection(driver.ComputeDriver):
                                project_id=instance['project_id'],)
          elif config_drive:
              label = 'config'
