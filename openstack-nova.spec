@@ -365,7 +365,7 @@ fi
 %endif
 
 %changelog
-* Tue Mar 20 2012 Pádraig Brady <P@draigBrady.com> - 2012.1-0.9.rc1
+* Tue Mar 20 2012 Pádraig Brady <P@draigBrady.com> - 2012.1-0.8.rc1
 - Update to Essex release candidate 1
 
 * Fri Mar 16 2012 Pádraig Brady <P@draigBrady.com> - 2012.1-0.8.e4
