@@ -186,9 +186,6 @@ find nova -name \*.py -exec sed -i '/\/usr\/bin\/env python/d' {} \;
 
 %install
 %{__python} setup.py install -O1 --skip-build --root %{buildroot}
-mkdir -p %{buildroot}/etc/nova/
-cp etc/nova/api-paste.ini %{buildroot}/etc/nova/
-cp etc/nova/policy.json %{buildroot}/etc/nova/
 
 # docs generation requires everything to be installed first
 export PYTHONPATH="$( pwd ):$PYTHONPATH"
