@@ -5,7 +5,7 @@ Version:          2012.2
 # The Release is in form 0.X.tag as per:
 #   http://fedoraproject.org/wiki/Packaging:NamingGuidelines#Pre-Release_packages
 # So for prereleases always increment X
-Release:          0.4.e3%{?dist}
+Release:          0.8.rc1%{?dist}
 Summary:          OpenStack Compute (nova)
 
 Group:            Applications/System
@@ -32,9 +32,11 @@ Source22:         nova-ifc-template
 Source23:         openstack-nova-db-setup
 
 #
-# patches_base=essex-3
+# patches_base=essex-rc1
 #
 Patch0001: 0001-Ensure-we-don-t-access-the-net-when-building-docs.patch
+Patch0002: 0002-fix-useexisting-deprecation-warnings.patch
+Patch0003: 0003-ensure-atomic-manipulation-of-libvirt-disk-images.patch
 
 BuildArch:        noarch
 BuildRequires:    intltool
@@ -49,6 +51,7 @@ Requires:         python-nova = %{version}-%{release}
 Requires:         python-paste
 Requires:         python-paste-deploy
 
+Requires:         bridge-utils
 Requires:         dnsmasq-utils
 Requires:         libguestfs-mount >= 1.7.17
 # The fuse dependency should be added to libguestfs-mount
@@ -157,7 +160,7 @@ BuildRequires:    python-twisted-core
 BuildRequires:    python-twisted-web
 BuildRequires:    python-webob
 # while not strictly required, quiets the build down when building docs.
-BuildRequires:    python-carrot, python-mox, python-suds, m2crypto, bpython, python-memcached, python-migrate
+BuildRequires:    python-carrot, python-mox, python-suds, m2crypto, bpython, python-memcached, python-migrate, python-iso8601
 
 %description      doc
 OpenStack Compute (codename Nova) is open source software designed to
@@ -171,6 +174,8 @@ This package contains documentation files for nova.
 %setup -q -n nova-%{version}
 
 %patch0001 -p1
+%patch0002 -p1
+%patch0003 -p1
 
 find . \( -name .gitignore -o -name .placeholder \) -delete
 
@@ -225,9 +230,11 @@ touch %{buildroot}%{_sharedstatedir}/nova/CA/{cacert.pem,crl.pem,index.txt,opens
 install -d -m 750 %{buildroot}%{_sharedstatedir}/nova/CA/private
 touch %{buildroot}%{_sharedstatedir}/nova/CA/private/cakey.pem
 
-# Install config file
+# Install config files
 install -d -m 755 %{buildroot}%{_sysconfdir}/nova
 install -p -D -m 640 %{SOURCE1} %{buildroot}%{_sysconfdir}/nova/nova.conf
+install -p -D -m 640 etc/nova/api-paste.ini %{buildroot}%{_sysconfdir}/nova/api-paste.ini
+install -p -D -m 640 etc/nova/policy.json %{buildroot}%{_sysconfdir}/nova/policy.json
 
 # Install initscripts for Nova services
 install -p -D -m 755 %{SOURCE10} %{buildroot}%{_unitdir}/openstack-nova-api.service
@@ -310,8 +317,8 @@ fi
 %doc LICENSE
 %dir %{_sysconfdir}/nova
 %config(noreplace) %attr(-, root, nova) %{_sysconfdir}/nova/nova.conf
-%config(noreplace) %{_sysconfdir}/nova/api-paste.ini
-%config(noreplace) %{_sysconfdir}/nova/policy.json
+%config(noreplace) %attr(-, root, nova) %{_sysconfdir}/nova/api-paste.ini
+%config(noreplace) %attr(-, root, nova) %{_sysconfdir}/nova/policy.json
 %config(noreplace) %{_sysconfdir}/logrotate.d/openstack-nova
 %config(noreplace) %{_sysconfdir}/sudoers.d/nova
 %config(noreplace) %{_sysconfdir}/polkit-1/localauthority/50-local.d/50-nova.pkla
@@ -362,19 +369,29 @@ fi
 %endif
 
 %changelog
-* Tue Mar 20 2012 Derek Higgins <derekh@redhat.com>
-- Update version to 2012.2
+* Tue Mar 20 2012 Pádraig Brady <P@draigBrady.com> - 2012.1-0.8.rc1
+- Update to Essex release candidate 1
 
-* Fri Mar 16 2012 Derek Higgins <derekh@redhat.com>
-- Add python-iso8601 as a dependency
+* Fri Mar 16 2012 Pádraig Brady <P@draigBrady.com> - 2012.1-0.8.e4
+- Include an upstream fix for errors logged when syncing power states
+- Support non blocking libvirt operations
+- Fix an exception when querying a server through the API (#803905)
+- Suppress deprecation warnings with db sync at install (#801302)
+- Avoid and cater for missing libvirt instance images (#801791)
 
-* Mon Feb 17 2012 Dan Prince <dprince@redhat.com>
-- Swap distutils-extra for babel.
-- Explicitly copy in api-paste.ini and policy.json.
+* Fri Mar  6 2012 Alan Pevec <apevec@redhat.com> - 2012.1-0.7.e4
+- Fixup permissions on nova config files
 
-* Mon Feb 13 2012 Derek Higgins <derekh@redhat.com>
-- Patch 0002 no longer needed, its been merged upstream
-- python-sphinx is also used to build the man pages
+* Fri Mar  6 2012 Pádraig Brady <P@draigBrady.com> - 2012.1-0.6.e4
+- Depend on bridge-utils
+- Support fully transparent handling of the new ini config file
+
+* Fri Mar  2 2012 Pádraig Brady <P@draigBrady.com> - 2012.1-0.5.e4
+- Update to Essex milestone 4.
+- explicitly select the libvirt firewall driver in default nova.conf.
+- Add dependency on python-iso8601.
+- Enable --force_dhcp_release.
+- Switch to the new ini format config file.
 
 * Mon Feb 13 2012 Pádraig Brady <P@draigBrady.com> - 2012.1-0.4.e3
 - Support --force_dhcp_release (#788485)
