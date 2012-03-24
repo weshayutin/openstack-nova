@@ -260,7 +260,6 @@ install -d -m 755 %{buildroot}%{_localstatedir}/run/nova
 # Install template files
 install -p -D -m 644 nova/auth/novarc.template %{buildroot}%{_datarootdir}/nova/novarc.template
 install -p -D -m 644 nova/cloudpipe/client.ovpn.template %{buildroot}%{_datarootdir}/nova/client.ovpn.template
-install -p -D -m 644 nova/virt/libvirt.xml.template %{buildroot}%{_datarootdir}/nova/libvirt.xml.template
 install -p -D -m 644 nova/virt/interfaces.template %{buildroot}%{_datarootdir}/nova/interfaces.template
 install -p -D -m 644 %{SOURCE22} %{buildroot}%{_datarootdir}/nova/interfaces.template
 
@@ -369,6 +368,9 @@ fi
 %endif
 
 %changelog
+* Fri Mar 23 2012 Dan Prince <dprince@redhat.com> - 2012.2
+- Remove libvirt.xml.template.
+
 * Tue Mar 20 2012 Pádraig Brady <P@draigBrady.com> - 2012.1-0.8.rc1
 - Update to Essex release candidate 1
 
