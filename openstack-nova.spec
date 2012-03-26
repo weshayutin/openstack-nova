@@ -23,7 +23,6 @@ Source14:         openstack-nova-objectstore.service
 Source15:         openstack-nova-scheduler.service
 Source16:         openstack-nova-volume.service
 Source17:         openstack-nova-direct-api.service
-Source18:         openstack-nova-ajax-console-proxy.service
 Source19:         openstack-nova-vncproxy.service
 
 Source20:         nova-sudoers
@@ -246,7 +245,6 @@ install -p -D -m 755 %{SOURCE14} %{buildroot}%{_unitdir}/openstack-nova-objectst
 install -p -D -m 755 %{SOURCE15} %{buildroot}%{_unitdir}/openstack-nova-scheduler.service
 install -p -D -m 755 %{SOURCE16} %{buildroot}%{_unitdir}/openstack-nova-volume.service
 install -p -D -m 755 %{SOURCE17} %{buildroot}%{_unitdir}/openstack-nova-direct-api.service
-install -p -D -m 755 %{SOURCE18} %{buildroot}%{_unitdir}/openstack-nova-ajax-console-proxy.service
 install -p -D -m 755 %{SOURCE19} %{buildroot}%{_unitdir}/openstack-nova-vncproxy.service
 
 # Install sudoers
@@ -271,11 +269,9 @@ install -p -D -m 644 %{SOURCE21} %{buildroot}%{_sysconfdir}/polkit-1/localauthor
 # Install database setup helper script.
 install -p -D -m 755 %{SOURCE23} %{buildroot}%{_bindir}/openstack-nova-db-setup
 
-# Remove ajaxterm and various other tools
-rm -fr %{buildroot}%{_datarootdir}/nova/{ajaxterm,euca-get-ajax-console,install_venv.py,pip-requires,clean-vlans,with_venv.sh,esx}
-rm -f %{buildroot}%{_bindir}/nova-debug
-
 # Remove unneeded in production stuff
+rm -fr %{buildroot}%{_datarootdir}/nova/{install_venv.py,pip-requires,clean-vlans,with_venv.sh,esx}
+rm -f %{buildroot}%{_bindir}/nova-debug
 rm -fr %{buildroot}%{python_sitelib}/nova/tests/
 rm -fr %{buildroot}%{python_sitelib}/run_tests.*
 rm -f %{buildroot}%{_bindir}/nova-combined
