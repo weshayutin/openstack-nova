@@ -270,7 +270,6 @@ install -p -D -m 644 %{SOURCE21} %{buildroot}%{_sysconfdir}/polkit-1/localauthor
 install -p -D -m 755 %{SOURCE23} %{buildroot}%{_bindir}/openstack-nova-db-setup
 
 # Remove unneeded in production stuff
-rm -fr %{buildroot}%{_datarootdir}/nova/{install_venv.py,pip-requires,clean-vlans,with_venv.sh,esx}
 rm -f %{buildroot}%{_bindir}/nova-debug
 rm -fr %{buildroot}%{python_sitelib}/nova/tests/
 rm -fr %{buildroot}%{python_sitelib}/run_tests.*
