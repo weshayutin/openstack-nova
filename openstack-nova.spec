@@ -2,7 +2,7 @@
 
 Name:             openstack-nova
 Version:          2011.3.1
-Release:          5%{?dist}
+Release:          6%{?dist}
 Summary:          OpenStack Compute (nova)
 
 Group:            Applications/System
@@ -370,6 +370,9 @@ fi
 %endif
 
 %changelog
+* Mon Mar 26 2012 Mark McLoughlin <markmc@redhat.com> - 2011.3.1-6
+- Avoid killing dnsmasq on network service shutdown (#805947)
+
 * Mon Mar  6 2012 Pádraig Brady <P@draigBrady.com> - 2011.3.1-5
 - Require bridge-utils
 
