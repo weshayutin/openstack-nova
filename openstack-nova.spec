@@ -367,6 +367,7 @@ fi
 %endif
 
 %changelog
+* Mon Mar 26 2012 Pádraig Brady <P@draigBrady.com> 2012.1-???
 - Remove the outdated nova-debug tool
 
 * Mon Mar 26 2012 Mark McLoughlin <markmc@redhat.com> - 2012.1-0.9.rc1
