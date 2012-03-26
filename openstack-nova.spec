@@ -272,7 +272,8 @@ install -p -D -m 644 %{SOURCE21} %{buildroot}%{_sysconfdir}/polkit-1/localauthor
 install -p -D -m 755 %{SOURCE23} %{buildroot}%{_bindir}/openstack-nova-db-setup
 
 # Remove ajaxterm and various other tools
-rm -fr %{buildroot}%{_datarootdir}/nova/{ajaxterm,euca-get-ajax-console,install_venv.py,nova-debug,pip-requires,clean-vlans,with_venv.sh,esx}
+rm -fr %{buildroot}%{_datarootdir}/nova/{ajaxterm,euca-get-ajax-console,install_venv.py,pip-requires,clean-vlans,with_venv.sh,esx}
+rm -f %{buildroot}%{_bindir}/nova-debug
 
 # Remove unneeded in production stuff
 rm -fr %{buildroot}%{python_sitelib}/nova/tests/
@@ -371,6 +372,8 @@ fi
 %endif
 
 %changelog
+- Remove the outdated nova-debug tool
+
 * Mon Mar 26 2012 Mark McLoughlin <markmc@redhat.com> - 2012.1-0.9.rc1
 - Avoid killing dnsmasq on network service shutdown (#805947)
 
