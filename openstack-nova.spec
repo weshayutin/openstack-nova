@@ -5,7 +5,7 @@ Version:          2012.1
 # The Release is in form 0.X.tag as per:
 #   http://fedoraproject.org/wiki/Packaging:NamingGuidelines#Pre-Release_packages
 # So for prereleases always increment X
-Release:          0.8.rc1%{?dist}
+Release:          0.9.rc1%{?dist}
 Summary:          OpenStack Compute (nova)
 
 Group:            Applications/System
@@ -365,6 +365,9 @@ fi
 %endif
 
 %changelog
+* Mon Mar 26 2012 Mark McLoughlin <markmc@redhat.com> - 2012.1-0.9.rc1
+- Avoid killing dnsmasq on network service shutdown (#805947)
+
 * Tue Mar 20 2012 Pádraig Brady <P@draigBrady.com> - 2012.1-0.8.rc1
 - Update to Essex release candidate 1
 
