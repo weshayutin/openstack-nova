@@ -191,15 +191,20 @@ export PYTHONPATH="$( pwd ):$PYTHONPATH"
 pushd doc
 # Manually auto-generate to work around sphinx-build segfault
 ./generate_autodoc_index.sh
-SPHINX_DEBUG=1 sphinx-build -b man source build/man
-mkdir -p %{buildroot}%{_mandir}/man1
-install -p -D -m 644 build/man/*.1 %{buildroot}%{_mandir}/man1/
 
 %if 0%{?with_doc}
 SPHINX_DEBUG=1 sphinx-build -b html source build/html
 # Fix hidden-file-or-dir warnings
 rm -fr build/html/.doctrees build/html/.buildinfo
 %endif
+
+# Create dir link to avoid a sphinx-build exception
+mkdir -p build/man/.doctrees/
+ln -s .  build/man/.doctrees/man
+SPHINX_DEBUG=1 sphinx-build -b man -c source source/man build/man
+mkdir -p %{buildroot}%{_mandir}/man1
+install -p -D -m 644 build/man/*.1 %{buildroot}%{_mandir}/man1/
+
 popd
 
 # Give stack, instance-usage-audit and clear_rabbit_queues a reasonable prefix
