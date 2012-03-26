@@ -187,9 +187,14 @@ find nova -name \*.py -exec sed -i '/\/usr\/bin\/env python/d' {} \;
 
 # docs generation requires everything to be installed first
 export PYTHONPATH="$( pwd ):$PYTHONPATH"
+
+# TODO: possibly remove call to
+# manually auto-generate to work around sphinx-build segfault
+# This was not required on python-sphinx-1.0.7 at least
+# but it's relatively quick at least
+doc/generate_autodoc_index.sh
+
 pushd doc
-# Manually auto-generate to work around sphinx-build segfault
-./generate_autodoc_index.sh
 
 %if 0%{?with_doc}
 SPHINX_DEBUG=1 sphinx-build -b html source build/html
