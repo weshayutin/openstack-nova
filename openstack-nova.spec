@@ -5,7 +5,7 @@ Version:          2012.2
 # The Release is in form 0.X.tag as per:
 #   http://fedoraproject.org/wiki/Packaging:NamingGuidelines#Pre-Release_packages
 # So for prereleases always increment X
-Release:          0.8.rc1%{?dist}
+Release:          0.9.rc1%{?dist}
 Summary:          OpenStack Compute (nova)
 
 Group:            Applications/System
@@ -23,7 +23,6 @@ Source14:         openstack-nova-objectstore.service
 Source15:         openstack-nova-scheduler.service
 Source16:         openstack-nova-volume.service
 Source17:         openstack-nova-direct-api.service
-Source18:         openstack-nova-ajax-console-proxy.service
 Source19:         openstack-nova-vncproxy.service
 
 Source20:         nova-sudoers
@@ -189,18 +188,28 @@ find nova -name \*.py -exec sed -i '/\/usr\/bin\/env python/d' {} \;
 
 # docs generation requires everything to be installed first
 export PYTHONPATH="$( pwd ):$PYTHONPATH"
+
+# TODO: possibly remove call to
+# manually auto-generate to work around sphinx-build segfault
+# This was not required on python-sphinx-1.0.7 at least
+# but it's relatively quick at least
+doc/generate_autodoc_index.sh
+
 pushd doc
-# Manually auto-generate to work around sphinx-build segfault
-./generate_autodoc_index.sh
-SPHINX_DEBUG=1 sphinx-build -b man source build/man
-mkdir -p %{buildroot}%{_mandir}/man1
-install -p -D -m 644 build/man/*.1 %{buildroot}%{_mandir}/man1/
 
 %if 0%{?with_doc}
 SPHINX_DEBUG=1 sphinx-build -b html source build/html
 # Fix hidden-file-or-dir warnings
 rm -fr build/html/.doctrees build/html/.buildinfo
 %endif
+
+# Create dir link to avoid a sphinx-build exception
+mkdir -p build/man/.doctrees/
+ln -s .  build/man/.doctrees/man
+SPHINX_DEBUG=1 sphinx-build -b man -c source source/man build/man
+mkdir -p %{buildroot}%{_mandir}/man1
+install -p -D -m 644 build/man/*.1 %{buildroot}%{_mandir}/man1/
+
 popd
 
 # Give stack, instance-usage-audit and clear_rabbit_queues a reasonable prefix
@@ -242,7 +251,6 @@ install -p -D -m 755 %{SOURCE14} %{buildroot}%{_unitdir}/openstack-nova-objectst
 install -p -D -m 755 %{SOURCE15} %{buildroot}%{_unitdir}/openstack-nova-scheduler.service
 install -p -D -m 755 %{SOURCE16} %{buildroot}%{_unitdir}/openstack-nova-volume.service
 install -p -D -m 755 %{SOURCE17} %{buildroot}%{_unitdir}/openstack-nova-direct-api.service
-install -p -D -m 755 %{SOURCE18} %{buildroot}%{_unitdir}/openstack-nova-ajax-console-proxy.service
 install -p -D -m 755 %{SOURCE19} %{buildroot}%{_unitdir}/openstack-nova-vncproxy.service
 
 # Install sudoers
@@ -266,10 +274,9 @@ install -p -D -m 644 %{SOURCE21} %{buildroot}%{_sysconfdir}/polkit-1/localauthor
 # Install database setup helper script.
 install -p -D -m 755 %{SOURCE23} %{buildroot}%{_bindir}/openstack-nova-db-setup
 
-# Remove ajaxterm and various other tools
-rm -fr %{buildroot}%{_datarootdir}/nova/{ajaxterm,euca-get-ajax-console,install_venv.py,nova-debug,pip-requires,clean-vlans,with_venv.sh,esx}
-
 # Remove unneeded in production stuff
+rm -f %{buildroot}%{_bindir}/nova-debug
+rm -fr %{buildroot}%{python_sitelib}/nova/tests/
 rm -fr %{buildroot}%{python_sitelib}/run_tests.*
 rm -f %{buildroot}%{_bindir}/nova-combined
 rm -f %{buildroot}/usr/share/doc/nova/README*
@@ -367,6 +374,12 @@ fi
 %changelog
 * Fri Mar 23 2012 Dan Prince <dprince@redhat.com> - 2012.2
 - Remove libvirt.xml.template.
+
+* Mon Mar 26 2012 Pádraig Brady <P@draigBrady.com> 2012.1-???
+- Remove the outdated nova-debug tool
+
+* Mon Mar 26 2012 Mark McLoughlin <markmc@redhat.com> - 2012.1-0.9.rc1
+- Avoid killing dnsmasq on network service shutdown (#805947)
 
 * Tue Mar 20 2012 Pádraig Brady <P@draigBrady.com> - 2012.1-0.8.rc1
 - Update to Essex release candidate 1
