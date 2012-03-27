@@ -372,7 +372,7 @@ fi
 %endif
 
 %changelog
-* Fri Mar 23 2012 Dan Prince <dprince@redhat.com> - 2012.2
+* Fri Mar 27 2012 Dan Prince <dprince@redhat.com> - 2012.2
 - Remove libvirt.xml.template.
 
 * Mon Mar 26 2012 Pádraig Brady <P@draigBrady.com> 2012.1-???
