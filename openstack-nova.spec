@@ -377,7 +377,7 @@ fi
 %changelog
 * Thu Mar 29 2012 Russell Bryant <rbryant@redhat.com> - 2011.3.1-7
 - CVE-2012-1585 - Long server names grow nova-api log files significantly
-- Resolves: rhbz#808150
+- Resolves: rhbz#808148
 
 * Mon Mar 26 2012 Mark McLoughlin <markmc@redhat.com> - 2011.3.1-6
 - Avoid killing dnsmasq on network service shutdown (#805947)
