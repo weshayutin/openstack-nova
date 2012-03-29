@@ -41,6 +41,7 @@ Patch0008: 0008-Bug-898257-abstract-out-disk-image-access-methods.patch
 Patch0009: 0009-Bug-898257-support-handling-images-with-libguestfs.patch
 Patch0010: 0010-Fix-libguestfs-operation-with-specified-partitions.patch
 Patch0011: 0011-Ensure-we-don-t-access-the-net-when-building-docs.patch
+Patch0012: 0012-Add-validation-for-OSAPI-server-name-length.patch
 
 BuildArch:        noarch
 BuildRequires:    intltool
@@ -184,6 +185,7 @@ This package contains documentation files for nova.
 %patch0009 -p1
 %patch0010 -p1
 %patch0011 -p1
+%patch0012 -p1
 
 find . \( -name .gitignore -o -name .placeholder \) -delete
 
