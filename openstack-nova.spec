@@ -2,7 +2,7 @@
 
 Name:             openstack-nova
 Version:          2011.3.1
-Release:          3%{?dist}
+Release:          7%{?dist}
 Summary:          OpenStack Compute (nova)
 
 Group:            Applications/System
@@ -41,6 +41,7 @@ Patch0008: 0008-Bug-898257-abstract-out-disk-image-access-methods.patch
 Patch0009: 0009-Bug-898257-support-handling-images-with-libguestfs.patch
 Patch0010: 0010-Fix-libguestfs-operation-with-specified-partitions.patch
 Patch0011: 0011-Ensure-we-don-t-access-the-net-when-building-docs.patch
+Patch0012: 0012-Add-validation-for-OSAPI-server-name-length.patch
 
 # This is EPEL specific and not upstream
 Patch100:         openstack-nova-newdeps.patch
@@ -59,6 +60,8 @@ Requires:         python-paste
 Requires:         python-paste-deploy
 Requires:         python-setuptools
 
+Requires:         bridge-utils
+Requires:         dnsmasq-utils
 Requires:         libguestfs-mount >= 1.7.17
 # The fuse dependency should be added to libguestfs-mount
 Requires:         fuse
@@ -185,6 +188,7 @@ This package contains documentation files for nova.
 %patch0009 -p1
 %patch0010 -p1
 %patch0011 -p1
+%patch0012 -p1
 
 # Apply EPEL patch
 %patch100 -p1
@@ -371,6 +375,19 @@ fi
 %endif
 
 %changelog
+* Thu Mar 29 2012 Russell Bryant <rbryant@redhat.com> - 2011.3.1-7
+- CVE-2012-1585 - Long server names grow nova-api log files significantly
+- Resolves: rhbz#808150
+
+* Mon Mar 26 2012 Mark McLoughlin <markmc@redhat.com> - 2011.3.1-6
+- Avoid killing dnsmasq on network service shutdown (#805947)
+
+* Mon Mar  6 2012 Pádraig Brady <P@draigBrady.com> - 2011.3.1-5
+- Require bridge-utils
+
+* Mon Feb 13 2012 Pádraig Brady <P@draigBrady.com> - 2011.3.1-4
+- Support --force_dhcp_release (#788485)
+
 * Fri Jan 27 2012 Pádraig Brady <P@draigBrady.com> - 2011.3.1-3
 - Suppress erroneous output to stdout on package install (#785115)
 
