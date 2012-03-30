@@ -2,7 +2,7 @@
 
 Name:             openstack-nova
 Version:          2011.3.1
-Release:          7%{?dist}
+Release:          8%{?dist}
 Summary:          OpenStack Compute (nova)
 
 Group:            Applications/System
@@ -61,7 +61,6 @@ Requires:         python-paste-deploy
 Requires:         python-setuptools
 
 Requires:         bridge-utils
-Requires:         dnsmasq-utils
 Requires:         libguestfs-mount >= 1.7.17
 # The fuse dependency should be added to libguestfs-mount
 Requires:         fuse
@@ -375,6 +374,9 @@ fi
 %endif
 
 %changelog
+* Thu Mar 29 2012 Pádraig Brady <P@draigBrady.com> - 2011.3.1-8
+- Remove the dependency on the not yet available dnsmasq-utils
+
 * Thu Mar 29 2012 Russell Bryant <rbryant@redhat.com> - 2011.3.1-7
 - CVE-2012-1585 - Long server names grow nova-api log files significantly
 - Resolves: rhbz#808148
