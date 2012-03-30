@@ -381,9 +381,6 @@ fi
 - CVE-2012-1585 - Long server names grow nova-api log files significantly
 - Resolves: rhbz#808148
 
-* Mon Mar 26 2012 Mark McLoughlin <markmc@redhat.com> - 2011.3.1-6
-- Avoid killing dnsmasq on network service shutdown (#805947)
-
 * Mon Mar  6 2012 Pádraig Brady <P@draigBrady.com> - 2011.3.1-5
 - Require bridge-utils
 
