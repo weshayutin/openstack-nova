@@ -1,25 +1,28 @@
 %global with_doc %{!?_without_doc:1}%{?_without_doc:0}
 
 Name:             openstack-nova
-Version:          2011.3.1
-Release:          8%{?dist}
+Version:          2012.1
+# The Release is in form 0.X.tag as per:
+#   http://fedoraproject.org/wiki/Packaging:NamingGuidelines#Pre-Release_packages
+# So for prereleases always increment X
+Release:          0.1.rc1%{?dist}
 Summary:          OpenStack Compute (nova)
 
 Group:            Applications/System
 License:          ASL 2.0
 URL:              http://openstack.org/projects/compute/
-Source0:          http://launchpad.net/nova/diablo/%{version}/+download/nova-%{version}.tar.gz
+Source0:          http://launchpad.net/nova/essex/essex-rc1/+download/nova-%{version}~rc1.tar.gz
 Source1:          nova.conf
 Source6:          nova.logrotate
 
-Source11:         openstack-nova-api.init
+Source10:         openstack-nova-api.init
+Source11:         openstack-nova-cert.init
 Source12:         openstack-nova-compute.init
 Source13:         openstack-nova-network.init
 Source14:         openstack-nova-objectstore.init
 Source15:         openstack-nova-scheduler.init
 Source16:         openstack-nova-volume.init
 Source17:         openstack-nova-direct-api.init
-Source18:         openstack-nova-ajax-console-proxy.init
 Source19:         openstack-nova-vncproxy.init
 
 Source20:         nova-sudoers
@@ -28,20 +31,12 @@ Source22:         nova-ifc-template
 Source23:         openstack-nova-db-setup
 
 #
-# patches_base=2011.3.1
+# patches_base=essex-rc1
 #
-Patch0001: 0001-Bug-920497-fix-X-Server-Management-Url-for-v1.0-noau.patch
-Patch0002: 0002-Add-INPUT-chain-rule-for-EC2-metadata-requests-lp-85.patch
-Patch0003: 0003-Have-nova-api-add-the-INPUT-rule-for-EC2-metadata-lp.patch
-Patch0004: 0004-Allow-the-user-to-choose-either-ietadm-or-tgtadm-lp-.patch
-Patch0005: 0005-Remove-VolumeDriver.sync_exec-method-lp-819997.patch
-Patch0006: 0006-Refactor-ietadm-tgtadm-calls-out-into-helper-classes.patch
-Patch0007: 0007-Fix-tgtadm-off-by-one-error.-Fixes-bug-871278.patch
-Patch0008: 0008-Bug-898257-abstract-out-disk-image-access-methods.patch
-Patch0009: 0009-Bug-898257-support-handling-images-with-libguestfs.patch
-Patch0010: 0010-Fix-libguestfs-operation-with-specified-partitions.patch
-Patch0011: 0011-Ensure-we-don-t-access-the-net-when-building-docs.patch
-Patch0012: 0012-Add-validation-for-OSAPI-server-name-length.patch
+Patch0001: 0001-Ensure-we-don-t-access-the-net-when-building-docs.patch
+Patch0002: 0002-fix-useexisting-deprecation-warnings.patch
+Patch0003: 0003-ensure-atomic-manipulation-of-libvirt-disk-images.patch
+Patch0004: 0004-Add-validation-for-OSAPI-server-name-length.patch
 
 # This is EPEL specific and not upstream
 Patch100:         openstack-nova-newdeps.patch
@@ -54,13 +49,14 @@ BuildRequires:    python-netaddr
 BuildRequires:    python-lockfile
 
 Requires:         python-nova = %{version}-%{release}
-Requires:         openstack-glance
 
 Requires:         python-paste
 Requires:         python-paste-deploy
 Requires:         python-setuptools
 
 Requires:         bridge-utils
+#TODO: Enable when available in RHEL 6.3
+#Requires:         dnsmasq-utils
 Requires:         libguestfs-mount >= 1.7.17
 # The fuse dependency should be added to libguestfs-mount
 Requires:         fuse
@@ -72,7 +68,6 @@ Requires:         MySQL-python
 
 Requires:         euca2ools
 Requires:         openssl
-Requires:         rabbitmq-server
 Requires:         sudo
 
 Requires(post):   chkconfig
@@ -102,12 +97,16 @@ Requires:         libvirt-python
 Requires:         python-anyjson
 Requires:         python-IPy
 Requires:         python-boto
+# TODO: make these messaging libs optional
+Requires:         python-qpid
+Requires:         python-carrot
 Requires:         python-kombu
 Requires:         python-amqplib
 Requires:         python-daemon
 Requires:         python-eventlet
 Requires:         python-greenlet
 Requires:         python-gflags
+Requires:         python-iso8601
 Requires:         python-lockfile
 Requires:         python-lxml
 Requires:         python-mox
@@ -119,6 +118,7 @@ Requires:         python-twisted-core
 Requires:         python-twisted-web
 Requires:         python-webob1.0
 Requires:         python-netaddr
+# TODO: remove the following dependency which is minimal
 Requires:         python-glance
 Requires:         python-novaclient
 Requires:         python-paste-deploy
@@ -163,7 +163,7 @@ BuildRequires:    python-twisted-core
 BuildRequires:    python-twisted-web
 BuildRequires:    python-webob1.0
 # while not strictly required, quiets the build down when building docs.
-BuildRequires:    python-carrot, python-mox, python-suds, m2crypto, bpython, python-memcached, python-migrate
+BuildRequires:    python-carrot, python-mox, python-suds, m2crypto, bpython, python-memcached, python-migrate, python-iso8601
 
 %description      doc
 OpenStack Compute (codename Nova) is open source software designed to
@@ -180,14 +180,6 @@ This package contains documentation files for nova.
 %patch0002 -p1
 %patch0003 -p1
 %patch0004 -p1
-%patch0005 -p1
-%patch0006 -p1
-%patch0007 -p1
-%patch0008 -p1
-%patch0009 -p1
-%patch0010 -p1
-%patch0011 -p1
-%patch0012 -p1
 
 # Apply EPEL patch
 %patch100 -p1
@@ -204,18 +196,28 @@ find nova -name \*.py -exec sed -i '/\/usr\/bin\/env python/d' {} \;
 
 # docs generation requires everything to be installed first
 export PYTHONPATH="$( pwd ):$PYTHONPATH"
+
+# TODO: possibly remove call to
+# manually auto-generate to work around sphinx-build segfault
+# This was not required on python-sphinx-1.0.7 at least
+# but it's relatively quick at least
+doc/generate_autodoc_index.sh
+
 pushd doc
-# Manually auto-generate to work around sphinx-build segfault
-./generate_autodoc_index.sh
-SPHINX_DEBUG=1 sphinx-1.0-build -b man source build/man
-mkdir -p %{buildroot}%{_mandir}/man1
-install -p -D -m 644 build/man/*.1 %{buildroot}%{_mandir}/man1/
 
 %if 0%{?with_doc}
 SPHINX_DEBUG=1 sphinx-1.0-build -b html source build/html
 # Fix hidden-file-or-dir warnings
 rm -fr build/html/.doctrees build/html/.buildinfo
 %endif
+
+# Create dir link to avoid a sphinx-build exception
+mkdir -p build/man/.doctrees/
+ln -s .  build/man/.doctrees/man
+SPHINX_DEBUG=1 sphinx-1.0-build -b man -c source source/man build/man
+mkdir -p %{buildroot}%{_mandir}/man1
+install -p -D -m 644 build/man/*.1 %{buildroot}%{_mandir}/man1/
+
 popd
 
 # Give stack, instance-usage-audit and clear_rabbit_queues a reasonable prefix
@@ -242,19 +244,21 @@ touch %{buildroot}%{_sharedstatedir}/nova/CA/{cacert.pem,crl.pem,index.txt,opens
 install -d -m 750 %{buildroot}%{_sharedstatedir}/nova/CA/private
 touch %{buildroot}%{_sharedstatedir}/nova/CA/private/cakey.pem
 
-# Install config file
+# Install config files
 install -d -m 755 %{buildroot}%{_sysconfdir}/nova
 install -p -D -m 640 %{SOURCE1} %{buildroot}%{_sysconfdir}/nova/nova.conf
+install -p -D -m 640 etc/nova/api-paste.ini %{buildroot}%{_sysconfdir}/nova/api-paste.ini
+install -p -D -m 640 etc/nova/policy.json %{buildroot}%{_sysconfdir}/nova/policy.json
 
 # Install initscripts for Nova services
-install -p -D -m 755 %{SOURCE11} %{buildroot}%{_initrddir}/openstack-nova-api
+install -p -D -m 755 %{SOURCE10} %{buildroot}%{_initrddir}/openstack-nova-api
+install -p -D -m 755 %{SOURCE11} %{buildroot}%{_initrddir}/openstack-nova-cert
 install -p -D -m 755 %{SOURCE12} %{buildroot}%{_initrddir}/openstack-nova-compute
 install -p -D -m 755 %{SOURCE13} %{buildroot}%{_initrddir}/openstack-nova-network
 install -p -D -m 755 %{SOURCE14} %{buildroot}%{_initrddir}/openstack-nova-objectstore
 install -p -D -m 755 %{SOURCE15} %{buildroot}%{_initrddir}/openstack-nova-scheduler
 install -p -D -m 755 %{SOURCE16} %{buildroot}%{_initrddir}/openstack-nova-volume
 install -p -D -m 755 %{SOURCE17} %{buildroot}%{_initrddir}/openstack-nova-direct-api
-install -p -D -m 755 %{SOURCE18} %{buildroot}%{_initrddir}/openstack-nova-ajax-console-proxy
 install -p -D -m 755 %{SOURCE19} %{buildroot}%{_initrddir}/openstack-nova-vncproxy
 
 # Install sudoers
@@ -279,10 +283,9 @@ install -p -D -m 644 %{SOURCE21} %{buildroot}%{_sysconfdir}/polkit-1/localauthor
 # Install database setup helper script.
 install -p -D -m 755 %{SOURCE23} %{buildroot}%{_bindir}/openstack-nova-db-setup
 
-# Remove ajaxterm and various other tools
-rm -fr %{buildroot}%{_datarootdir}/nova/{ajaxterm,euca-get-ajax-console,install_venv.py,nova-debug,pip-requires,clean-vlans,with_venv.sh,esx}
-
 # Remove unneeded in production stuff
+rm -f %{buildroot}%{_bindir}/nova-debug
+rm -fr %{buildroot}%{python_sitelib}/nova/tests/
 rm -fr %{buildroot}%{python_sitelib}/run_tests.*
 rm -f %{buildroot}%{_bindir}/nova-combined
 rm -f %{buildroot}/usr/share/doc/nova/README*
@@ -300,13 +303,13 @@ exit 0
 
 %post
 # Register the services
-for svc in api compute network objectstore scheduler volume direct-api ajax-console-proxy vncproxy; do
+for svc in api cert compute network objectstore scheduler volume direct-api vncproxy; do
     /sbin/chkconfig --add openstack-nova-${svc}
 done
 
 %preun
 if [ $1 -eq 0 ] ; then
-    for svc in api compute network objectstore scheduler volume direct-api ajax-console-proxy vncproxy; do
+    for svc in api cert compute network objectstore scheduler volume direct-api vncproxy; do
         /sbin/service openstack-nova-${svc} stop >/dev/null 2>&1
         /sbin/chkconfig --del openstack-nova-${svc}
     done
@@ -314,7 +317,7 @@ fi
 
 %postun
 if [ "$1" -ge 1 ] ; then
-    for svc in api compute network objectstore scheduler volume direct-api ajax-console-proxy vncproxy; do
+    for svc in api cert compute network objectstore scheduler volume direct-api vncproxy; do
         /sbin/service openstack-nova-${svc} condrestart > /dev/null 2>&1 || :
     done
 fi
@@ -323,7 +326,8 @@ fi
 %doc LICENSE
 %dir %{_sysconfdir}/nova
 %config(noreplace) %attr(-, root, nova) %{_sysconfdir}/nova/nova.conf
-%config(noreplace) %{_sysconfdir}/nova/api-paste.ini
+%config(noreplace) %attr(-, root, nova) %{_sysconfdir}/nova/api-paste.ini
+%config(noreplace) %attr(-, root, nova) %{_sysconfdir}/nova/policy.json
 %config(noreplace) %{_sysconfdir}/logrotate.d/openstack-nova
 %config(noreplace) %{_sysconfdir}/sudoers.d/nova
 %config(noreplace) %{_sysconfdir}/polkit-1/localauthority/50-local.d/50-nova.pkla
@@ -332,8 +336,8 @@ fi
 %dir %attr(0755, nova, root) %{_localstatedir}/run/nova
 
 %{_bindir}/nova-*
-%{_initrddir}/openstack-nova-*
 %{_bindir}/openstack-nova-db-setup
+%{_initrddir}/openstack-nova-*
 %{_datarootdir}/nova
 %{_mandir}/man1/nova*.1.gz
 
@@ -374,6 +378,9 @@ fi
 %endif
 
 %changelog
+* Mon Apr 01 2012 Pádraig Brady <P@draigBrady.com> - 2012.1-0.1.rc1
+- Update to Essex release candidate 1
+
 * Thu Mar 29 2012 Pádraig Brady <P@draigBrady.com> - 2011.3.1-8
 - Remove the dependency on the not yet available dnsmasq-utils
 
