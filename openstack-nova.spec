@@ -2,16 +2,13 @@
 
 Name:             openstack-nova
 Version:          2012.1
-# The Release is in form 0.X.tag as per:
-#   http://fedoraproject.org/wiki/Packaging:NamingGuidelines#Pre-Release_packages
-# So for prereleases always increment X
-Release:          0.1.rc1%{?dist}
+Release:          1%{?dist}
 Summary:          OpenStack Compute (nova)
 
 Group:            Applications/System
 License:          ASL 2.0
 URL:              http://openstack.org/projects/compute/
-Source0:          http://launchpad.net/nova/essex/essex-rc1/+download/nova-%{version}~rc1.tar.gz
+Source0:          http://launchpad.net/nova/essex/2012.1/+download/nova-2012.1.tar.gz
 Source1:          nova.conf
 Source6:          nova.logrotate
 
@@ -31,12 +28,14 @@ Source22:         nova-ifc-template
 Source23:         openstack-nova-db-setup
 
 #
-# patches_base=essex-rc1
+# patches_base=2012.1
 #
-Patch0001: 0001-Ensure-we-don-t-access-the-net-when-building-docs.patch
-Patch0002: 0002-fix-useexisting-deprecation-warnings.patch
+Patch0001: 0001-fix-bug-where-nova-ignores-glance-host-in-imageref.patch
+Patch0002: 0002-Stop-libvirt-test-from-deleting-instances-dir.patch
 Patch0003: 0003-ensure-atomic-manipulation-of-libvirt-disk-images.patch
-Patch0004: 0004-Add-validation-for-OSAPI-server-name-length.patch
+Patch0004: 0004-Fixed-bug-962840-added-a-test-case.patch
+Patch0005: 0005-Ensure-we-don-t-access-the-net-when-building-docs.patch
+Patch0006: 0006-fix-useexisting-deprecation-warnings.patch
 
 # This is EPEL specific and not upstream
 Patch100:         openstack-nova-newdeps.patch
@@ -180,6 +179,8 @@ This package contains documentation files for nova.
 %patch0002 -p1
 %patch0003 -p1
 %patch0004 -p1
+%patch0005 -p1
+%patch0006 -p1
 
 # Apply EPEL patch
 %patch100 -p1
@@ -378,6 +379,9 @@ fi
 %endif
 
 %changelog
+* Fri Apr 13 2012 Pádraig Brady <P@draigBrady.com> - 2012.1-1
+- Update to Essex release
+
 * Mon Apr 01 2012 Pádraig Brady <P@draigBrady.com> - 2012.1-0.1.rc1
 - Update to Essex release candidate 1
 
