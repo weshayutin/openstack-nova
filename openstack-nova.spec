@@ -213,7 +213,6 @@ install -p -D -m 644 build/man/*.1 %{buildroot}%{_mandir}/man1/
 popd
 
 # Give stack, instance-usage-audit and clear_rabbit_queues a reasonable prefix
-mv %{buildroot}%{_bindir}/stack %{buildroot}%{_bindir}/nova-stack
 mv %{buildroot}%{_bindir}/instance-usage-audit %{buildroot}%{_bindir}/nova-instance-usage-audit
 mv %{buildroot}%{_bindir}/clear_rabbit_queues %{buildroot}%{_bindir}/nova-clear-rabbit-queues
 
@@ -372,6 +371,9 @@ fi
 %endif
 
 %changelog
+* Tue Apr 10 2012 Dan Prince <dprince@redhat.com> - 2012.2
+- Remove nova-stack.
+
 * Fri Mar 27 2012 Dan Prince <dprince@redhat.com> - 2012.2
 - Remove libvirt.xml.template.
 
