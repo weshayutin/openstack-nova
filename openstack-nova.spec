@@ -41,6 +41,7 @@ Patch0008: 0008-Use-project_id-in-ec2.cloud._format_image.patch
 Patch0009: 0009-ensure-atomic-manipulation-of-libvirt-disk-images.patch
 Patch0010: 0010-Ensure-we-don-t-access-the-net-when-building-docs.patch
 Patch0011: 0011-fix-useexisting-deprecation-warnings.patch
+Patch0012: 0012-support-a-configurable-libvirt-injection-partition.patch
 
 # This is EPEL specific and not upstream
 Patch100:         openstack-nova-newdeps.patch
@@ -191,6 +192,7 @@ This package contains documentation files for nova.
 %patch0009 -p1
 %patch0010 -p1
 %patch0011 -p1
+%patch0012 -p1
 
 # Apply EPEL patch
 %patch100 -p1
@@ -391,6 +393,7 @@ fi
 %changelog
 * Thu Apr 19 2012 Pádraig Brady <P@draigBrady.com> - 2012.1-2
 - Sync up with Essex stable branch
+- Support more flexible guest image file injection
 
 * Fri Apr 13 2012 Pádraig Brady <P@draigBrady.com> - 2012.1-1
 - Update to Essex release
