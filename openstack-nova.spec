@@ -20,7 +20,9 @@ Source14:         openstack-nova-objectstore.init
 Source15:         openstack-nova-scheduler.init
 Source16:         openstack-nova-volume.init
 Source17:         openstack-nova-direct-api.init
-Source19:         openstack-nova-vncproxy.init
+Source18:         openstack-nova-xvpvncproxy.init
+Source19:         openstack-nova-console.init
+Source24:         openstack-nova-consoleauth.init
 
 Source20:         nova-sudoers
 Source21:         nova-polkit.pkla
@@ -274,7 +276,9 @@ install -p -D -m 755 %{SOURCE14} %{buildroot}%{_initrddir}/openstack-nova-object
 install -p -D -m 755 %{SOURCE15} %{buildroot}%{_initrddir}/openstack-nova-scheduler
 install -p -D -m 755 %{SOURCE16} %{buildroot}%{_initrddir}/openstack-nova-volume
 install -p -D -m 755 %{SOURCE17} %{buildroot}%{_initrddir}/openstack-nova-direct-api
-install -p -D -m 755 %{SOURCE19} %{buildroot}%{_initrddir}/openstack-nova-vncproxy
+install -p -D -m 755 %{SOURCE18} %{buildroot}%{_initrddir}/openstack-nova-xvpvncproxy
+install -p -D -m 755 %{SOURCE19} %{buildroot}%{_initrddir}/openstack-nova-console
+install -p -D -m 755 %{SOURCE24} %{buildroot}%{_initrddir}/openstack-nova-consoleauth
 
 # Install sudoers
 install -p -D -m 440 %{SOURCE20} %{buildroot}%{_sysconfdir}/sudoers.d/nova
@@ -397,6 +401,7 @@ fi
 - Sync up with Essex stable branch
 - Support more flexible guest image file injection
 - Enforce quota on security group rules (#814275, CVE-2012-2101)
+- Provide startup scripts for the Essex VNC services
 
 * Fri Apr 13 2012 Pádraig Brady <P@draigBrady.com> - 2012.1-1
 - Update to Essex release
