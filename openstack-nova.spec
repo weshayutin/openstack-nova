@@ -2,7 +2,7 @@
 
 Name:             openstack-nova
 Version:          2012.1
-Release:          2%{?dist}
+Release:          3%{?dist}
 Summary:          OpenStack Compute (nova)
 
 Group:            Applications/System
@@ -60,7 +60,7 @@ BuildRequires:    python-lockfile
 Requires:         python-nova = %{version}-%{release}
 
 Requires:         python-paste
-Requires:         python-paste-deploy
+Requires:         python-paste-deploy1.5
 Requires:         python-setuptools
 
 Requires:         bridge-utils
@@ -120,7 +120,7 @@ Requires:         python-lockfile
 Requires:         python-lxml
 Requires:         python-mox
 Requires:         python-redis
-Requires:         python-routes
+Requires:         python-routes1.12
 Requires:         python-sqlalchemy0.7
 Requires:         python-tornado
 Requires:         python-twisted-core
@@ -130,7 +130,7 @@ Requires:         python-netaddr
 # TODO: remove the following dependency which is minimal
 Requires:         python-glance
 Requires:         python-novaclient
-Requires:         python-paste-deploy
+Requires:         python-paste-deploy1.5
 Requires:         python-migrate
 Requires:         python-ldap
 Requires:         radvd
@@ -165,7 +165,7 @@ BuildRequires:    python-IPy
 BuildRequires:    python-boto
 BuildRequires:    python-eventlet
 BuildRequires:    python-gflags
-BuildRequires:    python-routes
+BuildRequires:    python-routes1.12
 BuildRequires:    python-sqlalchemy0.7
 BuildRequires:    python-tornado
 BuildRequires:    python-twisted-core
@@ -399,6 +399,9 @@ fi
 %endif
 
 %changelog
+* Wed Apr 25 2012 Pádraig Brady <P@draigBrady.com> - 2012.1-3
+- Use parallel installed versions of python-routes and python-paste-deploy
+
 * Thu Apr 19 2012 Pádraig Brady <P@draigBrady.com> - 2012.1-2
 - Sync up with Essex stable branch
 - Support more flexible guest image file injection
