@@ -2,7 +2,7 @@
 
 Name:             openstack-nova
 Version:          2012.1
-Release:          3%{?dist}
+Release:          4%{?dist}
 Summary:          OpenStack Compute (nova)
 
 Group:            Applications/System
@@ -285,7 +285,7 @@ install -p -D -m 755 %{SOURCE17} %{buildroot}%{_initrddir}/openstack-nova-direct
 install -p -D -m 755 %{SOURCE18} %{buildroot}%{_initrddir}/openstack-nova-xvpvncproxy
 install -p -D -m 755 %{SOURCE19} %{buildroot}%{_initrddir}/openstack-nova-console
 install -p -D -m 755 %{SOURCE24} %{buildroot}%{_initrddir}/openstack-nova-consoleauth
-install -p -D -m 755 %{SOURCE25} %{buildroot}%{_initrddir}/openstack-nova-metadata-api.init
+install -p -D -m 755 %{SOURCE25} %{buildroot}%{_initrddir}/openstack-nova-metadata-api
 
 # Install sudoers
 install -p -D -m 440 %{SOURCE20} %{buildroot}%{_sysconfdir}/sudoers.d/nova
@@ -329,13 +329,13 @@ exit 0
 
 %post
 # Register the services
-for svc in api cert compute network objectstore scheduler volume direct-api vncproxy; do
+for svc in api cert compute network objectstore scheduler volume direct-api metadata-api console consoleauth xvpvncproxy; do
     /sbin/chkconfig --add openstack-nova-${svc}
 done
 
 %preun
 if [ $1 -eq 0 ] ; then
-    for svc in api cert compute network objectstore scheduler volume direct-api vncproxy; do
+    for svc in api cert compute network objectstore scheduler volume direct-api metadata-api console consoleauth xvpvncproxy; do
         /sbin/service openstack-nova-${svc} stop >/dev/null 2>&1
         /sbin/chkconfig --del openstack-nova-${svc}
     done
@@ -343,7 +343,7 @@ fi
 
 %postun
 if [ "$1" -ge 1 ] ; then
-    for svc in api cert compute network objectstore scheduler volume direct-api vncproxy; do
+    for svc in api cert compute network objectstore scheduler volume direct-api metadata-api console consoleauth xvpvncproxy; do
         /sbin/service openstack-nova-${svc} condrestart > /dev/null 2>&1 || :
     done
 fi
@@ -404,6 +404,9 @@ fi
 %endif
 
 %changelog
+* Wed Apr 27 2012 Pádraig Brady <P@draigBrady.com> - 2012.1-4
+- Fix install issues with new Essex init scripts
+
 * Wed Apr 25 2012 Pádraig Brady <P@draigBrady.com> - 2012.1-3
 - Use parallel installed versions of python-routes and python-paste-deploy
 

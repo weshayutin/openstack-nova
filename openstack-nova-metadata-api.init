@@ -1,9 +1,9 @@
 #!/bin/sh
 #
-# openstack-nova-cert  OpenStack Nova Metadata API Server
+# openstack-nova-metadata-api  OpenStack Nova Metadata API Server
 #
 # chkconfig:   - 20 80
-# description: cert manages auth cert access and creation
+# description: Metadata provider for guests
 
 ### BEGIN INIT INFO
 # Provides:
