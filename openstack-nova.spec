@@ -170,12 +170,9 @@ BuildRequires:    python-IPy
 BuildRequires:    python-boto
 BuildRequires:    python-eventlet
 BuildRequires:    python-gflags
-BuildRequires:    python-routes1.12
-BuildRequires:    python-sqlalchemy0.7
 BuildRequires:    python-tornado
 BuildRequires:    python-twisted-core
 BuildRequires:    python-twisted-web
-BuildRequires:    python-webob1.0
 # while not strictly required, quiets the build down when building docs.
 BuildRequires:    python-carrot, python-mox, python-suds, m2crypto, bpython, python-memcached, python-migrate, python-iso8601
 
