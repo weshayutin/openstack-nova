@@ -2,7 +2,7 @@
 #
 # openstack-nova-metadata-api  OpenStack Nova Metadata API Server
 #
-# chkconfig:   - 20 80
+# chkconfig:   - 98 02
 # description: Metadata provider for guests
 
 ### BEGIN INIT INFO

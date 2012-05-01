@@ -2,7 +2,7 @@
 
 Name:             openstack-nova
 Version:          2012.1
-Release:          4%{?dist}
+Release:          5%{?dist}
 Summary:          OpenStack Compute (nova)
 
 Group:            Applications/System
@@ -401,6 +401,9 @@ fi
 %endif
 
 %changelog
+* Tue May 01 2012 Pádraig Brady <P@draigBrady.com> - 2012.1-5
+- Start the services later in the boot sequence
+
 * Wed Apr 27 2012 Pádraig Brady <P@draigBrady.com> - 2012.1-4
 - Fix install issues with new Essex init scripts
 

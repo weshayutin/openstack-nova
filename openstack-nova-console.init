@@ -2,7 +2,7 @@
 #
 # openstack-nova-console  OpenStack Nova Console Proxy
 #
-# chkconfig:   - 20 80
+# chkconfig:   - 98 02
 # description: OpenStack Nova Console Proxy Server
 
 ### BEGIN INIT INFO
