@@ -2,7 +2,7 @@
 
 Name:             openstack-nova
 Version:          2012.1
-Release:          5%{?dist}
+Release:          6%{?dist}
 Summary:          OpenStack Compute (nova)
 
 Group:            Applications/System
@@ -143,7 +143,6 @@ Requires:         iptables iptables-ipv6
 Requires:         iscsi-initiator-utils
 Requires:         scsi-target-utils
 Requires:         lvm2
-Requires:         socat
 Requires:         coreutils
 
 %description -n   python-nova
@@ -401,6 +400,9 @@ fi
 %endif
 
 %changelog
+* Wed May 09 2012 Alan Pevec <apevec@redhat.com> - 2012.1-6
+- Remove the socat dependency no longer needed by Essex
+
 * Tue May 01 2012 Pádraig Brady <P@draigBrady.com> - 2012.1-5
 - Start the services later in the boot sequence
 
