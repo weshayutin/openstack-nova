@@ -28,7 +28,6 @@ Source25:         openstack-nova-metadata-api.init
 Source20:         nova-sudoers
 Source21:         nova-polkit.pkla
 Source22:         nova-ifc-template
-Source23:         openstack-nova-db-setup
 
 #
 # patches_base=2012.1
@@ -334,9 +333,6 @@ install -p -D -m 644 %{SOURCE22} %{buildroot}%{_datarootdir}/nova/interfaces.tem
 install -d -m 755 %{buildroot}%{_sysconfdir}/polkit-1/localauthority/50-local.d
 install -p -D -m 644 %{SOURCE21} %{buildroot}%{_sysconfdir}/polkit-1/localauthority/50-local.d/50-nova.pkla
 
-# Install database setup helper script.
-install -p -D -m 755 %{SOURCE23} %{buildroot}%{_bindir}/openstack-nova-db-setup
-
 # Remove unneeded in production stuff
 rm -f %{buildroot}%{_bindir}/nova-debug
 rm -fr %{buildroot}%{python_sitelib}/nova/tests/
@@ -390,7 +386,6 @@ fi
 %dir %attr(0755, nova, root) %{_localstatedir}/run/nova
 
 %{_bindir}/nova-*
-%{_bindir}/openstack-nova-db-setup
 %{_initrddir}/openstack-nova-*
 %{_datarootdir}/nova
 %{_mandir}/man1/nova*.1.gz
@@ -436,6 +431,7 @@ fi
 - Depend on tunctl which can be used when `ip tuntap` is unavailable
 - Sync up with Essex stable branch
 - Handle updated qemu-img info output
+- Replace openstack-nova-db-setup with openstack-db
 
 * Wed May 09 2012 Alan Pevec <apevec@redhat.com> - 2012.1-6
 - Remove the socat dependency no longer needed by Essex
