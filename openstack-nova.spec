@@ -2,7 +2,7 @@
 
 Name:             openstack-nova
 Version:          2012.1
-Release:          7%{?dist}
+Release:          8%{?dist}
 Summary:          OpenStack Compute (nova)
 
 Group:            Applications/System
@@ -122,7 +122,7 @@ Group:            Applications/System
 Requires:         vconfig
 Requires:         PyXML
 Requires:         curl
-Requires:         m2crypto
+Requires:         python-crypto
 Requires:         libvirt-python
 Requires:         python-anyjson
 Requires:         python-IPy
@@ -189,7 +189,7 @@ BuildRequires:    python-tornado
 BuildRequires:    python-twisted-core
 BuildRequires:    python-twisted-web
 # while not strictly required, quiets the build down when building docs.
-BuildRequires:    python-carrot, python-mox, python-suds, m2crypto, bpython, python-memcached, python-migrate, python-iso8601
+BuildRequires:    python-carrot, python-mox, python-suds, bpython, python-memcached, python-migrate, python-iso8601
 
 %description      doc
 OpenStack Compute (codename Nova) is open source software designed to
@@ -427,6 +427,9 @@ fi
 %endif
 
 %changelog
+* Wed May 16 2012 Alan Pevec <apevec@redhat.com> - 2012.1-8
+- Remove m2crypto dependency no loner needed by Essex
+
 * Wed May 16 2012 Pádraig Brady <P@draigBrady.com> - 2012.1-7
 - Depend on tunctl which can be used when `ip tuntap` is unavailable
 - Sync up with Essex stable branch
