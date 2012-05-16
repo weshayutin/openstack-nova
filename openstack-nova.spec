@@ -2,7 +2,7 @@
 
 Name:             openstack-nova
 Version:          2012.1
-Release:          6%{?dist}
+Release:          7%{?dist}
 Summary:          OpenStack Compute (nova)
 
 Group:            Applications/System
@@ -69,6 +69,8 @@ Requires:         python-paste-deploy1.5
 Requires:         python-setuptools
 
 Requires:         bridge-utils
+# tunctl is needed where `ip tuntap` is not available
+Requires:         tunctl
 #TODO: Enable when available in RHEL 6.3
 #Requires:         dnsmasq-utils
 Requires:         libguestfs-mount >= 1.7.17
@@ -400,6 +402,9 @@ fi
 %endif
 
 %changelog
+* Wed May 16 2012 Pádraig Brady <P@draigBrady.com> - 2012.1-7
+- Depend on tunctl which can be used when `ip tuntap` is unavailable
+
 * Wed May 09 2012 Alan Pevec <apevec@redhat.com> - 2012.1-6
 - Remove the socat dependency no longer needed by Essex
 
