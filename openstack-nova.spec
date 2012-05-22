@@ -215,6 +215,7 @@ popd
 # Give stack, instance-usage-audit and clear_rabbit_queues a reasonable prefix
 mv %{buildroot}%{_bindir}/instance-usage-audit %{buildroot}%{_bindir}/nova-instance-usage-audit
 mv %{buildroot}%{_bindir}/clear_rabbit_queues %{buildroot}%{_bindir}/nova-clear-rabbit-queues
+mv %{buildroot}%{_bindir}/volume-usage-audit %{buildroot}%{_bindir}/nova-volume-usage-audit
 
 # Setup directories
 install -d -m 755 %{buildroot}%{_sharedstatedir}/nova
@@ -371,6 +372,9 @@ fi
 %endif
 
 %changelog
+* Tue May 22 2012 Dan Prince <dprince@redhat.com> - 2012.2
+- Move volume-usage-audit to a nova- prefix.
+
 * Tue Apr 10 2012 Dan Prince <dprince@redhat.com> - 2012.2
 - Remove nova-stack.
 
