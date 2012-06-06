@@ -212,11 +212,6 @@ install -p -D -m 644 build/man/*.1 %{buildroot}%{_mandir}/man1/
 
 popd
 
-# Give stack, instance-usage-audit and clear_rabbit_queues a reasonable prefix
-mv %{buildroot}%{_bindir}/instance-usage-audit %{buildroot}%{_bindir}/nova-instance-usage-audit
-mv %{buildroot}%{_bindir}/clear_rabbit_queues %{buildroot}%{_bindir}/nova-clear-rabbit-queues
-mv %{buildroot}%{_bindir}/volume-usage-audit %{buildroot}%{_bindir}/nova-volume-usage-audit
-
 # Setup directories
 install -d -m 755 %{buildroot}%{_sharedstatedir}/nova
 install -d -m 755 %{buildroot}%{_sharedstatedir}/nova/buckets
@@ -372,6 +367,9 @@ fi
 %endif
 
 %changelog
+* Wed Jun 6 2012 Dan Prince <dprince@redhat.com> - 2012.2
+- We no longer need to rename binaries with the nova- prefix.
+
 * Tue May 22 2012 Dan Prince <dprince@redhat.com> - 2012.2
 - Move volume-usage-audit to a nova- prefix.
 
