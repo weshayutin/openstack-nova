@@ -2,7 +2,7 @@
 
 Name:             openstack-nova
 Version:          2012.1
-Release:          9%{?dist}
+Release:          10%{?dist}
 Summary:          OpenStack Compute (nova)
 
 Group:            Applications/System
@@ -424,6 +424,9 @@ fi
 %endif
 
 %changelog
+* Wed Jun 08 2012 Pádraig Brady <P@draigBrady.com> - 2012.1-10
+- Enable libguestfs image inspection
+
 * Wed Jun 06 2012 Pádraig Brady <P@draigBrady.com> - 2012.1-9
 - Sync up with Essex stable branch, including...
 - Fix for protocol case handling (#829441, CVE-2012-2654)
