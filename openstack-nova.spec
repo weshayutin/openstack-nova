@@ -2,7 +2,7 @@
 
 Name:             openstack-nova
 Version:          2012.1
-Release:          10%{?dist}
+Release:          11%{?dist}
 Summary:          OpenStack Compute (nova)
 
 Group:            Applications/System
@@ -67,6 +67,9 @@ Patch0032: 0032-ensure-atomic-manipulation-of-libvirt-disk-images.patch
 Patch0033: 0033-Ensure-we-don-t-access-the-net-when-building-docs.patch
 Patch0034: 0034-fix-useexisting-deprecation-warnings.patch
 Patch0035: 0035-support-a-configurable-libvirt-injection-partition.patch
+Patch0036: 0036-Only-invoke-.lower-on-non-None-protocols.patch
+Patch0037: 0037-Create-a-utf8-version-of-the-dns_domains-table.patch
+Patch0038: 0038-Don-t-query-nova-network-on-startup.patch
 
 # This is EPEL specific and not upstream
 Patch100:         openstack-nova-newdeps.patch
@@ -227,6 +230,9 @@ This package contains documentation files for nova.
 %patch0033 -p1
 %patch0034 -p1
 %patch0035 -p1
+%patch0036 -p1
+%patch0037 -p1
+%patch0038 -p1
 
 # Apply EPEL patch
 %patch100 -p1
@@ -424,6 +430,11 @@ fi
 %endif
 
 %changelog
+* Mon Jun 11 2012 Pádraig Brady <P@draigBrady.com> - 2012.1-11
+- fix an exception caused by the fix for CVE-2012-2654
+- fix the encoding of the dns_domains table (requires a db sync)
+- fix a crash due to a nova services startup race (#825051)
+
 * Wed Jun 08 2012 Pádraig Brady <P@draigBrady.com> - 2012.1-10
 - Enable libguestfs image inspection
 
