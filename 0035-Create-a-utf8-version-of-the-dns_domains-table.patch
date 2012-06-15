@@ -1,4 +1,4 @@
-From abc01f2430b592388fe3bb1818f6dd13d8d02b0e Mon Sep 17 00:00:00 2001
+From f0a9f475c5d82493f90debd1082b913511ebacf0 Mon Sep 17 00:00:00 2001
 From: Dan Prince <dprince@redhat.com>
 Date: Fri, 8 Jun 2012 16:59:27 -0400
 Subject: [PATCH] Create a utf8 version of the dns_domains table.

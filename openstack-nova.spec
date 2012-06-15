@@ -2,7 +2,7 @@
 
 Name:             openstack-nova
 Version:          2012.1
-Release:          11%{?dist}
+Release:          12%{?dist}
 Summary:          OpenStack Compute (nova)
 
 Group:            Applications/System
@@ -59,17 +59,26 @@ Patch0024: 0024-Generate-a-Changelog-for-Nova.patch
 Patch0025: 0025-Fix-type-of-snapshot_id-column-to-match-db.patch
 Patch0026: 0026-handle-updated-qemu-img-info-output.patch
 Patch0027: 0027-Nail-pep8-dependencies-to-1.0.1.patch
-Patch0028: 0028-Fix-Multi_Scheduler-to-process-host-capabilities.patch
-Patch0029: 0029-Add-libvirt-get_console_output-tests-pty-and-file.patch
-Patch0030: 0030-Report-memory-correctly-on-Xen.-Fixes-bug-997014.patch
-Patch0031: 0031-Fix-up-protocol-case-handling-for-security-groups.patch
-Patch0032: 0032-ensure-atomic-manipulation-of-libvirt-disk-images.patch
-Patch0033: 0033-Ensure-we-don-t-access-the-net-when-building-docs.patch
-Patch0034: 0034-fix-useexisting-deprecation-warnings.patch
-Patch0035: 0035-support-a-configurable-libvirt-injection-partition.patch
+Patch0028: 0028-Fix-bug-988034-Quantum-Network-Manager-not-clearing-.patch
+Patch0029: 0029-Fix-Multi_Scheduler-to-process-host-capabilities.patch
+Patch0030: 0030-bug-999953-xenapi-driver-intermittently-fail-to-deta.patch
+Patch0031: 0031-Add-libvirt-get_console_output-tests-pty-and-file.patch
+Patch0032: 0032-Report-memory-correctly-on-Xen.-Fixes-bug-997014.patch
+Patch0033: 0033-Fix-up-protocol-case-handling-for-security-groups.patch
+Patch0034: 0034-Fix-bug-1006664-describe-non-existent-ec2-keypair.patch
+Patch0035: 0035-Create-a-utf8-version-of-the-dns_domains-table.patch
 Patch0036: 0036-Only-invoke-.lower-on-non-None-protocols.patch
-Patch0037: 0037-Create-a-utf8-version-of-the-dns_domains-table.patch
-Patch0038: 0038-Don-t-query-nova-network-on-startup.patch
+Patch0037: 0037-Implements-resume_state_on_host_boot-for-libvirt.patch
+Patch0038: 0038-Add-caching-to-openstack.common.cfg.patch
+Patch0040: 0040-Ensure-dnsmasq-accept-rules-are-preset-at-startup.patch
+Patch0041: 0041-Add-missing-ack-to-impl_qpid.patch
+Patch0042: 0042-Updates-the-cache.patch
+Patch0043: 0043-Don-t-query-nova-network-on-startup.patch
+Patch0044: 0044-ensure-atomic-manipulation-of-libvirt-disk-images.patch
+Patch0045: 0045-Ensure-we-don-t-access-the-net-when-building-docs.patch
+Patch0046: 0046-fix-useexisting-deprecation-warnings.patch
+Patch0047: 0047-support-a-configurable-libvirt-injection-partition.patch
+Patch0048: 0048-repeat-fusermount-to-avoid-business.patch
 
 # This is EPEL specific and not upstream
 Patch100:         openstack-nova-newdeps.patch
@@ -233,6 +242,15 @@ This package contains documentation files for nova.
 %patch0036 -p1
 %patch0037 -p1
 %patch0038 -p1
+%patch0040 -p1
+%patch0041 -p1
+%patch0042 -p1
+%patch0043 -p1
+%patch0044 -p1
+%patch0045 -p1
+%patch0046 -p1
+%patch0047 -p1
+%patch0048 -p1
 
 # Apply EPEL patch
 %patch100 -p1
@@ -430,6 +448,9 @@ fi
 %endif
 
 %changelog
+* Fri Jun 15 2012 Pádraig Brady <P@draigBrady.com> - 2012.1-12
+- update performance and stability fixes from essex stable
+
 * Mon Jun 11 2012 Pádraig Brady <P@draigBrady.com> - 2012.1-11
 - fix an exception caused by the fix for CVE-2012-2654
 - fix the encoding of the dns_domains table (requires a db sync)

@@ -1,4 +1,4 @@
-From 1cee536c3e040aa2b1b1b3a1e5e9f1b2001c9b84 Mon Sep 17 00:00:00 2001
+From d89c2f309221afb8b25cb0afe5291d432f033076 Mon Sep 17 00:00:00 2001
 From: Russell Bryant <rbryant@redhat.com>
 Date: Mon, 11 Jun 2012 14:07:19 +0100
 Subject: [PATCH] Don't query nova-network on startup.
@@ -88,18 +88,18 @@ index dcdc87d..fcdde9e 100644
              return rv
          vif = nw_info[0]
 diff --git a/nova/compute/manager.py b/nova/compute/manager.py
-index 053e80e..7cf462e 100644
+index ed41874..784727f 100644
 --- a/nova/compute/manager.py
 +++ b/nova/compute/manager.py
-@@ -254,7 +254,7 @@ class ComputeManager(manager.SchedulerDependentManager):
-             elif drv_state == power_state.RUNNING:
-                 # Hyper-V and VMWareAPI drivers will raise an exception
-                 try:
--                    net_info = self._get_instance_nw_info(context, instance)
-+                    net_info = compute_utils.get_nw_info_for_instance(instance)
-                     self.driver.ensure_filtering_rules_for_instance(instance,
-                                                 self._legacy_nw_info(net_info))
-                 except NotImplementedError:
+@@ -246,7 +246,7 @@ class ComputeManager(manager.SchedulerDependentManager):
+             LOG.debug(_('Current state is %(drv_state)s, state in DB is '
+                         '%(db_state)s.'), locals(), instance=instance)
+ 
+-            net_info = self._get_instance_nw_info(context, instance)
++            net_info = compute_utils.get_nw_info_for_instance(instance)
+             if ((expect_running and FLAGS.resume_guests_state_on_host_boot) or
+                 FLAGS.start_guests_on_host_boot):
+                 LOG.info(_('Rebooting instance after nova-compute restart.'),
 diff --git a/nova/compute/utils.py b/nova/compute/utils.py
 index 1e5eb8b..6104c10 100644
 --- a/nova/compute/utils.py
