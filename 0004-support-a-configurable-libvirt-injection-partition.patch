@@ -1,4 +1,4 @@
-From 55cc54dad672c31e6898605f5d1a132031b306a8 Mon Sep 17 00:00:00 2001
+From fdcd601a1da74186a926bc046758ae3055fe4a1e Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?P=C3=A1draig=20Brady?= <pbrady@redhat.com>
 Date: Wed, 18 Apr 2012 23:27:31 +0100
 Subject: [PATCH] support a configurable libvirt injection partition
