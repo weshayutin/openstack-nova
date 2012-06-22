@@ -37,6 +37,7 @@ Patch0002: 0002-Ensure-we-don-t-access-the-net-when-building-docs.patch
 Patch0003: 0003-fix-useexisting-deprecation-warnings.patch
 Patch0004: 0004-support-a-configurable-libvirt-injection-partition.patch
 Patch0005: 0005-repeat-fusermount-to-avoid-business.patch
+Patch0006: 0006-only-mount-guest-image-once-when-injecting-files.patch
 
 # This is EPEL specific and not upstream
 Patch100:         openstack-nova-newdeps.patch
@@ -167,6 +168,7 @@ This package contains documentation files for nova.
 %patch0003 -p1
 %patch0004 -p1
 %patch0005 -p1
+%patch0006 -p1
 
 # Apply EPEL patch
 %patch100 -p1
@@ -365,7 +367,8 @@ fi
 
 %changelog
 * Fri Jun 22 2012 Pádraig Brady <P@draigBrady.com> - 2012.1.1-1
-- update to essex stable release 2012.1.1
+- Update to essex stable release 2012.1.1
+- Improve performance and stability of file injection
 
 * Fri Jun 15 2012 Pádraig Brady <P@draigBrady.com> - 2012.1-12
 - update performance and stability fixes from essex stable
