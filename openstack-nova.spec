@@ -13,17 +13,28 @@ Source1:          nova.conf
 Source6:          nova.logrotate
 
 Source10:         openstack-nova-api.init
+Source100:        openstack-nova-api.upstart
 Source11:         openstack-nova-cert.init
+Source110:        openstack-nova-cert.upstart
 Source12:         openstack-nova-compute.init
+Source120:        openstack-nova-compute.upstart
 Source13:         openstack-nova-network.init
+Source130:        openstack-nova-network.upstart
 Source14:         openstack-nova-objectstore.init
+Source140:        openstack-nova-objectstore.upstart
 Source15:         openstack-nova-scheduler.init
+Source150:        openstack-nova-scheduler.upstart
 Source16:         openstack-nova-volume.init
+Source160:        openstack-nova-volume.upstart
 Source17:         openstack-nova-direct-api.init
 Source18:         openstack-nova-xvpvncproxy.init
+Source180:        openstack-nova-xvpvncproxy.upstart
 Source19:         openstack-nova-console.init
+Source190:        openstack-nova-console.upstart
 Source24:         openstack-nova-consoleauth.init
+Source240:        openstack-nova-consoleauth.upstart
 Source25:         openstack-nova-metadata-api.init
+Source250:        openstack-nova-metadata-api.upstart
 
 Source20:         nova-sudoers
 Source21:         nova-polkit.pkla
@@ -269,6 +280,19 @@ install -p -D -m 644 nova/virt/libvirt.xml.template %{buildroot}%{_datarootdir}/
 install -p -D -m 644 nova/virt/interfaces.template %{buildroot}%{_datarootdir}/nova/interfaces.template
 install -p -D -m 644 %{SOURCE22} %{buildroot}%{_datarootdir}/nova/interfaces.template
 
+# Install upstart jobs examples
+install -p -m 644 %{SOURCE100} %{buildroot}%{_datadir}/nova/
+install -p -m 644 %{SOURCE110} %{buildroot}%{_datadir}/nova/
+install -p -m 644 %{SOURCE120} %{buildroot}%{_datadir}/nova/
+install -p -m 644 %{SOURCE130} %{buildroot}%{_datadir}/nova/
+install -p -m 644 %{SOURCE140} %{buildroot}%{_datadir}/nova/
+install -p -m 644 %{SOURCE150} %{buildroot}%{_datadir}/nova/
+install -p -m 644 %{SOURCE160} %{buildroot}%{_datadir}/nova/
+install -p -m 644 %{SOURCE180} %{buildroot}%{_datadir}/nova/
+install -p -m 644 %{SOURCE190} %{buildroot}%{_datadir}/nova/
+install -p -m 644 %{SOURCE240} %{buildroot}%{_datadir}/nova/
+install -p -m 644 %{SOURCE250} %{buildroot}%{_datadir}/nova/
+
 install -d -m 755 %{buildroot}%{_sysconfdir}/polkit-1/localauthority/50-local.d
 install -p -D -m 644 %{SOURCE21} %{buildroot}%{_sysconfdir}/polkit-1/localauthority/50-local.d/50-nova.pkla
 
@@ -369,6 +393,7 @@ fi
 * Fri Jun 22 2012 Pádraig Brady <P@draigBrady.com> - 2012.1.1-1
 - Update to essex stable release 2012.1.1
 - Improve performance and stability of file injection
+- add upstart jobs, alternative to sysv initscripts
 
 * Fri Jun 15 2012 Pádraig Brady <P@draigBrady.com> - 2012.1-12
 - update performance and stability fixes from essex stable
