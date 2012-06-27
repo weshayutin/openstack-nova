@@ -1,4 +1,4 @@
-From b57f04571265b7889872e890bba9e0c38e55bb54 Mon Sep 17 00:00:00 2001
+From 972858eab37408304f447a443641b949e9ca5b42 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?P=C3=A1draig=20Brady?= <pbrady@redhat.com>
 Date: Fri, 16 Mar 2012 03:43:49 +0000
 Subject: [PATCH] ensure atomic manipulation of libvirt disk images
@@ -169,7 +169,7 @@ index 1e0ae0a..626f3ff 100644
  
      return metadata
 diff --git a/nova/virt/libvirt/connection.py b/nova/virt/libvirt/connection.py
-index e0943ba..b940a17 100644
+index 5ec029a..f909886 100644
 --- a/nova/virt/libvirt/connection.py
 +++ b/nova/virt/libvirt/connection.py
 @@ -1112,7 +1112,8 @@ class LibvirtConnection(driver.ComputeDriver):

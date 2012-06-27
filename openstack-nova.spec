@@ -2,7 +2,7 @@
 
 Name:             openstack-nova
 Version:          2012.1.1
-Release:          1%{?dist}
+Release:          2%{?dist}
 Summary:          OpenStack Compute (nova)
 
 Group:            Applications/System
@@ -43,12 +43,14 @@ Source22:         nova-ifc-template
 #
 # patches_base=2012.1.1
 #
-Patch0001: 0001-ensure-atomic-manipulation-of-libvirt-disk-images.patch
-Patch0002: 0002-Ensure-we-don-t-access-the-net-when-building-docs.patch
-Patch0003: 0003-fix-useexisting-deprecation-warnings.patch
-Patch0004: 0004-support-a-configurable-libvirt-injection-partition.patch
-Patch0005: 0005-repeat-fusermount-to-avoid-business.patch
-Patch0006: 0006-only-mount-guest-image-once-when-injecting-files.patch
+Patch0002: 0002-Call-libvirt_volume_driver-with-right-mountpoint.patch
+Patch0003: 0003-Stop-nova_ipam_lib-from-changing-the-timeout-setting.patch
+Patch0004: 0004-ensure-atomic-manipulation-of-libvirt-disk-images.patch
+Patch0005: 0005-Ensure-we-don-t-access-the-net-when-building-docs.patch
+Patch0006: 0006-fix-useexisting-deprecation-warnings.patch
+Patch0007: 0007-support-a-configurable-libvirt-injection-partition.patch
+Patch0008: 0008-repeat-fusermount-to-avoid-business.patch
+Patch0009: 0009-only-mount-guest-image-once-when-injecting-files.patch
 
 # This is EPEL specific and not upstream
 Patch100:         openstack-nova-newdeps.patch
@@ -174,12 +176,14 @@ This package contains documentation files for nova.
 %prep
 %setup -q -n nova-%{version}
 
-%patch0001 -p1
 %patch0002 -p1
 %patch0003 -p1
 %patch0004 -p1
 %patch0005 -p1
 %patch0006 -p1
+%patch0007 -p1
+%patch0008 -p1
+%patch0009 -p1
 
 # Apply EPEL patch
 %patch100 -p1
@@ -390,6 +394,9 @@ fi
 %endif
 
 %changelog
+* Wed Jun 27 2012 Pádraig Brady <P@draigBrady.com> - 2012.1.1-2
+- Update to latest essex stable branch
+
 * Fri Jun 22 2012 Pádraig Brady <P@draigBrady.com> - 2012.1.1-1
 - Update to essex stable release 2012.1.1
 - Improve performance and stability of file injection
