@@ -51,6 +51,7 @@ Patch0006: 0006-fix-useexisting-deprecation-warnings.patch
 Patch0007: 0007-support-a-configurable-libvirt-injection-partition.patch
 Patch0008: 0008-repeat-fusermount-to-avoid-business.patch
 Patch0009: 0009-only-mount-guest-image-once-when-injecting-files.patch
+Patch0010: 0010-set-correct-SELinux-context-for-injected-ssh-keys.patch
 
 # This is EPEL specific and not upstream
 Patch100:         openstack-nova-newdeps.patch
@@ -184,6 +185,7 @@ This package contains documentation files for nova.
 %patch0007 -p1
 %patch0008 -p1
 %patch0009 -p1
+%patch0010 -p1
 
 # Apply EPEL patch
 %patch100 -p1
@@ -396,6 +398,7 @@ fi
 %changelog
 * Wed Jun 27 2012 Pádraig Brady <P@draigBrady.com> - 2012.1.1-2
 - Update to latest essex stable branch
+- Support injecting new .ssh/authorized_keys files to SELinux enabled guests
 
 * Fri Jun 22 2012 Pádraig Brady <P@draigBrady.com> - 2012.1.1-1
 - Update to essex stable release 2012.1.1
