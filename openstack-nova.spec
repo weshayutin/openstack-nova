@@ -2,7 +2,7 @@
 
 Name:             openstack-nova
 Version:          2012.1.1
-Release:          2%{?dist}
+Release:          3%{?dist}
 Summary:          OpenStack Compute (nova)
 
 Group:            Applications/System
@@ -44,14 +44,16 @@ Source22:         nova-ifc-template
 # patches_base=2012.1.1
 #
 Patch0002: 0002-Call-libvirt_volume_driver-with-right-mountpoint.patch
-Patch0003: 0003-Stop-nova_ipam_lib-from-changing-the-timeout-setting.patch
-Patch0004: 0004-ensure-atomic-manipulation-of-libvirt-disk-images.patch
-Patch0005: 0005-Ensure-we-don-t-access-the-net-when-building-docs.patch
-Patch0006: 0006-fix-useexisting-deprecation-warnings.patch
-Patch0007: 0007-support-a-configurable-libvirt-injection-partition.patch
-Patch0008: 0008-repeat-fusermount-to-avoid-business.patch
-Patch0009: 0009-only-mount-guest-image-once-when-injecting-files.patch
-Patch0010: 0010-set-correct-SELinux-context-for-injected-ssh-keys.patch
+Patch0003: 0003-Prevent-file-injection-writing-to-host-filesystem.patch
+Patch0004: 0004-Stop-nova_ipam_lib-from-changing-the-timeout-setting.patch
+Patch0005: 0005-ensure-atomic-manipulation-of-libvirt-disk-images.patch
+Patch0006: 0006-Ensure-we-don-t-access-the-net-when-building-docs.patch
+Patch0007: 0007-fix-useexisting-deprecation-warnings.patch
+Patch0008: 0008-support-a-configurable-libvirt-injection-partition.patch
+Patch0009: 0009-repeat-fusermount-to-avoid-business.patch
+Patch0010: 0010-only-mount-guest-image-once-when-injecting-files.patch
+Patch0011: 0011-set-correct-SELinux-context-for-injected-ssh-keys.patch
+Patch0012: 0012-Distinguish-over-quota-for-volume-size-and-number.patch
 
 # This is EPEL specific and not upstream
 Patch100:         openstack-nova-newdeps.patch
@@ -186,6 +188,8 @@ This package contains documentation files for nova.
 %patch0008 -p1
 %patch0009 -p1
 %patch0010 -p1
+%patch0011 -p1
+%patch0012 -p1
 
 # Apply EPEL patch
 %patch100 -p1
@@ -396,6 +400,10 @@ fi
 %endif
 
 %changelog
+* Thu Jul  5 2012 Pádraig Brady <P@draigBrady.com> - 2012.1.1-3
+- Distinguish volume overlimit exceptions
+- Prohibit host file corruption through file injection (CVE-2012-3360, CVE-2012-3361)
+
 * Wed Jun 27 2012 Pádraig Brady <P@draigBrady.com> - 2012.1.1-2
 - Update to latest essex stable branch
 - Support injecting new .ssh/authorized_keys files to SELinux enabled guests

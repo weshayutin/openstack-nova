@@ -1,4 +1,4 @@
-From 8346d52f7f4e4bc7c93dc877ac5bc5aa63e999ee Mon Sep 17 00:00:00 2001
+From ea9d8a5ae2ec89fa873999986654f365a6cd65d1 Mon Sep 17 00:00:00 2001
 From: Alessio Ababilov <aababilov@griddynamics.com>
 Date: Fri, 15 Jun 2012 18:33:26 +0300
 Subject: [PATCH] repeat fusermount to avoid business

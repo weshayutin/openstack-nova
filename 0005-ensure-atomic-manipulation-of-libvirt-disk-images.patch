@@ -1,4 +1,4 @@
-From 972858eab37408304f447a443641b949e9ca5b42 Mon Sep 17 00:00:00 2001
+From c765c320651a7cf029658ffb1b987e7162b5e2bf Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?P=C3=A1draig=20Brady?= <pbrady@redhat.com>
 Date: Fri, 16 Mar 2012 03:43:49 +0000
 Subject: [PATCH] ensure atomic manipulation of libvirt disk images

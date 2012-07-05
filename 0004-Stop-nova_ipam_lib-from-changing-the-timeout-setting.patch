@@ -1,4 +1,4 @@
-From 5b772f98fa139e7b4b32698004922add56ed22d0 Mon Sep 17 00:00:00 2001
+From 72c218d730736210961cf86f88543c69bf52d1fc Mon Sep 17 00:00:00 2001
 From: Vishvananda Ishaya <vishvananda@gmail.com>
 Date: Tue, 26 Jun 2012 20:37:02 +0000
 Subject: [PATCH] Stop nova_ipam_lib from changing the timeout setting

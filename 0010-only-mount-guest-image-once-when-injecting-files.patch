@@ -1,20 +1,20 @@
-From def7d00ded863b0647ef18d611c2832b1336d06a Mon Sep 17 00:00:00 2001
+From 8843f1e61d5b648306398f6e8b8448c1442f58bf Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?P=C3=A1draig=20Brady?= <pbrady@redhat.com>
-Date: Thu, 21 Jun 2012 15:28:05 +0100
+Date: Mon, 25 Jun 2012 13:52:46 +0100
 Subject: [PATCH] only mount guest image once when injecting files
 
 Previously we could incur the costly guest mount operation twice,
 if injecting files with any of net, ssh keys, password, metadata.
 Instead now inject files in the same operation.
 
-Change-Id: I250532af14262962777e354324e9aa89d5ecbea1
+Change-Id: I228da2229a19d9097507f67b697595616fa601fe
 ---
  nova/virt/disk/api.py           |   39 ++++++++++++++-------------------------
  nova/virt/libvirt/connection.py |   23 +++++++----------------
  2 files changed, 21 insertions(+), 41 deletions(-)
 
 diff --git a/nova/virt/disk/api.py b/nova/virt/disk/api.py
-index 6cb19f2..6756ac2 100644
+index 04feb76..d6d6007 100644
 --- a/nova/virt/disk/api.py
 +++ b/nova/virt/disk/api.py
 @@ -224,7 +224,7 @@ class _DiskImage(object):
@@ -76,18 +76,15 @@ index 6cb19f2..6756ac2 100644
 +            _inject_file_into_fs(fs, path, contents)
  
  
- def _inject_file_into_fs(fs, path, contents):
-@@ -314,7 +303,7 @@ def _inject_file_into_fs(fs, path, contents):
-           run_as_root=True)
+ def _join_and_check_path_within_fs(fs, *args):
+@@ -336,12 +325,12 @@ def _inject_file_into_fs(fs, path, contents, append=False):
+     utils.execute('tee', *args, **kwargs)
  
  
 -def _inject_metadata_into_fs(metadata, fs, execute=None):
 +def _inject_metadata_into_fs(metadata, fs):
-     metadata_path = os.path.join(fs, "meta.js")
      metadata = dict([(m.key, m.value) for m in metadata])
- 
-@@ -322,7 +311,7 @@ def _inject_metadata_into_fs(metadata, fs, execute=None):
-                   process_input=json.dumps(metadata), run_as_root=True)
+     _inject_file_into_fs(fs, 'meta.js', json.dumps(metadata))
  
  
 -def _inject_key_into_fs(key, fs, execute=None):
@@ -95,8 +92,8 @@ index 6cb19f2..6756ac2 100644
      """Add the given public ssh key to root's authorized_keys.
  
      key is an ssh key string.
-@@ -344,7 +333,7 @@ def _inject_key_into_fs(key, fs, execute=None):
-                   process_input=''.join(key_data), run_as_root=True)
+@@ -365,7 +354,7 @@ def _inject_key_into_fs(key, fs, execute=None):
+     _inject_file_into_fs(fs, keyfile, key_data, append=True)
  
  
 -def _inject_net_into_fs(net, fs, execute=None):
@@ -104,8 +101,8 @@ index 6cb19f2..6756ac2 100644
      """Inject /etc/network/interfaces into the filesystem rooted at fs.
  
      net is the contents of /etc/network/interfaces.
-@@ -357,7 +346,7 @@ def _inject_net_into_fs(net, fs, execute=None):
-     utils.execute('tee', netfile, process_input=net, run_as_root=True)
+@@ -379,7 +368,7 @@ def _inject_net_into_fs(net, fs, execute=None):
+     _inject_file_into_fs(fs, netfile, net)
  
  
 -def _inject_admin_password_into_fs(admin_passwd, fs, execute=None):
