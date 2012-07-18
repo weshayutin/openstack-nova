@@ -2,7 +2,7 @@
 
 Name:             openstack-nova
 Version:          2012.1.1
-Release:          3%{?dist}
+Release:          4%{?dist}
 Summary:          OpenStack Compute (nova)
 
 Group:            Applications/System
@@ -400,6 +400,9 @@ fi
 %endif
 
 %changelog
+* Wed Jul 18 2012 Pádraig Brady <P@draigBrady.com> - 2012.1.1-4
+- Enable auto cleanup of old cached instance images
+
 * Thu Jul  5 2012 Pádraig Brady <P@draigBrady.com> - 2012.1.1-3
 - Distinguish volume overlimit exceptions
 - Prohibit host file corruption through file injection (CVE-2012-3360, CVE-2012-3361)
