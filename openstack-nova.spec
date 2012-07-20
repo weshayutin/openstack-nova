@@ -43,17 +43,26 @@ Source22:         nova-ifc-template
 #
 # patches_base=2012.1.1
 #
-Patch0002: 0002-Call-libvirt_volume_driver-with-right-mountpoint.patch
-Patch0003: 0003-Prevent-file-injection-writing-to-host-filesystem.patch
-Patch0004: 0004-Stop-nova_ipam_lib-from-changing-the-timeout-setting.patch
-Patch0005: 0005-ensure-atomic-manipulation-of-libvirt-disk-images.patch
-Patch0006: 0006-Ensure-we-don-t-access-the-net-when-building-docs.patch
-Patch0007: 0007-fix-useexisting-deprecation-warnings.patch
-Patch0008: 0008-support-a-configurable-libvirt-injection-partition.patch
-Patch0009: 0009-repeat-fusermount-to-avoid-business.patch
-Patch0010: 0010-only-mount-guest-image-once-when-injecting-files.patch
-Patch0011: 0011-set-correct-SELinux-context-for-injected-ssh-keys.patch
-Patch0012: 0012-Distinguish-over-quota-for-volume-size-and-number.patch
+Patch0003: 0003-Call-libvirt_volume_driver-with-right-mountpoint.patch
+Patch0004: 0004-Use-fake_libvirt_utils-for-libvirt-console-tests.patch
+Patch0005: 0005-Fixes-ram_allocation_ratio-based-over-subscription.patch
+Patch0006: 0006-Stop-nova_ipam_lib-from-changing-the-timeout-setting.patch
+Patch0007: 0007-Prevent-file-injection-writing-to-host-filesystem.patch
+Patch0008: 0008-Distinguish-over-quota-for-volume-size-and-number.patch
+Patch0009: 0009-Expose-over-quota-exceptions-via-native-API.patch
+Patch0010: 0010-Fix-call-to-network_get_all_by_uuids.patch
+Patch0011: 0011-fix-libvirt-get_memory_mb_total-with-xen.patch
+Patch0012: 0012-Use-compute_api.get_all-in-affinity-filters.patch
+Patch0013: 0013-Use-default-qemu-img-cluster-size-in-libvirt-connect.patch
+Patch0014: 0014-Return-413-status-on-over-quota-in-the-native-API.patch
+Patch0015: 0015-ensure-atomic-manipulation-of-libvirt-disk-images.patch
+Patch0016: 0016-Ensure-we-don-t-access-the-net-when-building-docs.patch
+Patch0017: 0017-fix-useexisting-deprecation-warnings.patch
+Patch0018: 0018-support-a-configurable-libvirt-injection-partition.patch
+Patch0019: 0019-only-mount-guest-image-once-when-injecting-files.patch
+Patch0020: 0020-set-correct-SELinux-context-for-injected-ssh-keys.patch
+Patch0021: 0021-ensure-libguestfs-has-completed-before-proceeding.patch
+Patch0022: 0022-ensure-libguestfs-mounts-are-cleaned-up.patch
 
 # This is EPEL specific and not upstream
 Patch100:         openstack-nova-newdeps.patch
@@ -179,7 +188,6 @@ This package contains documentation files for nova.
 %prep
 %setup -q -n nova-%{version}
 
-%patch0002 -p1
 %patch0003 -p1
 %patch0004 -p1
 %patch0005 -p1
@@ -190,6 +198,16 @@ This package contains documentation files for nova.
 %patch0010 -p1
 %patch0011 -p1
 %patch0012 -p1
+%patch0013 -p1
+%patch0014 -p1
+%patch0015 -p1
+%patch0016 -p1
+%patch0017 -p1
+%patch0018 -p1
+%patch0019 -p1
+%patch0020 -p1
+%patch0021 -p1
+%patch0022 -p1
 
 # Apply EPEL patch
 %patch100 -p1
@@ -400,8 +418,16 @@ fi
 %endif
 
 %changelog
-* Wed Jul 18 2012 Pádraig Brady <P@draigBrady.com> - 2012.1.1-4
+* Fri Jul 20 2012 Pádraig Brady <P@draigBrady.com> - 2012.1.1-4
 - Enable auto cleanup of old cached instance images
+- Fix ram_allocation_ratio based over subscription
+- Expose over quota exceptions via native API
+- Return 413 status on over quota in the native API
+- Fix call to network_get_all_by_uuids
+- Fix libvirt get_memory_mb_total with xen
+- Use compute_api.get_all in affinity filters (CVE-2012-3371)
+- Use default qemu img cluster size in libvirt connect
+- Ensure libguestfs has completed before proceeding
 
 * Thu Jul  5 2012 Pádraig Brady <P@draigBrady.com> - 2012.1.1-3
 - Distinguish volume overlimit exceptions

@@ -1,4 +1,4 @@
-From 0cb4c982d353089b1396b9cfaf5d2cdc53496a6f Mon Sep 17 00:00:00 2001
+From da96aac3cfcef22f03a2d3962b5fc0e15a934658 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?P=C3=A1draig=20Brady?= <pbrady@redhat.com>
 Date: Wed, 27 Jun 2012 10:29:57 +0100
 Subject: [PATCH] set correct SELinux context for injected ssh keys
