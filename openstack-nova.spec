@@ -326,7 +326,6 @@ Requires:         python-iso8601
 Requires:         python-lockfile
 Requires:         python-netaddr
 Requires:         python-lxml
-Requires:         PyXML
 Requires:         python-anyjson
 Requires:         python-boto
 Requires:         python-cheetah
