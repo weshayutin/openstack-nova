@@ -69,6 +69,7 @@ Patch100:         openstack-nova-newdeps.patch
 
 BuildArch:        noarch
 BuildRequires:    intltool
+BuildRequires:    python-sphinx10
 BuildRequires:    python-setuptools
 BuildRequires:    python-netaddr
 BuildRequires:    python-lockfile
@@ -358,7 +359,6 @@ Group:            Documentation
 
 Requires:         %{name} = %{version}-%{release}
 
-BuildRequires:    python-sphinx10
 BuildRequires:    graphviz
 
 # Required to build module documents
