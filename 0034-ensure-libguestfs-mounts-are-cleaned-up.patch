@@ -1,4 +1,4 @@
-From 3e48d95cc79e77c1e51ed1fbc00b9fe46d800f73 Mon Sep 17 00:00:00 2001
+From decebd38721c5e6c054e3b48a130efd154b283c9 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?P=C3=A1draig=20Brady?= <pbrady@redhat.com>
 Date: Wed, 11 Jul 2012 23:45:28 +0100
 Subject: [PATCH] ensure libguestfs mounts are cleaned up

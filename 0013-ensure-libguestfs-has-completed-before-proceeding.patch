@@ -1,4 +1,4 @@
-From 7656d036b559b5337bf36f3a6676d75edb52d8ab Mon Sep 17 00:00:00 2001
+From 1c1b858e919248d6e3fb11c1022532ba40e75844 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?P=C3=A1draig=20Brady?= <pbrady@redhat.com>
 Date: Tue, 10 Jul 2012 15:22:39 +0100
 Subject: [PATCH] ensure libguestfs has completed before proceeding
