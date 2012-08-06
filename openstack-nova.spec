@@ -366,6 +366,9 @@ fi
 %endif
 
 %changelog
+* Mon Aug 6 2012 Dan Prince <dprince@redhat.com> - 2012.2
+- Switch over to use rootwrap_config in nova.conf.
+
 * Mon Jul 10 2012 Dan Prince <dprince@redhat.com> - 2012.2
 - Remove doc/generate_autodoc_index.sh
 - Remove novarc.template.
