@@ -2,7 +2,7 @@
 
 Name:             openstack-nova
 Version:          2012.1.1
-Release:          11%{?dist}
+Release:          12%{?dist}
 Summary:          OpenStack Compute (nova)
 
 Group:            Applications/System
@@ -565,11 +565,12 @@ rm -f %{buildroot}/usr/share/doc/nova/README*
 %pre common
 getent group nova >/dev/null || groupadd -r nova --gid 162
 if ! getent passwd nova >/dev/null; then
-  useradd -u 162 -r -g nova -G nova,nobody,qemu -d %{_sharedstatedir}/nova -s /sbin/nologin -c "OpenStack Nova Daemons" nova
+  useradd -u 162 -r -g nova -G nova,nobody -d %{_sharedstatedir}/nova -s /sbin/nologin -c "OpenStack Nova Daemons" nova
 fi
 exit 0
 
 %pre compute
+usermod -a -G qemu nova
 # Add nova to the fuse group (if present) to support guestmount
 if getent group fuse >/dev/null; then
   usermod -a -G fuse nova
@@ -825,6 +826,9 @@ fi
 %endif
 
 %changelog
+* Mon Aug  6 2012 Pádraig Brady <P@draigBrady.com> - 2012.1.1-12
+- Fix group installation issue introduced in 2012.1.1-10
+
 * Sun Jul 30 2012 Pádraig Brady <P@draigBrady.com> - 2012.1.1-11
 - Update from stable upstream including...
 - Fix metadata file injection with xen
