@@ -85,6 +85,7 @@ Patch0042: 0042-Convert-remaining-network-API-casts-to-calls.patch
 Patch0043: 0043-Moving-where-the-fixed-ip-deallocation-happens.patch
 Patch0044: 0044-fix-the-qpid_heartbeat-option-so-that-it-s-effective.patch
 Patch0045: 0045-Add-error-log-for-live-migration.patch
+Patch0046: 0046-Prohibit-file-injection-writing-to-host-filesystem.patch
 
 # This is EPEL specific and not upstream
 Patch100:         openstack-nova-newdeps.patch
@@ -441,6 +442,7 @@ This package contains documentation files for nova.
 %patch0043 -p1
 %patch0044 -p1
 %patch0045 -p1
+%patch0046 -p1
 
 # Apply EPEL patch
 %patch100 -p1
@@ -830,6 +832,7 @@ fi
 %changelog
 * Wed Aug  8 2012 Pádraig Brady <P@draigBrady.com> - 2012.1.1-13
 - Log live migration errors
+- Prohibit host file corruption through file injection (CVE-2012-3447)
 
 * Mon Aug  6 2012 Pádraig Brady <P@draigBrady.com> - 2012.1.1-12
 - Fix group installation issue introduced in 2012.1.1-10
