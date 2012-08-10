@@ -2,7 +2,7 @@
 
 Name:             openstack-nova
 Version:          2012.1.1
-Release:          13%{?dist}
+Release:          14%{?dist}
 Summary:          OpenStack Compute (nova)
 
 Group:            Applications/System
@@ -780,6 +780,7 @@ fi
 %{_bindir}/nova-cert
 %{_initrddir}/openstack-nova-cert
 %{_datarootdir}/nova/openstack-nova-cert.upstart
+%defattr(-, nova, nova, -)
 %dir %{_sharedstatedir}/nova/CA/
 %dir %{_sharedstatedir}/nova/CA/certs
 %dir %{_sharedstatedir}/nova/CA/crl
@@ -830,6 +831,9 @@ fi
 %endif
 
 %changelog
+* Fri Aug 10 2012 Pádraig Brady <P@draigBrady.com> - 2012.1.1-14
+- Fix CA cert permissions issue introduced in 2012.1.1-10
+
 * Wed Aug  8 2012 Pádraig Brady <P@draigBrady.com> - 2012.1.1-13
 - Log live migration errors
 - Prohibit host file corruption through file injection (CVE-2012-3447)
