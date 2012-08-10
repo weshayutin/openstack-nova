@@ -2,7 +2,7 @@
 
 Name:             openstack-nova
 Version:          2012.1.1
-Release:          14%{?dist}
+Release:          15%{?dist}
 Summary:          OpenStack Compute (nova)
 
 Group:            Applications/System
@@ -154,7 +154,7 @@ between all the OpenStack nova services.
 Summary:          OpenStack Nova Virtual Machine control service
 Group:            Applications/System
 
-Requires:         openstack-nova-common
+Requires:         openstack-nova-common = %{version}-%{release}
 Requires:         curl
 Requires:         iscsi-initiator-utils
 Requires:         iptables iptables-ipv6
@@ -185,7 +185,7 @@ This package contains the Nova service for controlling Virtual Machines.
 Summary:          OpenStack Nova Network control service
 Group:            Applications/System
 
-Requires:         openstack-nova-common
+Requires:         openstack-nova-common = %{version}-%{release}
 Requires:         vconfig
 Requires:         radvd
 Requires:         bridge-utils
@@ -211,7 +211,7 @@ This package contains the Nova service for controlling networking.
 Summary:          OpenStack Nova storage volume control service
 Group:            Applications/System
 
-Requires:         openstack-nova-common
+Requires:         openstack-nova-common = %{version}-%{release}
 Requires:         lvm2
 Requires:         scsi-target-utils
 
@@ -232,7 +232,7 @@ This package contains the Nova service for controlling storage volumes.
 Summary:          OpenStack Nova VM distribution service
 Group:            Applications/System
 
-Requires:         openstack-nova-common
+Requires:         openstack-nova-common = %{version}-%{release}
 
 %description scheduler
 OpenStack Compute (codename Nova) is open source software designed to
@@ -252,7 +252,7 @@ to run Virtual Machines in the cloud.
 Summary:          OpenStack Nova certificate management service
 Group:            Applications/System
 
-Requires:         openstack-nova-common
+Requires:         openstack-nova-common = %{version}-%{release}
 
 %description cert
 OpenStack Compute (codename Nova) is open source software designed to
@@ -271,7 +271,7 @@ This package contains the Nova service for managing certificates.
 Summary:          OpenStack Nova API services
 Group:            Applications/System
 
-Requires:         openstack-nova-common
+Requires:         openstack-nova-common = %{version}-%{release}
 
 %description api
 OpenStack Compute (codename Nova) is open source software designed to
@@ -290,7 +290,7 @@ This package contains the Nova services providing programmatic access.
 Summary:          OpenStack Nova simple object store service
 Group:            Applications/System
 
-Requires:         openstack-nova-common
+Requires:         openstack-nova-common = %{version}-%{release}
 
 %description objectstore
 OpenStack Compute (codename Nova) is open source software designed to
@@ -309,7 +309,7 @@ This package contains the Nova service providing a simple object store.
 Summary:          OpenStack Nova console access services
 Group:            Applications/System
 
-Requires:         openstack-nova-common
+Requires:         openstack-nova-common = %{version}-%{release}
 
 %description console
 OpenStack Compute (codename Nova) is open source software designed to
@@ -831,7 +831,8 @@ fi
 %endif
 
 %changelog
-* Fri Aug 10 2012 Pádraig Brady <P@draigBrady.com> - 2012.1.1-14
+* Fri Aug 10 2012 Pádraig Brady <P@draigBrady.com> - 2012.1.1-15
+- Fix package versions to ensure update dependencies are correct
 - Fix CA cert permissions issue introduced in 2012.1.1-10
 
 * Wed Aug  8 2012 Pádraig Brady <P@draigBrady.com> - 2012.1.1-13
