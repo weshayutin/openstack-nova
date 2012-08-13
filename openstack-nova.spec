@@ -113,8 +113,9 @@ Requires:         python-twisted-core
 Requires:         python-twisted-web
 Requires:         python-webob
 Requires:         python-netaddr
-# TODO: remove the following dependency which is minimal
+# TODO: remove the following dependency once we need just glanceclient
 Requires:         python-glance
+Requires:         python-glanceclient
 Requires:         python-novaclient
 Requires:         python-paste-deploy
 Requires:         python-migrate
@@ -366,6 +367,9 @@ fi
 %endif
 
 %changelog
+* Mon Aug 12 2012 Dan Prince <dprince@redhat.com> - 2012.2
+- Add dependency on python-glanceclient.
+
 * Mon Aug 6 2012 Dan Prince <dprince@redhat.com> - 2012.2
 - Switch over to use rootwrap_config in nova.conf.
 
