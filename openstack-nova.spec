@@ -8,7 +8,7 @@ Summary:          OpenStack Compute (nova)
 Group:            Applications/System
 License:          ASL 2.0
 URL:              http://openstack.org/projects/compute/
-Source0:          http://launchpad.net/nova/folsom/folsom-1/+download/nova-2012.2~f3.tar.gz
+Source0:          nova-2012.2.tar.gz
 Source1:          nova.conf
 Source6:          nova.logrotate
 
@@ -31,14 +31,14 @@ Source24:         nova-sudoers
 #
 # patches_base=folsom-3
 #
-Patch0001: 0001-Ensure-we-don-t-access-the-net-when-building-docs.patch
+#Patch0001: 0001-Ensure-we-don-t-access-the-net-when-building-docs.patch
 
 BuildArch:        noarch
 BuildRequires:    intltool
 BuildRequires:    python-sphinx
 BuildRequires:    python-setuptools
 BuildRequires:    python-netaddr
-BuildRequires:    openstack-utils
+#BuildRequires:    openstack-utils
 
 Requires:         openstack-nova-compute = %{version}-%{release}
 Requires:         openstack-nova-cert = %{version}-%{release}
@@ -64,7 +64,7 @@ standard hardware configurations and seven major hypervisors.
 Summary:          Components common to all OpenStack Nova services
 Group:            Applications/System
 
-Requires:         openstack-utils
+#Requires:         openstack-utils
 Requires:         python-nova = %{version}-%{release}
 
 Requires(post):   systemd-units
@@ -289,7 +289,7 @@ Requires:         python-paste-deploy
 Requires:         python-routes
 Requires:         python-webob
 
-Requires:         python-glanceclient >= 1:0
+Requires:         python-glanceclient
 #Requires:         python-quantumclient >= 1:2
 Requires:         python-novaclient
 
@@ -330,7 +330,7 @@ This package contains documentation files for nova.
 %prep
 %setup -q -n nova-%{version}
 
-%patch0001 -p1
+#%patch0001 -p1
 
 find . \( -name .gitignore -o -name .placeholder \) -delete
 
@@ -342,13 +342,13 @@ sed -i '/setuptools_git/d' setup.py
 %{__python} setup.py build
 
 # Move authtoken configuration out of paste.ini
-openstack-config --del etc/nova/api-paste.ini filter:authtoken admin_tenant_name
-openstack-config --del etc/nova/api-paste.ini filter:authtoken admin_user
-openstack-config --del etc/nova/api-paste.ini filter:authtoken admin_password
-openstack-config --del etc/nova/api-paste.ini filter:authtoken auth_host
-openstack-config --del etc/nova/api-paste.ini filter:authtoken auth_port
-openstack-config --del etc/nova/api-paste.ini filter:authtoken auth_protocol
-openstack-config --del etc/nova/api-paste.ini filter:authtoken signing_dirname
+#openstack-config --del etc/nova/api-paste.ini filter:authtoken admin_tenant_name
+#openstack-config --del etc/nova/api-paste.ini filter:authtoken admin_user
+#openstack-config --del etc/nova/api-paste.ini filter:authtoken admin_password
+#openstack-config --del etc/nova/api-paste.ini filter:authtoken auth_host
+#openstack-config --del etc/nova/api-paste.ini filter:authtoken auth_port
+#openstack-config --del etc/nova/api-paste.ini filter:authtoken auth_protocol
+#openstack-config --del etc/nova/api-paste.ini filter:authtoken signing_dirname
 
 %install
 %{__python} setup.py install -O1 --skip-build --root %{buildroot}
@@ -727,6 +727,12 @@ fi
 %endif
 
 %changelog
+* Thu Sep 13 2012 Dan Prince <dprince@redhat.com> - 2012.2-0.6.upstream
+- Remove quantumclient requirement (for now).
+- Remove requirement on openstack-utils. Leave api-paste.ini as is.
+- Disable patching for upstream builds.
+- Remove glanceclient >= 1 requirement.
+
 * Mon Aug 27 2012 Pádraig Brady <P@draigBrady.com> - 2012.2-0.6.f3
 - Update to folsom milestone 3
 
