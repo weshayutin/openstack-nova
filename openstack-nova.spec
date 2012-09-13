@@ -2,16 +2,13 @@
 
 Name:             openstack-nova
 Version:          2012.2
-# The Release is in form 0.X.tag as per:
-#   http://fedoraproject.org/wiki/Packaging:NamingGuidelines#Pre-Release_packages
-# So for prereleases always increment X
-Release:          0.9.rc1%{?dist}
+Release:          0.6.f3%{?dist}
 Summary:          OpenStack Compute (nova)
 
 Group:            Applications/System
 License:          ASL 2.0
 URL:              http://openstack.org/projects/compute/
-Source0:          novatarball.tar.gz
+Source0:          http://launchpad.net/nova/folsom/folsom-1/+download/nova-2012.2~f3.tar.gz
 Source1:          nova.conf
 Source6:          nova.logrotate
 
@@ -22,53 +19,36 @@ Source13:         openstack-nova-network.service
 Source14:         openstack-nova-objectstore.service
 Source15:         openstack-nova-scheduler.service
 Source16:         openstack-nova-volume.service
-Source17:         openstack-nova-direct-api.service
-Source19:         openstack-nova-vncproxy.service
+Source18:         openstack-nova-xvpvncproxy.service
+Source19:         openstack-nova-console.service
+Source20:         openstack-nova-consoleauth.service
+Source25:         openstack-nova-metadata-api.service
 
-Source20:         nova-sudoers
 Source21:         nova-polkit.pkla
 Source22:         nova-ifc-template
-Source23:         openstack-nova-db-setup
+Source24:         nova-sudoers
 
 #
-# patches_base=essex-rc1
+# patches_base=folsom-3
 #
 Patch0001: 0001-Ensure-we-don-t-access-the-net-when-building-docs.patch
-Patch0002: 0002-fix-useexisting-deprecation-warnings.patch
-Patch0003: 0003-ensure-atomic-manipulation-of-libvirt-disk-images.patch
 
 BuildArch:        noarch
 BuildRequires:    intltool
-BuildRequires:    python-setuptools
-BuildRequires:    python-babel
-BuildRequires:    python-netaddr
-BuildRequires:    python-lockfile
 BuildRequires:    python-sphinx
+BuildRequires:    python-setuptools
+BuildRequires:    python-netaddr
+BuildRequires:    openstack-utils
 
-Requires:         python-nova = %{version}-%{release}
+Requires:         openstack-nova-compute = %{version}-%{release}
+Requires:         openstack-nova-cert = %{version}-%{release}
+Requires:         openstack-nova-scheduler = %{version}-%{release}
+Requires:         openstack-nova-volume = %{version}-%{release}
+Requires:         openstack-nova-api = %{version}-%{release}
+Requires:         openstack-nova-network = %{version}-%{release}
+Requires:         openstack-nova-objectstore = %{version}-%{release}
+Requires:         openstack-nova-console = %{version}-%{release}
 
-Requires:         python-paste
-Requires:         python-paste-deploy
-
-Requires:         bridge-utils
-Requires:         dnsmasq-utils
-Requires:         libguestfs-mount >= 1.7.17
-# The fuse dependency should be added to libguestfs-mount
-Requires:         fuse
-Requires:         libvirt-python
-Requires:         libvirt >= 0.8.7
-Requires:         libxml2-python
-Requires:         python-cheetah
-Requires:         MySQL-python
-
-Requires:         euca2ools
-Requires:         openssl
-Requires:         sudo
-
-Requires(post):   systemd-units
-Requires(preun):  systemd-units
-Requires(postun): systemd-units
-Requires(pre):    shadow-utils qemu-kvm
 
 %description
 OpenStack Compute (codename Nova) is open source software designed to
@@ -80,53 +60,238 @@ through users and projects. OpenStack Compute strives to be both
 hardware and hypervisor agnostic, currently supporting a variety of
 standard hardware configurations and seven major hypervisors.
 
+%package common
+Summary:          Components common to all OpenStack Nova services
+Group:            Applications/System
+
+Requires:         openstack-utils
+Requires:         python-nova = %{version}-%{release}
+
+Requires(post):   systemd-units
+Requires(preun):  systemd-units
+Requires(postun): systemd-units
+Requires(pre):    shadow-utils
+
+%description common
+OpenStack Compute (codename Nova) is open source software designed to
+provision and manage large networks of virtual machines, creating a
+redundant and scalable cloud computing platform. It gives you the
+software, control panels, and APIs required to orchestrate a cloud,
+including running instances, managing networks, and controlling access
+through users and projects. OpenStack Compute strives to be both
+hardware and hypervisor agnostic, currently supporting a variety of
+standard hardware configurations and seven major hypervisors.
+
+This package contains scripts, config and dependencies shared
+between all the OpenStack nova services.
+
+
+%package compute
+Summary:          OpenStack Nova Virtual Machine control service
+Group:            Applications/System
+
+Requires:         openstack-nova-common = %{version}-%{release}
+Requires:         curl
+Requires:         iscsi-initiator-utils
+Requires:         iptables iptables-ipv6
+Requires:         vconfig
+Requires:         libguestfs-mount >= 1.7.17
+Requires:         libvirt >= 0.9.6
+Requires:         libvirt-python
+Requires(pre):    qemu-kvm
+
+%description compute
+OpenStack Compute (codename Nova) is open source software designed to
+provision and manage large networks of virtual machines, creating a
+redundant and scalable cloud computing platform. It gives you the
+software, control panels, and APIs required to orchestrate a cloud,
+including running instances, managing networks, and controlling access
+through users and projects. OpenStack Compute strives to be both
+hardware and hypervisor agnostic, currently supporting a variety of
+standard hardware configurations and seven major hypervisors.
+
+This package contains the Nova service for controlling Virtual Machines.
+
+
+%package network
+Summary:          OpenStack Nova Network control service
+Group:            Applications/System
+
+Requires:         openstack-nova-common = %{version}-%{release}
+Requires:         vconfig
+Requires:         radvd
+Requires:         bridge-utils
+Requires:         dnsmasq-utils
+
+%description network
+OpenStack Compute (codename Nova) is open source software designed to
+provision and manage large networks of virtual machines, creating a
+redundant and scalable cloud computing platform. It gives you the
+software, control panels, and APIs required to orchestrate a cloud,
+including running instances, managing networks, and controlling access
+through users and projects. OpenStack Compute strives to be both
+hardware and hypervisor agnostic, currently supporting a variety of
+standard hardware configurations and seven major hypervisors.
+
+This package contains the Nova service for controlling networking.
+
+
+%package volume
+Summary:          OpenStack Nova storage volume control service
+Group:            Applications/System
+
+Requires:         openstack-nova-common = %{version}-%{release}
+Requires:         lvm2
+Requires:         scsi-target-utils
+
+%description volume
+OpenStack Compute (codename Nova) is open source software designed to
+provision and manage large networks of virtual machines, creating a
+redundant and scalable cloud computing platform. It gives you the
+software, control panels, and APIs required to orchestrate a cloud,
+including running instances, managing networks, and controlling access
+through users and projects. OpenStack Compute strives to be both
+hardware and hypervisor agnostic, currently supporting a variety of
+standard hardware configurations and seven major hypervisors.
+
+This package contains the Nova service for controlling storage volumes.
+
+
+%package scheduler
+Summary:          OpenStack Nova VM distribution service
+Group:            Applications/System
+
+Requires:         openstack-nova-common = %{version}-%{release}
+
+%description scheduler
+OpenStack Compute (codename Nova) is open source software designed to
+provision and manage large networks of virtual machines, creating a
+redundant and scalable cloud computing platform. It gives you the
+software, control panels, and APIs required to orchestrate a cloud,
+including running instances, managing networks, and controlling access
+through users and projects. OpenStack Compute strives to be both
+hardware and hypervisor agnostic, currently supporting a variety of
+standard hardware configurations and seven major hypervisors.
+
+This package contains the service for scheduling where
+to run Virtual Machines in the cloud.
+
+
+%package cert
+Summary:          OpenStack Nova certificate management service
+Group:            Applications/System
+
+Requires:         openstack-nova-common = %{version}-%{release}
+
+%description cert
+OpenStack Compute (codename Nova) is open source software designed to
+provision and manage large networks of virtual machines, creating a
+redundant and scalable cloud computing platform. It gives you the
+software, control panels, and APIs required to orchestrate a cloud,
+including running instances, managing networks, and controlling access
+through users and projects. OpenStack Compute strives to be both
+hardware and hypervisor agnostic, currently supporting a variety of
+standard hardware configurations and seven major hypervisors.
+
+This package contains the Nova service for managing certificates.
+
+
+%package api
+Summary:          OpenStack Nova API services
+Group:            Applications/System
+
+Requires:         openstack-nova-common = %{version}-%{release}
+
+%description api
+OpenStack Compute (codename Nova) is open source software designed to
+provision and manage large networks of virtual machines, creating a
+redundant and scalable cloud computing platform. It gives you the
+software, control panels, and APIs required to orchestrate a cloud,
+including running instances, managing networks, and controlling access
+through users and projects. OpenStack Compute strives to be both
+hardware and hypervisor agnostic, currently supporting a variety of
+standard hardware configurations and seven major hypervisors.
+
+This package contains the Nova services providing programmatic access.
+
+
+%package objectstore
+Summary:          OpenStack Nova simple object store service
+Group:            Applications/System
+
+Requires:         openstack-nova-common = %{version}-%{release}
+
+%description objectstore
+OpenStack Compute (codename Nova) is open source software designed to
+provision and manage large networks of virtual machines, creating a
+redundant and scalable cloud computing platform. It gives you the
+software, control panels, and APIs required to orchestrate a cloud,
+including running instances, managing networks, and controlling access
+through users and projects. OpenStack Compute strives to be both
+hardware and hypervisor agnostic, currently supporting a variety of
+standard hardware configurations and seven major hypervisors.
+
+This package contains the Nova service providing a simple object store.
+
+
+%package console
+Summary:          OpenStack Nova console access services
+Group:            Applications/System
+
+Requires:         openstack-nova-common = %{version}-%{release}
+
+%description console
+OpenStack Compute (codename Nova) is open source software designed to
+provision and manage large networks of virtual machines, creating a
+redundant and scalable cloud computing platform. It gives you the
+software, control panels, and APIs required to orchestrate a cloud,
+including running instances, managing networks, and controlling access
+through users and projects. OpenStack Compute strives to be both
+hardware and hypervisor agnostic, currently supporting a variety of
+standard hardware configurations and seven major hypervisors.
+
+This package contains the Nova services providing
+console access services to Virtual Machines.
+
+
 %package -n       python-nova
 Summary:          Nova Python libraries
 Group:            Applications/System
 
-Requires:         vconfig
-Requires:         PyXML
-Requires:         curl
-Requires:         m2crypto
-Requires:         libvirt-python
-Requires:         python-anyjson
-Requires:         python-IPy
-Requires:         python-boto
-# TODO: make these messaging libs optional
+Requires:         openssl
+Requires:         sudo
+
+Requires:         MySQL-python
+
+Requires:         python-paramiko
+
 Requires:         python-qpid
-Requires:         python-carrot
 Requires:         python-kombu
 Requires:         python-amqplib
+
 Requires:         python-daemon
 Requires:         python-eventlet
 Requires:         python-greenlet
-Requires:         python-gflags
 Requires:         python-iso8601
-Requires:         python-lockfile
-Requires:         python-lxml
-Requires:         python-mox
-Requires:         python-redis
-Requires:         python-routes
-Requires:         python-sqlalchemy
-Requires:         python-tornado
-Requires:         python-twisted-core
-Requires:         python-twisted-web
-Requires:         python-webob
 Requires:         python-netaddr
-# TODO: remove the following dependency once we need just glanceclient
-Requires:         python-glance
-Requires:         python-glanceclient
-Requires:         python-novaclient
-Requires:         python-paste-deploy
-Requires:         python-migrate
+Requires:         python-lxml
+Requires:         python-anyjson
+Requires:         python-boto
+Requires:         python-cheetah
 Requires:         python-ldap
-Requires:         radvd
-Requires:         iptables iptables-ipv6
-Requires:         iscsi-initiator-utils
-Requires:         scsi-target-utils
-Requires:         lvm2
-Requires:         socat
-Requires:         coreutils
+
+Requires:         python-memcached
+
+Requires:         python-sqlalchemy
+Requires:         python-migrate
+
+Requires:         python-paste-deploy
+Requires:         python-routes
+Requires:         python-webob
+
+Requires:         python-glanceclient >= 1:0
+#Requires:         python-quantumclient >= 1:2
+Requires:         python-novaclient
 
 %description -n   python-nova
 OpenStack Compute (codename Nova) is open source software designed to
@@ -143,24 +308,16 @@ Group:            Documentation
 Requires:         %{name} = %{version}-%{release}
 
 BuildRequires:    systemd-units
-BuildRequires:    python-sphinx
 BuildRequires:    graphviz
-BuildRequires:    python-babel
 
-BuildRequires:    python-nose
 # Required to build module documents
-BuildRequires:    python-IPy
 BuildRequires:    python-boto
 BuildRequires:    python-eventlet
-BuildRequires:    python-gflags
 BuildRequires:    python-routes
 BuildRequires:    python-sqlalchemy
-BuildRequires:    python-tornado
-BuildRequires:    python-twisted-core
-BuildRequires:    python-twisted-web
 BuildRequires:    python-webob
 # while not strictly required, quiets the build down when building docs.
-BuildRequires:    python-carrot, python-mox, python-suds, m2crypto, bpython, python-memcached, python-migrate, python-iso8601
+BuildRequires:    python-migrate, python-iso8601
 
 %description      doc
 OpenStack Compute (codename Nova) is open source software designed to
@@ -174,15 +331,24 @@ This package contains documentation files for nova.
 %setup -q -n nova-%{version}
 
 %patch0001 -p1
-%patch0002 -p1
-%patch0003 -p1
 
 find . \( -name .gitignore -o -name .placeholder \) -delete
 
-find nova -name \*.py -exec sed -i '/\/usr\/bin\/env python/d' {} \;
+find nova -name \*.py -exec sed -i '/\/usr\/bin\/env python/{d;q}' {} +
+
+sed -i '/setuptools_git/d' setup.py
 
 %build
 %{__python} setup.py build
+
+# Move authtoken configuration out of paste.ini
+openstack-config --del etc/nova/api-paste.ini filter:authtoken admin_tenant_name
+openstack-config --del etc/nova/api-paste.ini filter:authtoken admin_user
+openstack-config --del etc/nova/api-paste.ini filter:authtoken admin_password
+openstack-config --del etc/nova/api-paste.ini filter:authtoken auth_host
+openstack-config --del etc/nova/api-paste.ini filter:authtoken auth_port
+openstack-config --del etc/nova/api-paste.ini filter:authtoken auth_protocol
+openstack-config --del etc/nova/api-paste.ini filter:authtoken signing_dirname
 
 %install
 %{__python} setup.py install -O1 --skip-build --root %{buildroot}
@@ -241,11 +407,13 @@ install -p -D -m 755 %{SOURCE13} %{buildroot}%{_unitdir}/openstack-nova-network.
 install -p -D -m 755 %{SOURCE14} %{buildroot}%{_unitdir}/openstack-nova-objectstore.service
 install -p -D -m 755 %{SOURCE15} %{buildroot}%{_unitdir}/openstack-nova-scheduler.service
 install -p -D -m 755 %{SOURCE16} %{buildroot}%{_unitdir}/openstack-nova-volume.service
-install -p -D -m 755 %{SOURCE17} %{buildroot}%{_unitdir}/openstack-nova-direct-api.service
-install -p -D -m 755 %{SOURCE19} %{buildroot}%{_unitdir}/openstack-nova-vncproxy.service
+install -p -D -m 755 %{SOURCE18} %{buildroot}%{_unitdir}/openstack-nova-xvpvncproxy.service
+install -p -D -m 755 %{SOURCE19} %{buildroot}%{_unitdir}/openstack-nova-console.service
+install -p -D -m 755 %{SOURCE20} %{buildroot}%{_unitdir}/openstack-nova-consoleauth.service
+install -p -D -m 755 %{SOURCE25} %{buildroot}%{_unitdir}/openstack-nova-metadata-api.service
 
 # Install sudoers
-install -p -D -m 440 %{SOURCE20} %{buildroot}%{_sysconfdir}/sudoers.d/nova
+install -p -D -m 440 %{SOURCE24} %{buildroot}%{_sysconfdir}/sudoers.d/nova
 
 # Install logrotate
 install -p -D -m 644 %{SOURCE6} %{buildroot}%{_sysconfdir}/logrotate.d/openstack-nova
@@ -265,9 +433,6 @@ install -p -D -m 644 etc/nova/rootwrap.d/* %{buildroot}%{_datarootdir}/nova/root
 install -d -m 755 %{buildroot}%{_sysconfdir}/polkit-1/localauthority/50-local.d
 install -p -D -m 644 %{SOURCE21} %{buildroot}%{_sysconfdir}/polkit-1/localauthority/50-local.d/50-nova.pkla
 
-# Install database setup helper script.
-install -p -D -m 755 %{SOURCE23} %{buildroot}%{_bindir}/openstack-nova-db-setup
-
 # Remove unneeded in production stuff
 rm -f %{buildroot}%{_bindir}/nova-debug
 rm -fr %{buildroot}%{python_sitelib}/nova/tests/
@@ -275,42 +440,194 @@ rm -fr %{buildroot}%{python_sitelib}/run_tests.*
 rm -f %{buildroot}%{_bindir}/nova-combined
 rm -f %{buildroot}/usr/share/doc/nova/README*
 
-%pre
+# TODO. On F18 branch of novnc package, move the openstack-nova-novncproxy
+# subpackage to the openstack-nova-console subpackage here, and have
+# it provide openstack-nova-novncproxy
+rm -f %{buildroot}%{_bindir}/nova-novncproxy
+
+%pre common
 getent group nova >/dev/null || groupadd -r nova --gid 162
 if ! getent passwd nova >/dev/null; then
-  useradd -u 162 -r -g nova -G nova,nobody,qemu -d %{_sharedstatedir}/nova -s /sbin/nologin -c "OpenStack Nova Daemons" nova
+  useradd -u 162 -r -g nova -G nova,nobody -d %{_sharedstatedir}/nova -s /sbin/nologin -c "OpenStack Nova Daemons" nova
 fi
+exit 0
+
+%pre compute
+usermod -a -G qemu nova
 # Add nova to the fuse group (if present) to support guestmount
 if getent group fuse >/dev/null; then
   usermod -a -G fuse nova
 fi
 exit 0
 
-%post
+%post compute
+if [ $1 -eq 1 ] ; then
+    # Initial installation
+    /bin/systemctl daemon-reload >/dev/null 2>&1 || :
+fi
+%post network
+if [ $1 -eq 1 ] ; then
+    # Initial installation
+    /bin/systemctl daemon-reload >/dev/null 2>&1 || :
+fi
+%post volume
+if [ $1 -eq 1 ] ; then
+    # Initial installation
+    /bin/systemctl daemon-reload >/dev/null 2>&1 || :
+fi
+%post scheduler
+if [ $1 -eq 1 ] ; then
+    # Initial installation
+    /bin/systemctl daemon-reload >/dev/null 2>&1 || :
+fi
+%post cert
+if [ $1 -eq 1 ] ; then
+    # Initial installation
+    /bin/systemctl daemon-reload >/dev/null 2>&1 || :
+fi
+%post api
+if [ $1 -eq 1 ] ; then
+    # Initial installation
+    /bin/systemctl daemon-reload >/dev/null 2>&1 || :
+fi
+%post objectstore
+if [ $1 -eq 1 ] ; then
+    # Initial installation
+    /bin/systemctl daemon-reload >/dev/null 2>&1 || :
+fi
+%post console
 if [ $1 -eq 1 ] ; then
     # Initial installation
     /bin/systemctl daemon-reload >/dev/null 2>&1 || :
 fi
 
-
-%preun
+%preun compute
 if [ $1 -eq 0 ] ; then
-    for svc in api cert compute network objectstore scheduler volume direct-api ajax-console-proxy vncproxy; do
+    for svc in compute; do
+        /bin/systemctl --no-reload disable openstack-nova-${svc}.service > /dev/null 2>&1 || :
+        /bin/systemctl stop openstack-nova-${svc}.service > /dev/null 2>&1 || :
+    done
+fi
+%preun network
+if [ $1 -eq 0 ] ; then
+    for svc in network; do
+        /bin/systemctl --no-reload disable openstack-nova-${svc}.service > /dev/null 2>&1 || :
+        /bin/systemctl stop openstack-nova-${svc}.service > /dev/null 2>&1 || :
+    done
+fi
+%preun volume
+if [ $1 -eq 0 ] ; then
+    for svc in volume; do
+        /bin/systemctl --no-reload disable openstack-nova-${svc}.service > /dev/null 2>&1 || :
+        /bin/systemctl stop openstack-nova-${svc}.service > /dev/null 2>&1 || :
+    done
+fi
+%preun scheduler
+if [ $1 -eq 0 ] ; then
+    for svc in scheduler; do
+        /bin/systemctl --no-reload disable openstack-nova-${svc}.service > /dev/null 2>&1 || :
+        /bin/systemctl stop openstack-nova-${svc}.service > /dev/null 2>&1 || :
+    done
+fi
+%preun cert
+if [ $1 -eq 0 ] ; then
+    for svc in cert; do
+        /bin/systemctl --no-reload disable openstack-nova-${svc}.service > /dev/null 2>&1 || :
+        /bin/systemctl stop openstack-nova-${svc}.service > /dev/null 2>&1 || :
+    done
+fi
+%preun api
+if [ $1 -eq 0 ] ; then
+    for svc in api metadata-api; do
+        /bin/systemctl --no-reload disable openstack-nova-${svc}.service > /dev/null 2>&1 || :
+        /bin/systemctl stop openstack-nova-${svc}.service > /dev/null 2>&1 || :
+    done
+fi
+%preun objectstore
+if [ $1 -eq 0 ] ; then
+    for svc in objectstore; do
+        /bin/systemctl --no-reload disable openstack-nova-${svc}.service > /dev/null 2>&1 || :
+        /bin/systemctl stop openstack-nova-${svc}.service > /dev/null 2>&1 || :
+    done
+fi
+%preun console
+if [ $1 -eq 0 ] ; then
+    for svc in console consoleauth xvpvncproxy; do
         /bin/systemctl --no-reload disable openstack-nova-${svc}.service > /dev/null 2>&1 || :
         /bin/systemctl stop openstack-nova-${svc}.service > /dev/null 2>&1 || :
     done
 fi
 
-%postun
+%postun compute
 /bin/systemctl daemon-reload >/dev/null 2>&1 || :
 if [ $1 -ge 1 ] ; then
     # Package upgrade, not uninstall
-    for svc in api cert compute network objectstore scheduler volume direct-api ajax-console-proxy vncproxy; do
+    for svc in compute; do
+        /bin/systemctl try-restart openstack-nova-${svc}.service >/dev/null 2>&1 || :
+    done
+fi
+%postun network
+/bin/systemctl daemon-reload >/dev/null 2>&1 || :
+if [ $1 -ge 1 ] ; then
+    # Package upgrade, not uninstall
+    for svc in network; do
+        /bin/systemctl try-restart openstack-nova-${svc}.service >/dev/null 2>&1 || :
+    done
+fi
+%postun volume
+/bin/systemctl daemon-reload >/dev/null 2>&1 || :
+if [ $1 -ge 1 ] ; then
+    # Package upgrade, not uninstall
+    for svc in volume; do
+        /bin/systemctl try-restart openstack-nova-${svc}.service >/dev/null 2>&1 || :
+    done
+fi
+%postun scheduler
+/bin/systemctl daemon-reload >/dev/null 2>&1 || :
+if [ $1 -ge 1 ] ; then
+    # Package upgrade, not uninstall
+    for svc in scheduler; do
+        /bin/systemctl try-restart openstack-nova-${svc}.service >/dev/null 2>&1 || :
+    done
+fi
+%postun cert
+/bin/systemctl daemon-reload >/dev/null 2>&1 || :
+if [ $1 -ge 1 ] ; then
+    # Package upgrade, not uninstall
+    for svc in cert; do
+        /bin/systemctl try-restart openstack-nova-${svc}.service >/dev/null 2>&1 || :
+    done
+fi
+%postun api
+/bin/systemctl daemon-reload >/dev/null 2>&1 || :
+if [ $1 -ge 1 ] ; then
+    # Package upgrade, not uninstall
+    for svc in api metadata-api; do
+        /bin/systemctl try-restart openstack-nova-${svc}.service >/dev/null 2>&1 || :
+    done
+fi
+%postun objectstore
+/bin/systemctl daemon-reload >/dev/null 2>&1 || :
+if [ $1 -ge 1 ] ; then
+    # Package upgrade, not uninstall
+    for svc in objectstore; do
+        /bin/systemctl try-restart openstack-nova-${svc}.service >/dev/null 2>&1 || :
+    done
+fi
+%postun console
+/bin/systemctl daemon-reload >/dev/null 2>&1 || :
+if [ $1 -ge 1 ] ; then
+    # Package upgrade, not uninstall
+    for svc in console consoleauth xvpvncproxy; do
         /bin/systemctl try-restart openstack-nova-${svc}.service >/dev/null 2>&1 || :
     done
 fi
 
 %files
+%doc LICENSE
+%{_bindir}/nova-all
+
+%files common
 %doc LICENSE
 %dir %{_sysconfdir}/nova
 %config(noreplace) %attr(-, root, nova) %{_sysconfdir}/nova/nova.conf
@@ -324,9 +641,12 @@ fi
 %dir %attr(0755, nova, root) %{_localstatedir}/log/nova
 %dir %attr(0755, nova, root) %{_localstatedir}/run/nova
 
-%{_bindir}/nova-*
-%{_bindir}/openstack-nova-db-setup
-%{_unitdir}/openstack-nova-*.service
+%{_bindir}/nova-clear-rabbit-queues
+# TODO. zmq-receiver may need its own service?
+%{_bindir}/nova-rpc-zmq-receiver
+%{_bindir}/nova-manage
+%{_bindir}/nova-rootwrap
+
 %{_datarootdir}/nova
 %{_mandir}/man1/nova*.1.gz
 
@@ -339,6 +659,31 @@ fi
 %dir %{_sharedstatedir}/nova/networks
 %dir %{_sharedstatedir}/nova/tmp
 
+%files compute
+%{_bindir}/nova-compute
+%{_unitdir}/openstack-nova-compute.service
+%{_datarootdir}/nova/rootwrap/compute.filters
+
+%files network
+%{_bindir}/nova-network
+%{_bindir}/nova-dhcpbridge
+%{_unitdir}/openstack-nova-network.service
+%{_datarootdir}/nova/rootwrap/network.filters
+
+%files volume
+%{_bindir}/nova-volume
+%{_bindir}/nova-volume-usage-audit
+%{_unitdir}/openstack-nova-volume.service
+%{_datarootdir}/nova/rootwrap/volume.filters
+
+%files scheduler
+%{_bindir}/nova-scheduler
+%{_unitdir}/openstack-nova-scheduler.service
+
+%files cert
+%{_bindir}/nova-cert
+%{_unitdir}/openstack-nova-cert.service
+%defattr(-, nova, nova, -)
 %dir %{_sharedstatedir}/nova/CA/
 %dir %{_sharedstatedir}/nova/CA/certs
 %dir %{_sharedstatedir}/nova/CA/crl
@@ -355,6 +700,21 @@ fi
 %dir %attr(0750, -, -) %{_sharedstatedir}/nova/CA/private
 %ghost %config(missingok,noreplace) %verify(not md5 size mtime) %{_sharedstatedir}/nova/CA/private/cakey.pem
 
+%files api
+%{_bindir}/nova-api*
+%{_unitdir}/openstack-nova-*api.service
+%{_datarootdir}/nova/rootwrap/api-metadata.filters
+
+%files objectstore
+%{_bindir}/nova-objectstore
+%{_unitdir}/openstack-nova-objectstore.service
+
+%files console
+%{_bindir}/nova-console*
+%{_bindir}/nova-xvpvncproxy
+%{_unitdir}/openstack-nova-console*.service
+%{_unitdir}/openstack-nova-xvpvncproxy.service
+
 %files -n python-nova
 %defattr(-,root,root,-)
 %doc LICENSE
@@ -367,33 +727,48 @@ fi
 %endif
 
 %changelog
-* Mon Aug 12 2012 Dan Prince <dprince@redhat.com> - 2012.2
-- Add dependency on python-glanceclient.
+* Mon Aug 27 2012 Pádraig Brady <P@draigBrady.com> - 2012.2-0.6.f3
+- Update to folsom milestone 3
 
-* Mon Aug 6 2012 Dan Prince <dprince@redhat.com> - 2012.2
-- Switch over to use rootwrap_config in nova.conf.
+* Fri Jul 20 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2012.2-0.4.f1
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_18_Mass_Rebuild
 
-* Mon Jul 10 2012 Dan Prince <dprince@redhat.com> - 2012.2
-- Remove doc/generate_autodoc_index.sh
-- Remove novarc.template.
+* Wed Jun 08 2012 Pádraig Brady <P@draigBrady.com> - 2012.2-0.3.f1
+- Enable libguestfs image inspection
 
-* Mon Jun 25 2012 Dan Prince <dprince@redhat.com> - 2012.2
-- Add support for new rootwrap filters.
+* Wed Jun 06 2012 Pádraig Brady <P@draigBrady.com> - 2012.2-0.2.f1
+- Fix up protocol case handling for security groups (CVE-2012-2654)
 
-* Wed Jun 6 2012 Dan Prince <dprince@redhat.com> - 2012.2
-- We no longer need to rename binaries with the nova- prefix.
+* Tue May 29 2012 Pádraig Brady <P@draigBrady.com> - 2012.2-0.1.f1
+- Update to folsom milestone 1
 
-* Tue May 22 2012 Dan Prince <dprince@redhat.com> - 2012.2
-- Move volume-usage-audit to a nova- prefix.
+* Wed May 16 2012 Alan Pevec <apevec@redhat.com> - 2012.1-6
+- Remove m2crypto and other dependencies no loner needed by Essex
 
-* Tue Apr 10 2012 Dan Prince <dprince@redhat.com> - 2012.2
-- Remove nova-stack.
+* Wed May 16 2012 Pádraig Brady <P@draigBrady.com> - 2012.1-5
+- Sync up with Essex stable branch
+- Handle updated qemu-img info output
+- Remove redundant and outdated openstack-nova-db-setup
 
-* Fri Mar 27 2012 Dan Prince <dprince@redhat.com> - 2012.2
-- Remove libvirt.xml.template.
+* Wed May 09 2012 Alan Pevec <apevec@redhat.com> - 2012.1-4
+- Remove the socat dependency no longer needed by Essex
 
-* Mon Mar 26 2012 Pádraig Brady <P@draigBrady.com> 2012.1-???
+* Wed Apr 27 2012 Pádraig Brady <P@draigBrady.com> - 2012.1-3
+- Reference new Essex services at installation
+
+* Wed Apr 18 2012 Pádraig Brady <P@draigBrady.com> - 2012.1-2
+- Sync up with Essex stable branch
+- Support more flexible guest image file injection
+- Enforce quota on security group rules (#814275, CVE-2012-2101)
+- Provide startup scripts for the Essex VNC services
+- Provide a startup script for the separated metadata api service
+
+* Sun Apr  8 2012 Pádraig Brady <P@draigBrady.com> - 2012.1-1
+- Update to Essex release
+
+* Thu Mar 29 2012 Russell Bryant <rbryant@redhat.com> 2012.1-0.10.rc1
 - Remove the outdated nova-debug tool
+- CVE-2012-1585 openstack-nova: Long server names grow nova-api log files significantly
 
 * Mon Mar 26 2012 Mark McLoughlin <markmc@redhat.com> - 2012.1-0.9.rc1
 - Avoid killing dnsmasq on network service shutdown (#805947)
