@@ -1,6 +1,6 @@
-diff -Naur nova-2012.1.orig/nova/__init__.py nova-2012.1/nova/__init__.py
---- nova-2012.1.orig/nova/__init__.py	2012-04-25 10:16:25.104877188 +0000
-+++ nova-2012.1/nova/__init__.py	2012-04-25 10:18:12.504028632 +0000
+diff -Naur -Naru nova-2012.2.orig/nova/__init__.py nova-2012.2/nova/__init__.py
+--- nova-2012.2.orig/nova/__init__.py	2012-09-26 00:48:35.000000000 +0000
++++ nova-2012.2/nova/__init__.py	2012-10-11 15:36:40.149461373 +0000
 @@ -31,6 +31,37 @@
  .. moduleauthor:: Andy Smith <andy@anarkystic.com>
  """
@@ -37,5 +37,5 @@ diff -Naur nova-2012.1.orig/nova/__init__.py nova-2012.1/nova/__init__.py
 +
 +
  import gettext
- import logging
+ 
  

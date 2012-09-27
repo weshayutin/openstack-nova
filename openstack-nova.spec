@@ -1,14 +1,15 @@
 %global with_doc %{!?_without_doc:1}%{?_without_doc:0}
 
 Name:             openstack-nova
-Version:          2012.1.1
-Release:          15%{?dist}
+Version:          2012.2
+Release:          1%{?dist}
 Summary:          OpenStack Compute (nova)
 
 Group:            Applications/System
 License:          ASL 2.0
 URL:              http://openstack.org/projects/compute/
-Source0:          http://launchpad.net/nova/essex/%{version}/+download/nova-%{version}.tar.gz
+Source0:          http://launchpad.net/nova/folsom/%{version}/+download/nova-%{version}.tar.gz
+
 Source1:          nova.conf
 Source6:          nova.logrotate
 
@@ -26,7 +27,6 @@ Source15:         openstack-nova-scheduler.init
 Source150:        openstack-nova-scheduler.upstart
 Source16:         openstack-nova-volume.init
 Source160:        openstack-nova-volume.upstart
-Source17:         openstack-nova-direct-api.init
 Source18:         openstack-nova-xvpvncproxy.init
 Source180:        openstack-nova-xvpvncproxy.upstart
 Source19:         openstack-nova-console.init
@@ -41,51 +41,9 @@ Source21:         nova-polkit.pkla
 Source22:         nova-ifc-template
 
 #
-# patches_base=2012.1.1
+# patches_base=2012.2
 #
-Patch0004: 0004-Call-libvirt_volume_driver-with-right-mountpoint.patch
-Patch0005: 0005-Use-fake_libvirt_utils-for-libvirt-console-tests.patch
-Patch0006: 0006-Fixes-ram_allocation_ratio-based-over-subscription.patch
-Patch0007: 0007-Stop-nova_ipam_lib-from-changing-the-timeout-setting.patch
-Patch0008: 0008-Prevent-file-injection-writing-to-host-filesystem.patch
-Patch0009: 0009-Distinguish-over-quota-for-volume-size-and-number.patch
-Patch0010: 0010-Expose-over-quota-exceptions-via-native-API.patch
-Patch0011: 0011-Fix-call-to-network_get_all_by_uuids.patch
-Patch0012: 0012-fix-libvirt-get_memory_mb_total-with-xen.patch
-Patch0013: 0013-ensure-libguestfs-has-completed-before-proceeding.patch
-Patch0014: 0014-Use-compute_api.get_all-in-affinity-filters.patch
-Patch0015: 0015-fix-metadata-file-injection-with-xen.patch
-Patch0016: 0016-Fixes-affinity-filters-when-hints-is-None.patch
-Patch0017: 0017-Addtional-CommandFilters-to-fix-rootwrap-on-SLES.patch
-Patch0018: 0018-Fix-marker-behavior-for-flavors.patch
-Patch0019: 0019-Use-default-qemu-img-cluster-size-in-libvirt-connect.patch
-Patch0020: 0020-Return-413-status-on-over-quota-in-the-native-API.patch
-Patch0021: 0021-Handle-local-remote-exceptions-consistently.patch
-Patch0022: 0022-libvirt-fix-qcow2-size-on-live-block-migration.patch
-Patch0023: 0023-Backport-fix-for-API-listing-of-os-hosts.patch
-Patch0024: 0024-Avoid-lazy-loading-errors-on-instance_type.patch
-Patch0025: 0025-Avoid-casts-in-network-manager-to-prevent-races.patch
-Patch0026: 0026-Conditionally-allow-queries-for-deleted-flavours.patch
-Patch0027: 0027-Fix-wrong-regex-in-cleanup_file_locks.patch
-Patch0028: 0028-ensure-atomic-manipulation-of-libvirt-disk-images.patch
-Patch0029: 0029-Ensure-we-don-t-access-the-net-when-building-docs.patch
-Patch0030: 0030-fix-useexisting-deprecation-warnings.patch
-Patch0031: 0031-support-a-configurable-libvirt-injection-partition.patch
-Patch0032: 0032-only-mount-guest-image-once-when-injecting-files.patch
-Patch0033: 0033-set-correct-SELinux-context-for-injected-ssh-keys.patch
-Patch0034: 0034-ensure-libguestfs-mounts-are-cleaned-up.patch
-Patch0035: 0035-Adding-networking-rules-to-vm-s-on-compute-service-s.patch
-Patch0036: 0036-Tolerance-when-parsing-null-connection-info-in-BDM.patch
-Patch0037: 0037-Support-EC2-CreateImage-API-for-boot-from-volume.patch
-Patch0038: 0038-EC2-DescribeImages-reports-correct-rootDeviceType.patch
-Patch0039: 0039-Reject-EC2-CreateImage-for-instance-store.patch
-Patch0040: 0040-Fix-EC2-CreateImage-no_reboot-logic.patch
-Patch0041: 0041-use-boto-s-HTTPResponse-class-for-versions-of-boto-2.patch
-Patch0042: 0042-Convert-remaining-network-API-casts-to-calls.patch
-Patch0043: 0043-Moving-where-the-fixed-ip-deallocation-happens.patch
-Patch0044: 0044-fix-the-qpid_heartbeat-option-so-that-it-s-effective.patch
-Patch0045: 0045-Add-error-log-for-live-migration.patch
-Patch0046: 0046-Prohibit-file-injection-writing-to-host-filesystem.patch
+Patch0001: 0001-Ensure-we-don-t-access-the-net-when-building-docs.patch
 
 # This is EPEL specific and not upstream
 Patch100:         openstack-nova-newdeps.patch
@@ -95,7 +53,7 @@ BuildRequires:    intltool
 BuildRequires:    python-sphinx10
 BuildRequires:    python-setuptools
 BuildRequires:    python-netaddr
-BuildRequires:    python-lockfile
+BuildRequires:    openstack-utils
 # These are required to build due to the requirements check added
 BuildRequires:    python-paste-deploy1.5
 BuildRequires:    python-routes1.12
@@ -123,7 +81,7 @@ hardware and hypervisor agnostic, currently supporting a variety of
 standard hardware configurations and seven major hypervisors.
 
 %package common
-Summary:          Components common to all OpenStack services
+Summary:          Components common to all OpenStack Nova services
 Group:            Applications/System
 
 Requires:         openstack-utils
@@ -164,7 +122,7 @@ Requires:         tunctl
 Requires:         libguestfs-mount >= 1.7.17
 # The fuse dependency should be added to libguestfs-mount
 Requires:         fuse
-Requires:         libvirt >= 0.8.7
+Requires:         libvirt >= 0.9.6
 Requires:         libvirt-python
 Requires(pre):    qemu-kvm
 
@@ -334,7 +292,6 @@ Requires:         sudo
 
 Requires:         MySQL-python
 
-Requires:         python-crypto
 Requires:         python-paramiko
 
 Requires:         python-qpid
@@ -344,9 +301,7 @@ Requires:         python-amqplib
 Requires:         python-daemon
 Requires:         python-eventlet
 Requires:         python-greenlet
-Requires:         python-gflags
 Requires:         python-iso8601
-Requires:         python-lockfile
 Requires:         python-netaddr
 Requires:         python-lxml
 Requires:         python-anyjson
@@ -363,8 +318,8 @@ Requires:         python-paste-deploy1.5
 Requires:         python-routes1.12
 Requires:         python-webob1.0
 
-# TODO: remove the following dependency which is minimal
-Requires:         python-glance
+Requires:         python-glanceclient >= 1:0
+Requires:         python-quantumclient >= 1:2
 Requires:         python-novaclient
 
 %description -n   python-nova
@@ -400,49 +355,7 @@ This package contains documentation files for nova.
 %prep
 %setup -q -n nova-%{version}
 
-%patch0004 -p1
-%patch0005 -p1
-%patch0006 -p1
-%patch0007 -p1
-%patch0008 -p1
-%patch0009 -p1
-%patch0010 -p1
-%patch0011 -p1
-%patch0012 -p1
-%patch0013 -p1
-%patch0014 -p1
-%patch0015 -p1
-%patch0016 -p1
-%patch0017 -p1
-%patch0018 -p1
-%patch0019 -p1
-%patch0020 -p1
-%patch0021 -p1
-%patch0022 -p1
-%patch0023 -p1
-%patch0024 -p1
-%patch0025 -p1
-%patch0026 -p1
-%patch0027 -p1
-%patch0028 -p1
-%patch0029 -p1
-%patch0030 -p1
-%patch0031 -p1
-%patch0032 -p1
-%patch0033 -p1
-%patch0034 -p1
-%patch0035 -p1
-%patch0036 -p1
-%patch0037 -p1
-%patch0038 -p1
-%patch0039 -p1
-%patch0040 -p1
-%patch0041 -p1
-%patch0042 -p1
-%patch0043 -p1
-%patch0044 -p1
-%patch0045 -p1
-%patch0046 -p1
+%patch0001 -p1
 
 # Apply EPEL patch
 %patch100 -p1
@@ -451,20 +364,25 @@ find . \( -name .gitignore -o -name .placeholder \) -delete
 
 find nova -name \*.py -exec sed -i '/\/usr\/bin\/env python/{d;q}' {} +
 
+sed -i '/setuptools_git/d' setup.py
+
 %build
 %{__python} setup.py build
+
+# Move authtoken configuration out of paste.ini
+openstack-config --del etc/nova/api-paste.ini filter:authtoken admin_tenant_name
+openstack-config --del etc/nova/api-paste.ini filter:authtoken admin_user
+openstack-config --del etc/nova/api-paste.ini filter:authtoken admin_password
+openstack-config --del etc/nova/api-paste.ini filter:authtoken auth_host
+openstack-config --del etc/nova/api-paste.ini filter:authtoken auth_port
+openstack-config --del etc/nova/api-paste.ini filter:authtoken auth_protocol
+openstack-config --del etc/nova/api-paste.ini filter:authtoken signing_dirname
 
 %install
 %{__python} setup.py install -O1 --skip-build --root %{buildroot}
 
 # docs generation requires everything to be installed first
 export PYTHONPATH="$( pwd ):$PYTHONPATH"
-
-# TODO: possibly remove call to
-# manually auto-generate to work around sphinx-build segfault
-# This was not required on python-sphinx-1.0.7 at least
-# but it's relatively quick at least
-doc/generate_autodoc_index.sh
 
 pushd doc
 
@@ -482,11 +400,6 @@ mkdir -p %{buildroot}%{_mandir}/man1
 install -p -D -m 644 build/man/*.1 %{buildroot}%{_mandir}/man1/
 
 popd
-
-# Give stack, instance-usage-audit and clear_rabbit_queues a reasonable prefix
-mv %{buildroot}%{_bindir}/stack %{buildroot}%{_bindir}/nova-stack
-mv %{buildroot}%{_bindir}/instance-usage-audit %{buildroot}%{_bindir}/nova-instance-usage-audit
-mv %{buildroot}%{_bindir}/clear_rabbit_queues %{buildroot}%{_bindir}/nova-clear-rabbit-queues
 
 # Setup directories
 install -d -m 755 %{buildroot}%{_sharedstatedir}/nova
@@ -510,6 +423,8 @@ touch %{buildroot}%{_sharedstatedir}/nova/CA/private/cakey.pem
 # Install config files
 install -d -m 755 %{buildroot}%{_sysconfdir}/nova
 install -p -D -m 640 %{SOURCE1} %{buildroot}%{_sysconfdir}/nova/nova.conf
+install -d -m 755 %{buildroot}%{_sysconfdir}/nova/volumes
+install -p -D -m 640 etc/nova/rootwrap.conf %{buildroot}%{_sysconfdir}/nova/rootwrap.conf
 install -p -D -m 640 etc/nova/api-paste.ini %{buildroot}%{_sysconfdir}/nova/api-paste.ini
 install -p -D -m 640 etc/nova/policy.json %{buildroot}%{_sysconfdir}/nova/policy.json
 
@@ -521,7 +436,6 @@ install -p -D -m 755 %{SOURCE13} %{buildroot}%{_initrddir}/openstack-nova-networ
 install -p -D -m 755 %{SOURCE14} %{buildroot}%{_initrddir}/openstack-nova-objectstore
 install -p -D -m 755 %{SOURCE15} %{buildroot}%{_initrddir}/openstack-nova-scheduler
 install -p -D -m 755 %{SOURCE16} %{buildroot}%{_initrddir}/openstack-nova-volume
-install -p -D -m 755 %{SOURCE17} %{buildroot}%{_initrddir}/openstack-nova-direct-api
 install -p -D -m 755 %{SOURCE18} %{buildroot}%{_initrddir}/openstack-nova-xvpvncproxy
 install -p -D -m 755 %{SOURCE19} %{buildroot}%{_initrddir}/openstack-nova-console
 install -p -D -m 755 %{SOURCE24} %{buildroot}%{_initrddir}/openstack-nova-consoleauth
@@ -537,9 +451,7 @@ install -p -D -m 644 %{SOURCE6} %{buildroot}%{_sysconfdir}/logrotate.d/openstack
 install -d -m 755 %{buildroot}%{_localstatedir}/run/nova
 
 # Install template files
-install -p -D -m 644 nova/auth/novarc.template %{buildroot}%{_datarootdir}/nova/novarc.template
 install -p -D -m 644 nova/cloudpipe/client.ovpn.template %{buildroot}%{_datarootdir}/nova/client.ovpn.template
-install -p -D -m 644 nova/virt/libvirt.xml.template %{buildroot}%{_datarootdir}/nova/libvirt.xml.template
 install -p -D -m 644 nova/virt/interfaces.template %{buildroot}%{_datarootdir}/nova/interfaces.template
 install -p -D -m 644 %{SOURCE22} %{buildroot}%{_datarootdir}/nova/interfaces.template
 
@@ -556,6 +468,10 @@ install -p -m 644 %{SOURCE190} %{buildroot}%{_datadir}/nova/
 install -p -m 644 %{SOURCE240} %{buildroot}%{_datadir}/nova/
 install -p -m 644 %{SOURCE250} %{buildroot}%{_datadir}/nova/
 
+# Install rootwrap files in /usr/share/nova/rootwrap
+mkdir -p %{buildroot}%{_datarootdir}/nova/rootwrap/
+install -p -D -m 644 etc/nova/rootwrap.d/* %{buildroot}%{_datarootdir}/nova/rootwrap/
+
 install -d -m 755 %{buildroot}%{_sysconfdir}/polkit-1/localauthority/50-local.d
 install -p -D -m 644 %{SOURCE21} %{buildroot}%{_sysconfdir}/polkit-1/localauthority/50-local.d/50-nova.pkla
 
@@ -565,6 +481,11 @@ rm -fr %{buildroot}%{python_sitelib}/nova/tests/
 rm -fr %{buildroot}%{python_sitelib}/run_tests.*
 rm -f %{buildroot}%{_bindir}/nova-combined
 rm -f %{buildroot}/usr/share/doc/nova/README*
+
+# TODO. On F18 branch of novnc package, move the openstack-nova-novncproxy
+# subpackage to the openstack-nova-console subpackage here, and have
+# it provide openstack-nova-novncproxy
+rm -f %{buildroot}%{_bindir}/nova-novncproxy
 
 %pre common
 getent group nova >/dev/null || groupadd -r nova --gid 162
@@ -592,7 +513,7 @@ exit 0
 %post cert
 /sbin/chkconfig --add openstack-nova-cert
 %post api
-for svc in api direct-api metadata-api; do
+for svc in api metadata-api; do
     /sbin/chkconfig --add openstack-nova-$svc
 done
 %post objectstore
@@ -639,7 +560,7 @@ if [ $1 -eq 0 ] ; then
 fi
 %preun api
 if [ $1 -eq 0 ] ; then
-    for svc in api direct-api metadata-api; do
+    for svc in api metadata-api; do
         /sbin/service openstack-nova-${svc} stop >/dev/null 2>&1
         /sbin/chkconfig --del openstack-nova-${svc}
     done
@@ -697,7 +618,7 @@ fi
 %postun api
 if [ $1 -ge 1 ] ; then
     # Package upgrade, not uninstall
-    for svc in api direct-api metadata-api; do
+    for svc in api metadata-api; do
         /sbin/service openstack-nova-${svc} condrestart > /dev/null 2>&1 || :
     done
 fi
@@ -725,6 +646,7 @@ fi
 %dir %{_sysconfdir}/nova
 %config(noreplace) %attr(-, root, nova) %{_sysconfdir}/nova/nova.conf
 %config(noreplace) %attr(-, root, nova) %{_sysconfdir}/nova/api-paste.ini
+%config(noreplace) %attr(-, root, nova) %{_sysconfdir}/nova/rootwrap.conf
 %config(noreplace) %attr(-, root, nova) %{_sysconfdir}/nova/policy.json
 %config(noreplace) %{_sysconfdir}/logrotate.d/openstack-nova
 %config(noreplace) %{_sysconfdir}/sudoers.d/nova
@@ -733,8 +655,9 @@ fi
 %dir %attr(0755, nova, root) %{_localstatedir}/log/nova
 %dir %attr(0755, nova, root) %{_localstatedir}/run/nova
 
-%{_bindir}/nova-stack
 %{_bindir}/nova-clear-rabbit-queues
+# TODO. zmq-receiver may need its own service?
+%{_bindir}/nova-rpc-zmq-receiver
 %{_bindir}/nova-manage
 %{_bindir}/nova-rootwrap
 
@@ -753,23 +676,24 @@ fi
 
 %files compute
 %{_bindir}/nova-compute
-%{_bindir}/nova-instance-usage-audit
 %{_initrddir}/openstack-nova-compute
 %{_datarootdir}/nova/openstack-nova-compute.upstart
-%{python_sitelib}/nova/rootwrap/compute.py*
+%{_datarootdir}/nova/rootwrap/compute.filters
 
 %files network
 %{_bindir}/nova-network
 %{_bindir}/nova-dhcpbridge
 %{_initrddir}/openstack-nova-network
 %{_datarootdir}/nova/openstack-nova-network.upstart
-%{python_sitelib}/nova/rootwrap/network.py*
+%{_datarootdir}/nova/rootwrap/network.filters
 
 %files volume
 %{_bindir}/nova-volume
 %{_initrddir}/openstack-nova-volume
+%{_bindir}/nova-volume-usage-audit
 %{_datarootdir}/nova/openstack-nova-volume.upstart
-%{python_sitelib}/nova/rootwrap/volume.py*
+%{_datarootdir}/nova/rootwrap/volume.filters
+%dir %attr(0755, nova, root) %{_sysconfdir}/nova/volumes
 
 %files scheduler
 %{_bindir}/nova-scheduler
@@ -799,9 +723,9 @@ fi
 
 %files api
 %{_bindir}/nova-api*
-%{_bindir}/nova-direct-api
 %{_initrddir}/openstack-nova-*api
 %{_datarootdir}/nova/openstack-nova-*api.upstart
+%{_datarootdir}/nova/rootwrap/api-metadata.filters
 
 %files objectstore
 %{_bindir}/nova-objectstore
@@ -818,9 +742,6 @@ fi
 
 %files -n python-nova
 %defattr(-,root,root,-)
-%exclude %{python_sitelib}/nova/rootwrap/compute.py*
-%exclude %{python_sitelib}/nova/rootwrap/network.py*
-%exclude %{python_sitelib}/nova/rootwrap/volume.py*
 %doc LICENSE
 %{python_sitelib}/nova
 %{python_sitelib}/nova-%{version}-*.egg-info
@@ -831,6 +752,9 @@ fi
 %endif
 
 %changelog
+* Thu Oct 11 2012 Pádraig Brady <pbrady@redhat.com> - 2012.2-1
+- Update to folsom final
+
 * Fri Aug 10 2012 Pádraig Brady <P@draigBrady.com> - 2012.1.1-15
 - Fix package versions to ensure update dependencies are correct
 - Fix CA cert permissions issue introduced in 2012.1.1-10
