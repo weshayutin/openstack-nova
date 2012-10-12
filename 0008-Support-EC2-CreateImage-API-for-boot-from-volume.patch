@@ -1,4 +1,4 @@
-From 4e57f9a6f552e3516917ecfcb48aab3d9a9b8482 Mon Sep 17 00:00:00 2001
+From 00e43cc327c7f42fb57be88ad8a3de29d688089b Mon Sep 17 00:00:00 2001
 From: Eoghan Glynn <eglynn@redhat.com>
 Date: Mon, 9 Jul 2012 11:59:56 +0000
 Subject: [PATCH] Support EC2 CreateImage API for boot-from-volume

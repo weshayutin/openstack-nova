@@ -1,8 +1,8 @@
 %global with_doc %{!?_without_doc:1}%{?_without_doc:0}
 
 Name:             openstack-nova
-Version:          2012.1.1
-Release:          15%{?dist}
+Version:          2012.1.3
+Release:          1%{?dist}
 Summary:          OpenStack Compute (nova)
 
 Group:            Applications/System
@@ -41,51 +41,20 @@ Source21:         nova-polkit.pkla
 Source22:         nova-ifc-template
 
 #
-# patches_base=2012.1.1
+# patches_base=2012.1.3
 #
-Patch0004: 0004-Call-libvirt_volume_driver-with-right-mountpoint.patch
-Patch0005: 0005-Use-fake_libvirt_utils-for-libvirt-console-tests.patch
-Patch0006: 0006-Fixes-ram_allocation_ratio-based-over-subscription.patch
-Patch0007: 0007-Stop-nova_ipam_lib-from-changing-the-timeout-setting.patch
-Patch0008: 0008-Prevent-file-injection-writing-to-host-filesystem.patch
-Patch0009: 0009-Distinguish-over-quota-for-volume-size-and-number.patch
-Patch0010: 0010-Expose-over-quota-exceptions-via-native-API.patch
-Patch0011: 0011-Fix-call-to-network_get_all_by_uuids.patch
-Patch0012: 0012-fix-libvirt-get_memory_mb_total-with-xen.patch
-Patch0013: 0013-ensure-libguestfs-has-completed-before-proceeding.patch
-Patch0014: 0014-Use-compute_api.get_all-in-affinity-filters.patch
-Patch0015: 0015-fix-metadata-file-injection-with-xen.patch
-Patch0016: 0016-Fixes-affinity-filters-when-hints-is-None.patch
-Patch0017: 0017-Addtional-CommandFilters-to-fix-rootwrap-on-SLES.patch
-Patch0018: 0018-Fix-marker-behavior-for-flavors.patch
-Patch0019: 0019-Use-default-qemu-img-cluster-size-in-libvirt-connect.patch
-Patch0020: 0020-Return-413-status-on-over-quota-in-the-native-API.patch
-Patch0021: 0021-Handle-local-remote-exceptions-consistently.patch
-Patch0022: 0022-libvirt-fix-qcow2-size-on-live-block-migration.patch
-Patch0023: 0023-Backport-fix-for-API-listing-of-os-hosts.patch
-Patch0024: 0024-Avoid-lazy-loading-errors-on-instance_type.patch
-Patch0025: 0025-Avoid-casts-in-network-manager-to-prevent-races.patch
-Patch0026: 0026-Conditionally-allow-queries-for-deleted-flavours.patch
-Patch0027: 0027-Fix-wrong-regex-in-cleanup_file_locks.patch
-Patch0028: 0028-ensure-atomic-manipulation-of-libvirt-disk-images.patch
-Patch0029: 0029-Ensure-we-don-t-access-the-net-when-building-docs.patch
-Patch0030: 0030-fix-useexisting-deprecation-warnings.patch
-Patch0031: 0031-support-a-configurable-libvirt-injection-partition.patch
-Patch0032: 0032-only-mount-guest-image-once-when-injecting-files.patch
-Patch0033: 0033-set-correct-SELinux-context-for-injected-ssh-keys.patch
-Patch0034: 0034-ensure-libguestfs-mounts-are-cleaned-up.patch
-Patch0035: 0035-Adding-networking-rules-to-vm-s-on-compute-service-s.patch
-Patch0036: 0036-Tolerance-when-parsing-null-connection-info-in-BDM.patch
-Patch0037: 0037-Support-EC2-CreateImage-API-for-boot-from-volume.patch
-Patch0038: 0038-EC2-DescribeImages-reports-correct-rootDeviceType.patch
-Patch0039: 0039-Reject-EC2-CreateImage-for-instance-store.patch
-Patch0040: 0040-Fix-EC2-CreateImage-no_reboot-logic.patch
-Patch0041: 0041-use-boto-s-HTTPResponse-class-for-versions-of-boto-2.patch
-Patch0042: 0042-Convert-remaining-network-API-casts-to-calls.patch
-Patch0043: 0043-Moving-where-the-fixed-ip-deallocation-happens.patch
-Patch0044: 0044-fix-the-qpid_heartbeat-option-so-that-it-s-effective.patch
-Patch0045: 0045-Add-error-log-for-live-migration.patch
-Patch0046: 0046-Prohibit-file-injection-writing-to-host-filesystem.patch
+Patch0001: 0001-ensure-atomic-manipulation-of-libvirt-disk-images.patch
+Patch0002: 0002-Ensure-we-don-t-access-the-net-when-building-docs.patch
+Patch0003: 0003-fix-useexisting-deprecation-warnings.patch
+Patch0004: 0004-support-a-configurable-libvirt-injection-partition.patch
+Patch0005: 0005-only-mount-guest-image-once-when-injecting-files.patch
+Patch0006: 0006-set-correct-SELinux-context-for-injected-ssh-keys.patch
+Patch0007: 0007-Tolerance-when-parsing-null-connection-info-in-BDM.patch
+Patch0008: 0008-Support-EC2-CreateImage-API-for-boot-from-volume.patch
+Patch0009: 0009-EC2-DescribeImages-reports-correct-rootDeviceType.patch
+Patch0010: 0010-Reject-EC2-CreateImage-for-instance-store.patch
+Patch0011: 0011-Fix-EC2-CreateImage-no_reboot-logic.patch
+Patch0012: 0012-Avoid-RPC-calls-while-holding-iptables-lock.patch
 
 # This is EPEL specific and not upstream
 Patch100:         openstack-nova-newdeps.patch
@@ -400,6 +369,9 @@ This package contains documentation files for nova.
 %prep
 %setup -q -n nova-%{version}
 
+%patch0001 -p1
+%patch0002 -p1
+%patch0003 -p1
 %patch0004 -p1
 %patch0005 -p1
 %patch0006 -p1
@@ -409,40 +381,6 @@ This package contains documentation files for nova.
 %patch0010 -p1
 %patch0011 -p1
 %patch0012 -p1
-%patch0013 -p1
-%patch0014 -p1
-%patch0015 -p1
-%patch0016 -p1
-%patch0017 -p1
-%patch0018 -p1
-%patch0019 -p1
-%patch0020 -p1
-%patch0021 -p1
-%patch0022 -p1
-%patch0023 -p1
-%patch0024 -p1
-%patch0025 -p1
-%patch0026 -p1
-%patch0027 -p1
-%patch0028 -p1
-%patch0029 -p1
-%patch0030 -p1
-%patch0031 -p1
-%patch0032 -p1
-%patch0033 -p1
-%patch0034 -p1
-%patch0035 -p1
-%patch0036 -p1
-%patch0037 -p1
-%patch0038 -p1
-%patch0039 -p1
-%patch0040 -p1
-%patch0041 -p1
-%patch0042 -p1
-%patch0043 -p1
-%patch0044 -p1
-%patch0045 -p1
-%patch0046 -p1
 
 # Apply EPEL patch
 %patch100 -p1
@@ -831,6 +769,19 @@ fi
 %endif
 
 %changelog
+* Fri Oct 12 2012 Nikola Dipanov <ndipanov@redhat.com> - 2012.1.3-1
+- Restore libvirt block storage connections on reboot
+- Fix libvirt volume attachment error logging
+- Ensure instances with deleted floating IPs can be deleted
+- Ensure can contact floating IP after instance snapshot
+- Fix tenant usage time accounting
+- Ensure correct disk definitions are used on volume attach/detach
+- Improve concurrency of long running tasks
+- Fix unmounting of LXC containers in the presence of symlinks
+- Fix external lock corruption in the presence of SELinux
+- Allow snapshotting images that are deleted in glance
+- Ensure the correct fixed IP is deallocated when deleting VMs
+
 * Fri Aug 10 2012 Pádraig Brady <P@draigBrady.com> - 2012.1.1-15
 - Fix package versions to ensure update dependencies are correct
 - Fix CA cert permissions issue introduced in 2012.1.1-10

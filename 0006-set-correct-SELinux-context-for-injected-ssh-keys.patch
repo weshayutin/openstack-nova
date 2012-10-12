@@ -1,4 +1,4 @@
-From ad049175073aba988a1ed62bb4d87e462dd479de Mon Sep 17 00:00:00 2001
+From ae2e13b7e2481971f4c24da709e0c87234b42940 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?P=C3=A1draig=20Brady?= <pbrady@redhat.com>
 Date: Wed, 27 Jun 2012 10:29:57 +0100
 Subject: [PATCH] set correct SELinux context for injected ssh keys
@@ -12,30 +12,14 @@ currently doesn't support setting extended attributes.
 Suggested-by: David Naori <dnaori@redhat.com>
 Change-Id: Ibf3869e3ee477e91623e0c030838c1ec8a6128a6
 ---
- nova/rootwrap/compute.py |    4 ++++
- nova/virt/disk/api.py    |   33 +++++++++++++++++++++++++++++++++
- 2 files changed, 37 insertions(+), 0 deletions(-)
+ nova/virt/disk/api.py |   33 +++++++++++++++++++++++++++++++++
+ 1 files changed, 33 insertions(+), 0 deletions(-)
 
-diff --git a/nova/rootwrap/compute.py b/nova/rootwrap/compute.py
-index a3d7ec0..d28d3a0 100755
---- a/nova/rootwrap/compute.py
-+++ b/nova/rootwrap/compute.py
-@@ -189,6 +189,10 @@ filterlist = [
-     # nova/virt/libvirt/utils.py: 'qemu-img'
-     filters.CommandFilter("/usr/bin/qemu-img", "root"),
- 
-+    # nova/virt/disk/api.py: 'readlink', '-e'
-+    filters.CommandFilter("/usr/bin/readlink", "root"),
-+    filters.CommandFilter("/bin/readlink", "root"),
-+
-     # nova/virt/disk/api.py: 'touch', target
-     filters.CommandFilter("/usr/bin/touch", "root"),
- 
 diff --git a/nova/virt/disk/api.py b/nova/virt/disk/api.py
-index d6d6007..16d03c6 100644
+index ac002a7..ca2f49a 100644
 --- a/nova/virt/disk/api.py
 +++ b/nova/virt/disk/api.py
-@@ -330,6 +330,37 @@ def _inject_metadata_into_fs(metadata, fs):
+@@ -362,6 +362,37 @@ def _inject_metadata_into_fs(metadata, fs):
      _inject_file_into_fs(fs, 'meta.js', json.dumps(metadata))
  
  
@@ -73,7 +57,7 @@ index d6d6007..16d03c6 100644
  def _inject_key_into_fs(key, fs):
      """Add the given public ssh key to root's authorized_keys.
  
-@@ -353,6 +384,8 @@ def _inject_key_into_fs(key, fs):
+@@ -385,6 +416,8 @@ def _inject_key_into_fs(key, fs):
  
      _inject_file_into_fs(fs, keyfile, key_data, append=True)
  

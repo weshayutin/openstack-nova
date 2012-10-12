@@ -1,4 +1,4 @@
-From cd6f94cbb260248f5092fb47e715e06767ba1cae Mon Sep 17 00:00:00 2001
+From 72aadd897b2f07f5191859ae1b94d51425828fa3 Mon Sep 17 00:00:00 2001
 From: Joe Heck <heckj@mac.com>
 Date: Fri, 1 Jun 2012 21:51:48 +0000
 Subject: [PATCH] Tolerance when parsing null connection info in BDM
@@ -16,10 +16,10 @@ Change-Id: If7afa4fb030b3c53a0b80737ff792e42cc4d3101
  1 files changed, 9 insertions(+), 4 deletions(-)
 
 diff --git a/nova/compute/manager.py b/nova/compute/manager.py
-index 0ce6e31..4cf12c8 100644
+index ca51fc5..2d1745b 100644
 --- a/nova/compute/manager.py
 +++ b/nova/compute/manager.py
-@@ -653,10 +653,15 @@ class ComputeManager(manager.SchedulerDependentManager):
+@@ -659,10 +659,15 @@ class ComputeManager(manager.SchedulerDependentManager):
          bdms = self._get_instance_volume_bdms(context, instance_id)
          block_device_mapping = []
          for bdm in bdms:

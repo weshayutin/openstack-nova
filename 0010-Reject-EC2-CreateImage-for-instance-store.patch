@@ -1,4 +1,4 @@
-From efc454dbb6a422e36da081827b4f566a4ee05854 Mon Sep 17 00:00:00 2001
+From 52361b5fcd7749bf0992783fed1619c72e3f7543 Mon Sep 17 00:00:00 2001
 From: Eoghan Glynn <eglynn@redhat.com>
 Date: Tue, 17 Jul 2012 15:20:30 +0100
 Subject: [PATCH] Reject EC2 CreateImage for instance-store
@@ -45,17 +45,17 @@ index 7172954..e9bf1b2 100644
              if bdm.no_device:
                  continue
 diff --git a/nova/compute/api.py b/nova/compute/api.py
-index 48f3d47..d756885 100644
+index f64a10c..13570f7 100644
 --- a/nova/compute/api.py
 +++ b/nova/compute/api.py
-@@ -1685,6 +1685,20 @@ class API(BaseAPI):
+@@ -1687,6 +1687,20 @@ class API(BaseAPI):
          uuids = [instance['uuid'] for instance in instances]
          return self.db.instance_fault_get_by_instance_uuids(context, uuids)
  
 +    def get_instance_bdms(self, context, instance):
 +        """Get all bdm tables for specified instance."""
 +        return self.db.block_device_mapping_get_all_by_instance(context,
-+                instance['uuid'])
++                instance['id'])
 +
 +    def is_volume_backed_instance(self, context, instance, bdms):
 +        bdms = bdms or self.get_instance_bdms(context, instance)

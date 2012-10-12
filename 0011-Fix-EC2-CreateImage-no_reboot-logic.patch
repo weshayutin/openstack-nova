@@ -1,4 +1,4 @@
-From 885c385b63ef2ac9813f6a40dc1d885cc010ed88 Mon Sep 17 00:00:00 2001
+From 51e624805ae13f302fc07817343497de4c8ebe02 Mon Sep 17 00:00:00 2001
 From: Eoghan Glynn <eglynn@redhat.com>
 Date: Tue, 17 Jul 2012 18:18:07 +0100
 Subject: [PATCH] Fix EC2 CreateImage no_reboot logic

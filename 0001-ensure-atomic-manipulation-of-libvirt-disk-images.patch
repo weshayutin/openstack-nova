@@ -1,4 +1,4 @@
-From 614d618011a2278fa5ab2a5f63637eb3f5564909 Mon Sep 17 00:00:00 2001
+From 65bc9fc21e0162739eaedb5ade1184854c3b568a Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?P=C3=A1draig=20Brady?= <pbrady@redhat.com>
 Date: Fri, 16 Mar 2012 03:43:49 +0000
 Subject: [PATCH] ensure atomic manipulation of libvirt disk images
@@ -19,46 +19,16 @@ the image cache and instance dirs are protected.
 
 Change-Id: I81a5407665a6998128c0dee41387ef00ebddeb4d
 ---
- nova/utils.py                   |   21 +++++++++--
+ nova/utils.py                   |   12 +++++++
  nova/virt/images.py             |   69 +++++++++++++++++----------------------
  nova/virt/libvirt/connection.py |   16 ++++++---
- 3 files changed, 57 insertions(+), 49 deletions(-)
+ 3 files changed, 52 insertions(+), 45 deletions(-)
 
 diff --git a/nova/utils.py b/nova/utils.py
-index 01a52b5..0e5855a 100644
+index 6535b06..5fd6e47 100644
 --- a/nova/utils.py
 +++ b/nova/utils.py
-@@ -21,6 +21,7 @@
- 
- import contextlib
- import datetime
-+import errno
- import functools
- import hashlib
- import inspect
-@@ -1013,8 +1014,8 @@ def cleanup_file_locks():
-             continue
-         try:
-             stat_info = os.stat(os.path.join(FLAGS.lock_path, filename))
--        except OSError as (errno, strerror):
--            if errno == 2:  # doesn't exist
-+        except OSError as e:
-+            if e.errno == errno.ENOENT:
-                 continue
-             else:
-                 raise
-@@ -1033,8 +1034,8 @@ def delete_if_exists(pathname):
- 
-     try:
-         os.unlink(pathname)
--    except OSError as (errno, strerror):
--        if errno == 2:  # doesn't exist
-+    except OSError as e:
-+        if e.errno == errno.ENOENT:
-             return
-         else:
-             raise
-@@ -1344,6 +1345,18 @@ def logging_error(message):
+@@ -1346,6 +1346,18 @@ def logging_error(message):
              LOG.exception(message)
  
  
@@ -169,10 +139,10 @@ index 1e0ae0a..626f3ff 100644
  
      return metadata
 diff --git a/nova/virt/libvirt/connection.py b/nova/virt/libvirt/connection.py
-index ed94f15..5bc9ce0 100644
+index 8a14234..1da6b86 100644
 --- a/nova/virt/libvirt/connection.py
 +++ b/nova/virt/libvirt/connection.py
-@@ -1112,7 +1112,8 @@ class LibvirtConnection(driver.ComputeDriver):
+@@ -1144,7 +1144,8 @@ class LibvirtConnection(driver.ComputeDriver):
              @utils.synchronized(fname)
              def call_if_not_exists(base, fn, *args, **kwargs):
                  if not os.path.exists(base):
@@ -182,7 +152,7 @@ index ed94f15..5bc9ce0 100644
  
              if cow or not generating:
                  call_if_not_exists(base, fn, *args, **kwargs)
-@@ -1128,8 +1129,9 @@ class LibvirtConnection(driver.ComputeDriver):
+@@ -1160,8 +1161,9 @@ class LibvirtConnection(driver.ComputeDriver):
                          size_gb = size / (1024 * 1024 * 1024)
                          cow_base += "_%d" % size_gb
                          if not os.path.exists(cow_base):
@@ -194,7 +164,7 @@ index ed94f15..5bc9ce0 100644
                      libvirt_utils.create_cow_image(cow_base, target)
                  elif not generating:
                      libvirt_utils.copy_image(base, target)
-@@ -1139,7 +1141,8 @@ class LibvirtConnection(driver.ComputeDriver):
+@@ -1171,7 +1173,8 @@ class LibvirtConnection(driver.ComputeDriver):
                      if size:
                          disk.extend(target, size)
  
@@ -204,7 +174,7 @@ index ed94f15..5bc9ce0 100644
  
      @staticmethod
      def _create_local(target, local_size, unit='G',
-@@ -1312,8 +1315,9 @@ class LibvirtConnection(driver.ComputeDriver):
+@@ -1346,8 +1349,9 @@ class LibvirtConnection(driver.ComputeDriver):
                                project_id=instance['project_id'],)
          elif config_drive:
              label = 'config'

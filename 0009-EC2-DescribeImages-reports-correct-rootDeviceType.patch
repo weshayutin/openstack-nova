@@ -1,4 +1,4 @@
-From d18beab9fb9c5f61b7a8ec9d64dc95839ccc537e Mon Sep 17 00:00:00 2001
+From 3015523a9ca06deae79ba518c9215a8e191acc76 Mon Sep 17 00:00:00 2001
 From: Eoghan Glynn <eglynn@redhat.com>
 Date: Sat, 14 Jul 2012 21:30:43 +0100
 Subject: [PATCH] EC2 DescribeImages reports correct rootDeviceType

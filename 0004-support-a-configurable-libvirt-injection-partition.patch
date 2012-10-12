@@ -1,4 +1,4 @@
-From 1e01e15630e654cee6cda5c327754f7ffc9e86b6 Mon Sep 17 00:00:00 2001
+From 7bee66c36a67e4f6634b0b829be0f9ac5feed97d Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?P=C3=A1draig=20Brady?= <pbrady@redhat.com>
 Date: Wed, 18 Apr 2012 23:27:31 +0100
 Subject: [PATCH] support a configurable libvirt injection partition
@@ -23,10 +23,10 @@ Conflicts:
  2 files changed, 12 insertions(+), 6 deletions(-)
 
 diff --git a/nova/virt/disk/mount.py b/nova/virt/disk/mount.py
-index 4fb5dda..11959b2 100644
+index e7860b1..53dc0c5 100644
 --- a/nova/virt/disk/mount.py
 +++ b/nova/virt/disk/mount.py
-@@ -58,7 +58,9 @@ class Mount(object):
+@@ -75,7 +75,9 @@ class Mount(object):
          """Map partitions of the device to the file system namespace."""
          assert(os.path.exists(self.device))
  
@@ -37,7 +37,7 @@ index 4fb5dda..11959b2 100644
              map_path = '/dev/mapper/%sp%s' % (os.path.basename(self.device),
                                                self.partition)
              assert(not os.path.exists(map_path))
-@@ -73,7 +75,7 @@ class Mount(object):
+@@ -90,7 +92,7 @@ class Mount(object):
              # so given we only use it when we expect a partitioned image, fail
              if not os.path.exists(map_path):
                  if not err:
@@ -47,7 +47,7 @@ index 4fb5dda..11959b2 100644
              else:
                  self.mapped_device = map_path
 diff --git a/nova/virt/libvirt/connection.py b/nova/virt/libvirt/connection.py
-index 5bc9ce0..c38283f 100644
+index 1da6b86..93e9395 100644
 --- a/nova/virt/libvirt/connection.py
 +++ b/nova/virt/libvirt/connection.py
 @@ -108,6 +108,11 @@ libvirt_opts = [
@@ -62,7 +62,7 @@ index 5bc9ce0..c38283f 100644
      cfg.BoolOpt('use_usb_tablet',
                  default=True,
                  help='Sync virtual and real mouse cursors in Windows VMs'),
-@@ -1292,12 +1297,11 @@ class LibvirtConnection(driver.ComputeDriver):
+@@ -1326,12 +1331,11 @@ class LibvirtConnection(driver.ComputeDriver):
                                cow=FLAGS.use_cow_images,
                                swap_mb=swap_mb)
  

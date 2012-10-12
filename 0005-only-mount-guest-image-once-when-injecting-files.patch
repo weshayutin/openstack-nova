@@ -1,4 +1,4 @@
-From b12fa5ea79d7b8adb272795ccb996c8da6578d5c Mon Sep 17 00:00:00 2001
+From e218a915f0363f907498583a493d18a7bcc63114 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?P=C3=A1draig=20Brady?= <pbrady@redhat.com>
 Date: Mon, 25 Jun 2012 13:52:46 +0100
 Subject: [PATCH] only mount guest image once when injecting files
@@ -14,10 +14,10 @@ Change-Id: I228da2229a19d9097507f67b697595616fa601fe
  2 files changed, 21 insertions(+), 41 deletions(-)
 
 diff --git a/nova/virt/disk/api.py b/nova/virt/disk/api.py
-index 04feb76..d6d6007 100644
+index dc78b2b..ac002a7 100644
 --- a/nova/virt/disk/api.py
 +++ b/nova/virt/disk/api.py
-@@ -224,7 +224,7 @@ class _DiskImage(object):
+@@ -260,7 +260,7 @@ class _DiskImage(object):
  
  def inject_data(image,
                  key=None, net=None, metadata=None, admin_password=None,
@@ -26,7 +26,7 @@ index 04feb76..d6d6007 100644
      """Injects a ssh key and optionally net data into a disk image.
  
      it will mount the image as a fully partitioned disk and attempt to inject
-@@ -237,21 +237,7 @@ def inject_data(image,
+@@ -273,21 +273,7 @@ def inject_data(image,
      if img.mount():
          try:
              inject_data_into_fs(img.mount_dir,
@@ -49,7 +49,7 @@ index 04feb76..d6d6007 100644
          finally:
              img.umount()
      else:
-@@ -291,19 +277,22 @@ def destroy_container(img):
+@@ -321,19 +307,22 @@ def destroy_container(container_dir):
          LOG.exception(_('Failed to remove container: %s'), exn)
  
  
@@ -77,7 +77,7 @@ index 04feb76..d6d6007 100644
  
  
  def _join_and_check_path_within_fs(fs, *args):
-@@ -336,12 +325,12 @@ def _inject_file_into_fs(fs, path, contents, append=False):
+@@ -368,12 +357,12 @@ def _inject_file_into_fs(fs, path, contents, append=False):
      utils.execute('tee', *args, **kwargs)
  
  
@@ -92,7 +92,7 @@ index 04feb76..d6d6007 100644
      """Add the given public ssh key to root's authorized_keys.
  
      key is an ssh key string.
-@@ -365,7 +354,7 @@ def _inject_key_into_fs(key, fs, execute=None):
+@@ -397,7 +386,7 @@ def _inject_key_into_fs(key, fs, execute=None):
      _inject_file_into_fs(fs, keyfile, key_data, append=True)
  
  
@@ -101,7 +101,7 @@ index 04feb76..d6d6007 100644
      """Inject /etc/network/interfaces into the filesystem rooted at fs.
  
      net is the contents of /etc/network/interfaces.
-@@ -379,7 +368,7 @@ def _inject_net_into_fs(net, fs, execute=None):
+@@ -411,7 +400,7 @@ def _inject_net_into_fs(net, fs, execute=None):
      _inject_file_into_fs(fs, netfile, net)
  
  
@@ -111,10 +111,10 @@ index 04feb76..d6d6007 100644
  
      admin_password is a root password
 diff --git a/nova/virt/libvirt/connection.py b/nova/virt/libvirt/connection.py
-index c38283f..11e5b34 100644
+index 93e9395..cb57aa2 100644
 --- a/nova/virt/libvirt/connection.py
 +++ b/nova/virt/libvirt/connection.py
-@@ -970,12 +970,6 @@ class LibvirtConnection(driver.ComputeDriver):
+@@ -1002,12 +1002,6 @@ class LibvirtConnection(driver.ComputeDriver):
          fp.write(data)
          return fpath
  
@@ -127,7 +127,7 @@ index c38283f..11e5b34 100644
      @exception.wrap_exception()
      def get_console_output(self, instance):
          virt_dom = self._lookup_by_name(instance['name'])
-@@ -1368,11 +1362,13 @@ class LibvirtConnection(driver.ComputeDriver):
+@@ -1402,11 +1396,13 @@ class LibvirtConnection(driver.ComputeDriver):
          metadata = instance.get('metadata')
  
          if FLAGS.libvirt_inject_password:
@@ -144,7 +144,7 @@ index c38283f..11e5b34 100644
              if config_drive:  # Should be True or None by now.
                  injection_path = basepath('disk.config')
                  img_id = 'config-drive'
-@@ -1380,13 +1376,13 @@ class LibvirtConnection(driver.ComputeDriver):
+@@ -1414,13 +1410,13 @@ class LibvirtConnection(driver.ComputeDriver):
                  injection_path = basepath('disk')
                  img_id = instance.image_ref
  
@@ -160,7 +160,7 @@ index c38283f..11e5b34 100644
                                   partition=target_partition,
                                   use_cow=FLAGS.use_cow_images)
  
-@@ -1404,11 +1400,6 @@ class LibvirtConnection(driver.ComputeDriver):
+@@ -1438,11 +1434,6 @@ class LibvirtConnection(driver.ComputeDriver):
          if FLAGS.libvirt_type == 'uml':
              libvirt_utils.chown(basepath('disk'), 'root')
  
