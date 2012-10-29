@@ -18,7 +18,6 @@ Source12:         openstack-nova-compute.service
 Source13:         openstack-nova-network.service
 Source14:         openstack-nova-objectstore.service
 Source15:         openstack-nova-scheduler.service
-Source16:         openstack-nova-volume.service
 Source18:         openstack-nova-xvpvncproxy.service
 Source19:         openstack-nova-console.service
 Source20:         openstack-nova-consoleauth.service
@@ -43,7 +42,6 @@ BuildRequires:    python-netaddr
 Requires:         openstack-nova-compute = %{version}-%{release}
 Requires:         openstack-nova-cert = %{version}-%{release}
 Requires:         openstack-nova-scheduler = %{version}-%{release}
-Requires:         openstack-nova-volume = %{version}-%{release}
 Requires:         openstack-nova-api = %{version}-%{release}
 Requires:         openstack-nova-network = %{version}-%{release}
 Requires:         openstack-nova-objectstore = %{version}-%{release}
@@ -134,27 +132,6 @@ hardware and hypervisor agnostic, currently supporting a variety of
 standard hardware configurations and seven major hypervisors.
 
 This package contains the Nova service for controlling networking.
-
-
-%package volume
-Summary:          OpenStack Nova storage volume control service
-Group:            Applications/System
-
-Requires:         openstack-nova-common = %{version}-%{release}
-Requires:         lvm2
-Requires:         scsi-target-utils
-
-%description volume
-OpenStack Compute (codename Nova) is open source software designed to
-provision and manage large networks of virtual machines, creating a
-redundant and scalable cloud computing platform. It gives you the
-software, control panels, and APIs required to orchestrate a cloud,
-including running instances, managing networks, and controlling access
-through users and projects. OpenStack Compute strives to be both
-hardware and hypervisor agnostic, currently supporting a variety of
-standard hardware configurations and seven major hypervisors.
-
-This package contains the Nova service for controlling storage volumes.
 
 
 %package scheduler
@@ -406,7 +383,6 @@ install -p -D -m 755 %{SOURCE12} %{buildroot}%{_unitdir}/openstack-nova-compute.
 install -p -D -m 755 %{SOURCE13} %{buildroot}%{_unitdir}/openstack-nova-network.service
 install -p -D -m 755 %{SOURCE14} %{buildroot}%{_unitdir}/openstack-nova-objectstore.service
 install -p -D -m 755 %{SOURCE15} %{buildroot}%{_unitdir}/openstack-nova-scheduler.service
-install -p -D -m 755 %{SOURCE16} %{buildroot}%{_unitdir}/openstack-nova-volume.service
 install -p -D -m 755 %{SOURCE18} %{buildroot}%{_unitdir}/openstack-nova-xvpvncproxy.service
 install -p -D -m 755 %{SOURCE19} %{buildroot}%{_unitdir}/openstack-nova-console.service
 install -p -D -m 755 %{SOURCE20} %{buildroot}%{_unitdir}/openstack-nova-consoleauth.service
@@ -470,11 +446,6 @@ if [ $1 -eq 1 ] ; then
     # Initial installation
     /bin/systemctl daemon-reload >/dev/null 2>&1 || :
 fi
-%post volume
-if [ $1 -eq 1 ] ; then
-    # Initial installation
-    /bin/systemctl daemon-reload >/dev/null 2>&1 || :
-fi
 %post scheduler
 if [ $1 -eq 1 ] ; then
     # Initial installation
@@ -511,13 +482,6 @@ fi
 %preun network
 if [ $1 -eq 0 ] ; then
     for svc in network; do
-        /bin/systemctl --no-reload disable openstack-nova-${svc}.service > /dev/null 2>&1 || :
-        /bin/systemctl stop openstack-nova-${svc}.service > /dev/null 2>&1 || :
-    done
-fi
-%preun volume
-if [ $1 -eq 0 ] ; then
-    for svc in volume; do
         /bin/systemctl --no-reload disable openstack-nova-${svc}.service > /dev/null 2>&1 || :
         /bin/systemctl stop openstack-nova-${svc}.service > /dev/null 2>&1 || :
     done
@@ -571,14 +535,6 @@ fi
 if [ $1 -ge 1 ] ; then
     # Package upgrade, not uninstall
     for svc in network; do
-        /bin/systemctl try-restart openstack-nova-${svc}.service >/dev/null 2>&1 || :
-    done
-fi
-%postun volume
-/bin/systemctl daemon-reload >/dev/null 2>&1 || :
-if [ $1 -ge 1 ] ; then
-    # Package upgrade, not uninstall
-    for svc in volume; do
         /bin/systemctl try-restart openstack-nova-${svc}.service >/dev/null 2>&1 || :
     done
 fi
@@ -670,12 +626,6 @@ fi
 %{_unitdir}/openstack-nova-network.service
 %{_datarootdir}/nova/rootwrap/network.filters
 
-%files volume
-%{_bindir}/nova-volume
-%{_bindir}/nova-volume-usage-audit
-%{_unitdir}/openstack-nova-volume.service
-%{_datarootdir}/nova/rootwrap/volume.filters
-
 %files scheduler
 %{_bindir}/nova-scheduler
 %{_unitdir}/openstack-nova-scheduler.service
@@ -727,6 +677,9 @@ fi
 %endif
 
 %changelog
+* Sun Oct 28 2012 Dan Prince <dprince@redhat.com> - 2012.2-0.6.upstream
+- Remove nova volume files.
+
 * Thu Sep 13 2012 Dan Prince <dprince@redhat.com> - 2012.2-0.6.upstream
 - Remove quantumclient requirement (for now).
 - Remove requirement on openstack-utils. Leave api-paste.ini as is.
