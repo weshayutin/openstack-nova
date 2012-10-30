@@ -2,7 +2,7 @@
 
 Name:             openstack-nova
 Version:          2012.2
-Release:          1%{?dist}
+Release:          2%{?dist}
 Summary:          OpenStack Compute (nova)
 
 Group:            Applications/System
@@ -749,6 +749,9 @@ fi
 %endif
 
 %changelog
+* Tue Oct 30 2012 Pádraig Brady <pbrady@redhat.com> - 2012.2-2
+- Add support for python-migrate-0.6
+
 * Thu Oct 11 2012 Pádraig Brady <pbrady@redhat.com> - 2012.2-1
 - Update to folsom final
 
