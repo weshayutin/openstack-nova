@@ -752,7 +752,7 @@ fi
 * Tue Oct 30 2012 Pádraig Brady <pbrady@redhat.com> - 2012.2-2
 - Add support for python-migrate-0.6
 
-* Thu Oct 11 2012 Pádraig Brady <pbrady@redhat.com> - 2012.2-1
+* Thu Oct 12 2012 Pádraig Brady <pbrady@redhat.com> - 2012.2-1
 - Update to folsom final
 
 * Fri Oct 12 2012 Nikola Dipanov <ndipanov@redhat.com> - 2012.1.3-1
