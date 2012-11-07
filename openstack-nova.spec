@@ -147,6 +147,7 @@ Requires:         openstack-nova-common = %{version}-%{release}
 Requires:         vconfig
 Requires:         radvd
 Requires:         bridge-utils
+Requires:         dnsmasq
 #TODO: Enable when available in RHEL 6.3
 #Requires:         dnsmasq-utils
 # tunctl is needed where `ip tuntap` is not available
