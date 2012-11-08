@@ -10,6 +10,7 @@ License:          ASL 2.0
 URL:              http://openstack.org/projects/compute/
 Source0:          nova-2012.2.tar.gz
 Source1:          nova.conf
+Source3:          nova-tgt.conf
 Source6:          nova.logrotate
 
 Source10:         openstack-nova-api.service
@@ -24,6 +25,7 @@ Source20:         openstack-nova-consoleauth.service
 Source25:         openstack-nova-metadata-api.service
 
 Source21:         nova-polkit.pkla
+Source23:         nova-polkit.rules
 Source22:         nova-ifc-template
 Source24:         nova-sudoers
 
@@ -37,7 +39,7 @@ BuildRequires:    intltool
 BuildRequires:    python-sphinx
 BuildRequires:    python-setuptools
 BuildRequires:    python-netaddr
-#BuildRequires:    openstack-utils
+BuildRequires:    openstack-utils
 
 Requires:         openstack-nova-compute = %{version}-%{release}
 Requires:         openstack-nova-cert = %{version}-%{release}
@@ -119,6 +121,7 @@ Requires:         openstack-nova-common = %{version}-%{release}
 Requires:         vconfig
 Requires:         radvd
 Requires:         bridge-utils
+Requires:         dnsmasq
 Requires:         dnsmasq-utils
 
 %description network
@@ -246,7 +249,6 @@ Requires:         python-qpid
 Requires:         python-kombu
 Requires:         python-amqplib
 
-Requires:         python-daemon
 Requires:         python-eventlet
 Requires:         python-greenlet
 Requires:         python-iso8601
@@ -266,8 +268,9 @@ Requires:         python-paste-deploy
 Requires:         python-routes
 Requires:         python-webob
 
-Requires:         python-glanceclient
-#Requires:         python-quantumclient >= 1:2
+Requires:         python-glanceclient >= 1:0
+Requires:         python-quantumclient >= 1:2
+Requires:         python-cinderclient
 Requires:         python-novaclient
 
 %description -n   python-nova
@@ -319,13 +322,13 @@ sed -i '/setuptools_git/d' setup.py
 %{__python} setup.py build
 
 # Move authtoken configuration out of paste.ini
-#openstack-config --del etc/nova/api-paste.ini filter:authtoken admin_tenant_name
-#openstack-config --del etc/nova/api-paste.ini filter:authtoken admin_user
-#openstack-config --del etc/nova/api-paste.ini filter:authtoken admin_password
-#openstack-config --del etc/nova/api-paste.ini filter:authtoken auth_host
-#openstack-config --del etc/nova/api-paste.ini filter:authtoken auth_port
-#openstack-config --del etc/nova/api-paste.ini filter:authtoken auth_protocol
-#openstack-config --del etc/nova/api-paste.ini filter:authtoken signing_dirname
+openstack-config --del etc/nova/api-paste.ini filter:authtoken admin_tenant_name
+openstack-config --del etc/nova/api-paste.ini filter:authtoken admin_user
+openstack-config --del etc/nova/api-paste.ini filter:authtoken admin_password
+openstack-config --del etc/nova/api-paste.ini filter:authtoken auth_host
+openstack-config --del etc/nova/api-paste.ini filter:authtoken auth_port
+openstack-config --del etc/nova/api-paste.ini filter:authtoken auth_protocol
+openstack-config --del etc/nova/api-paste.ini filter:authtoken signing_dirname
 
 %install
 %{__python} setup.py install -O1 --skip-build --root %{buildroot}
@@ -406,8 +409,12 @@ install -p -D -m 644 %{SOURCE22} %{buildroot}%{_datarootdir}/nova/interfaces.tem
 mkdir -p %{buildroot}%{_datarootdir}/nova/rootwrap/
 install -p -D -m 644 etc/nova/rootwrap.d/* %{buildroot}%{_datarootdir}/nova/rootwrap/
 
+# Older format. Remove when we no longer want to support Fedora 17 with master branch package
 install -d -m 755 %{buildroot}%{_sysconfdir}/polkit-1/localauthority/50-local.d
 install -p -D -m 644 %{SOURCE21} %{buildroot}%{_sysconfdir}/polkit-1/localauthority/50-local.d/50-nova.pkla
+# Newer format since Fedora 18
+install -d -m 755 %{buildroot}%{_sysconfdir}/polkit-1/rules.d
+install -p -D -m 644 %{SOURCE23} %{buildroot}%{_sysconfdir}/polkit-1/rules.d/50-nova.rules
 
 # Remove unneeded in production stuff
 rm -f %{buildroot}%{_bindir}/nova-debug
@@ -416,9 +423,7 @@ rm -fr %{buildroot}%{python_sitelib}/run_tests.*
 rm -f %{buildroot}%{_bindir}/nova-combined
 rm -f %{buildroot}/usr/share/doc/nova/README*
 
-# TODO. On F18 branch of novnc package, move the openstack-nova-novncproxy
-# subpackage to the openstack-nova-console subpackage here, and have
-# it provide openstack-nova-novncproxy
+# We currently use the equivalent file from the novnc package
 rm -f %{buildroot}%{_bindir}/nova-novncproxy
 
 %pre common
@@ -593,6 +598,7 @@ fi
 %config(noreplace) %{_sysconfdir}/logrotate.d/openstack-nova
 %config(noreplace) %{_sysconfdir}/sudoers.d/nova
 %config(noreplace) %{_sysconfdir}/polkit-1/localauthority/50-local.d/50-nova.pkla
+%config(noreplace) %{_sysconfdir}/polkit-1/rules.d/50-nova.rules
 
 %dir %attr(0755, nova, root) %{_localstatedir}/log/nova
 %dir %attr(0755, nova, root) %{_localstatedir}/run/nova
@@ -677,6 +683,9 @@ fi
 %endif
 
 %changelog
+* Sun Nov 6 2012 Dan Prince <dprince@redhat.com> - 2012.2-0.6.upstream
+- Sync w/ latest folsom changes.
+
 * Sun Oct 28 2012 Dan Prince <dprince@redhat.com> - 2012.2-0.6.upstream
 - Remove nova volume files.
 
