@@ -124,6 +124,8 @@ Requires:         libguestfs-mount >= 1.7.17
 Requires:         fuse
 Requires:         libvirt >= 0.9.6
 Requires:         libvirt-python
+Requires:         openssh-clients
+Requires:         rsync
 Requires(pre):    qemu-kvm
 
 %description compute
@@ -289,6 +291,7 @@ Summary:          Nova Python libraries
 Group:            Applications/System
 
 Requires:         openssl
+Requires:         openssh # for ssh-keygen
 Requires:         sudo
 
 Requires:         MySQL-python
