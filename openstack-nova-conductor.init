@@ -1,30 +1,22 @@
 #!/bin/sh
 #
-# openstack-nova-volume  OpenStack Nova Volume Worker
+# openstack-nova-conductor  OpenStack Nova Compute DB Access service
 #
 # chkconfig:   - 98 02
-# description:	Volume Workers interact with iSCSI storage to manage    \
-#		LVM-based instance volumes. Specific functions include: \
-#		* Create Volumes                                        \
-#		* Delete Volumes                                        \
-#		* Establish Compute volumes
+# description: Implementation of an S3-like storage server based on local files.
 
 ### BEGIN INIT INFO
 # Provides:
 # Required-Start: $remote_fs $network $syslog
 # Required-Stop: $remote_fs $syslog
 # Default-Stop: 0 1 6
-# Short-Description: OpenStack Nova Volume Worker
-# Description:	Volume Workers interact with iSCSI storage to manage
-#		LVM-based instance volumes. Specific functions include:
-#		* Create Volumes
-#		* Delete Volumes
-#		* Establish Compute volumes
+# Short-Description: OpenStack Nova Compute DB Access service
+# Description: Service to handle database access for compute nodes
 ### END INIT INFO
 
 . /etc/rc.d/init.d/functions
 
-suffix=volume
+suffix=conductor
 prog=openstack-nova-$suffix
 exec="/usr/bin/nova-$suffix"
 config="/etc/nova/nova.conf"

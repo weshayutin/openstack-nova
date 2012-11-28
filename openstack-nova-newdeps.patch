@@ -1,10 +1,11 @@
-diff -Naur -Naru nova-2012.2.orig/nova/__init__.py nova-2012.2/nova/__init__.py
---- nova-2012.2.orig/nova/__init__.py	2012-09-26 00:48:35.000000000 +0000
-+++ nova-2012.2/nova/__init__.py	2012-10-11 15:36:40.149461373 +0000
-@@ -31,6 +31,37 @@
- .. moduleauthor:: Andy Smith <andy@anarkystic.com>
+diff --git a/nova/__init__.py b/nova/__init__.py
+index a9eca48..9bf9c4d 100644
+--- a/nova/__init__.py
++++ b/nova/__init__.py
+@@ -24,6 +24,36 @@
+    :platform: Unix
+    :synopsis: Infrastructure-as-a-Service Cloud platform.
  """
- 
 +import sys
 +import pkg_resources
 +
@@ -35,14 +36,14 @@ diff -Naur -Naru nova-2012.2.orig/nova/__init__.py nova-2012.2/nova/__init__.py
 +import paste
 +paste.__path__.insert(0, paste.__path__.pop(-1))
 +
-+
+ 
  import gettext
  
- 
-diff -Naur nova-2012.2.orig/nova/db/sqlalchemy/migration.py nova-2012.2/nova/db/sqlalchemy/migration.py
---- nova-2012.2.orig/nova/db/sqlalchemy/migration.py	2012-10-30 17:51:47.073636210 +0000
-+++ nova-2012.2/nova/db/sqlalchemy/migration.py	2012-10-30 17:56:03.974051764 +0000
-@@ -57,7 +57,12 @@
+diff --git a/nova/db/sqlalchemy/migration.py b/nova/db/sqlalchemy/migration.py
+index dbc1ed4..0260be0 100644
+--- a/nova/db/sqlalchemy/migration.py
++++ b/nova/db/sqlalchemy/migration.py
+@@ -56,7 +56,13 @@ if (not hasattr(migrate, '__version__') or
  
  
  # NOTE(jkoelker) Delay importing migrate until we are patched
@@ -53,6 +54,7 @@ diff -Naur nova-2012.2.orig/nova/db/sqlalchemy/migration.py nova-2012.2/nova/db/
 +except ImportError:
 +    # Use the newer path (migrate >= 0.7)
 +    from migrate import exceptions as versioning_exceptions
++
  from migrate.versioning import api as versioning_api
  from migrate.versioning.repository import Repository
  
