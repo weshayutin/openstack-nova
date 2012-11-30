@@ -1,8 +1,8 @@
 %global with_doc %{!?_without_doc:1}%{?_without_doc:0}
 
 Name:             openstack-nova
-Version:          2012.2
-Release:          2%{?dist}
+Version:          2012.2.1
+Release:          1%{?dist}
 Summary:          OpenStack Compute (nova)
 
 Group:            Applications/System
@@ -41,7 +41,7 @@ Source21:         nova-polkit.pkla
 Source22:         nova-ifc-template
 
 #
-# patches_base=2012.2
+# patches_base=2012.2.1
 #
 Patch0001: 0001-Ensure-we-don-t-access-the-net-when-building-docs.patch
 
@@ -753,6 +753,9 @@ fi
 %endif
 
 %changelog
+* Thu Sep 27 2012 Nikola Đipanov <ndipanov@redhat.com> - 2012.2.1-1
+- Update to folsom stable release 1
+
 * Tue Oct 30 2012 Pádraig Brady <pbrady@redhat.com> - 2012.2-2
 - Add support for python-migrate-0.6
 
