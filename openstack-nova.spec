@@ -98,6 +98,7 @@ Requires:         iscsi-initiator-utils
 Requires:         iptables iptables-ipv6
 Requires:         vconfig
 Requires:         libguestfs-mount >= 1.7.17
+Requires:         python-libguestfs
 Requires:         libvirt >= 0.9.6
 Requires:         libvirt-python
 Requires(pre):    qemu-kvm
@@ -728,6 +729,9 @@ fi
 %endif
 
 %changelog
+* Sat Dec 1 2012 Dan Prince <dprince@redhat.com> - 2013.2-0.1.upstream
+- Add python-guestfs to the nova-compute package.
+
 * Sun Nov 6 2012 Dan Prince <dprince@redhat.com> - 2013.1-0.1.upstream
 - Add nova-conductor service.
 
