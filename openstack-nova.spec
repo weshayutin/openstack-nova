@@ -756,7 +756,7 @@ fi
 
 %changelog
 * Tue Dec 04 2012 Nikola Đipanov <ndipanov@redhat.com> - 2012.2.1-2
-= Fix rpc_control_exchange regression
+- Fix rpc_control_exchange regression
 
 * Fri Nov 30 2012 Nikola Đipanov <ndipanov@redhat.com> - 2012.2.1-1
 - Update to folsom stable release 1
