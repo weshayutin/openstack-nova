@@ -729,6 +729,9 @@ fi
 %endif
 
 %changelog
+* Sat Dec 6 2012 Dan Prince <dprince@redhat.com> - 2013.2-0.1.upstream
+- Switch --logfile to --log-file in systemd service files.
+
 * Sat Dec 1 2012 Dan Prince <dprince@redhat.com> - 2013.2-0.1.upstream
 - Add python-guestfs to the nova-compute package.
 
