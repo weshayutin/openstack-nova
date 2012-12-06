@@ -2,7 +2,7 @@
 
 Name:             openstack-nova
 Version:          2012.2.1
-Release:          2%{?dist}
+Release:          3%{?dist}
 Summary:          OpenStack Compute (nova)
 
 Group:            Applications/System
@@ -382,7 +382,7 @@ openstack-config --del etc/nova/api-paste.ini filter:authtoken admin_password
 openstack-config --del etc/nova/api-paste.ini filter:authtoken auth_host
 openstack-config --del etc/nova/api-paste.ini filter:authtoken auth_port
 openstack-config --del etc/nova/api-paste.ini filter:authtoken auth_protocol
-openstack-config --del etc/nova/api-paste.ini filter:authtoken signing_dirname
+openstack-config --del etc/nova/api-paste.ini filter:authtoken signing_dir
 
 %install
 %{__python} setup.py install -O1 --skip-build --root %{buildroot}
@@ -755,6 +755,9 @@ fi
 %endif
 
 %changelog
+* Thu Dec 06 2012 Nikola Đipanov <ndipanov@redhat.com> - 2012.2.1-3
+- signing_dir renamed from incorrect signing_dirname in default nova.conf
+
 * Tue Dec 04 2012 Nikola Đipanov <ndipanov@redhat.com> - 2012.2.1-2
 - Fix rpc_control_exchange regression
 
