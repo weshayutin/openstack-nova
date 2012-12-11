@@ -293,6 +293,7 @@ Requires:         python-glanceclient >= 1:0
 Requires:         python-quantumclient >= 1:2
 Requires:         python-cinderclient
 Requires:         python-novaclient
+Requires:         python-stevedore
 
 %description -n   python-nova
 OpenStack Compute (codename Nova) is open source software designed to
@@ -729,6 +730,9 @@ fi
 %endif
 
 %changelog
+* Mon Dec 10 2012 Dan Prince <dprince@redhat.com> - 2013.2-0.1.upstream
+- Add python-stevedore dependency to python-nova.
+
 * Sat Dec 6 2012 Dan Prince <dprince@redhat.com> - 2013.2-0.1.upstream
 - Switch --logfile to --log-file in systemd service files.
 
