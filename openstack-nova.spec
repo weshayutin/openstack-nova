@@ -731,7 +731,7 @@ fi
 %endif
 
 %changelog
-* Jan 4 2012 Dan Prince <dprince@redhat.com> - 2013.2-0.1.upstream
+* Fri Jan 4 2013 Dan Prince <dprince@redhat.com> - 2013.2-0.1.upstream
 - Add nova-cells.
 
 * Mon Dec 10 2012 Dan Prince <dprince@redhat.com> - 2013.2-0.1.upstream
