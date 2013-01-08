@@ -646,6 +646,7 @@ fi
 %dir %attr(0755, nova, root) %{_localstatedir}/log/nova
 %dir %attr(0755, nova, root) %{_localstatedir}/run/nova
 
+%{_bindir}/nova-baremetal-deploy-helper
 %{_bindir}/nova-cells
 %{_bindir}/nova-clear-rabbit-queues
 # TODO. zmq-receiver may need its own service?
@@ -731,6 +732,9 @@ fi
 %endif
 
 %changelog
+* Tue Jan 8 2013 Dan Prince <dprince@redhat.com> - 2013.2-0.1.upstream
+- Add nova-baremetal-deploy-helper.
+
 * Fri Jan 4 2013 Dan Prince <dprince@redhat.com> - 2013.2-0.1.upstream
 - Add nova-cells.
 
