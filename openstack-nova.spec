@@ -2,13 +2,13 @@
 
 Name:             openstack-nova
 Version:          2013.1
-Release:          0.3.g1%{?dist}
+Release:          0.4.g2%{?dist}
 Summary:          OpenStack Compute (nova)
 
 Group:            Applications/System
 License:          ASL 2.0
 URL:              http://openstack.org/projects/compute/
-Source0:          http://launchpad.net/nova/grizzly/grizzly-1/+download/nova-2013.1~g1.tar.gz
+Source0:          http://launchpad.net/nova/grizzly/grizzly-1/+download/nova-2013.1~g2.tar.gz
 
 Source1:          nova.conf
 Source6:          nova.logrotate
@@ -35,13 +35,15 @@ Source24:         openstack-nova-consoleauth.init
 Source240:        openstack-nova-consoleauth.upstart
 Source25:         openstack-nova-metadata-api.init
 Source250:        openstack-nova-metadata-api.upstart
+Source26:         openstack-nova-cells.init
+Source260:        openstack-nova-cells.upstart
 
 Source20:         nova-sudoers
 Source21:         nova-polkit.pkla
 Source22:         nova-ifc-template
 
 #
-# patches_base=grizzly-1
+# patches_base=grizzly-2
 #
 Patch0001: 0001-Ensure-we-don-t-access-the-net-when-building-docs.patch
 
@@ -67,6 +69,7 @@ Requires:         openstack-nova-api = %{version}-%{release}
 Requires:         openstack-nova-network = %{version}-%{release}
 Requires:         openstack-nova-objectstore = %{version}-%{release}
 Requires:         openstack-nova-conductor = %{version}-%{release}
+Requires:         openstack-nova-console = %{version}-%{release}
 Requires:         openstack-nova-console = %{version}-%{release}
 
 
@@ -284,6 +287,24 @@ standard hardware configurations and seven major hypervisors.
 This package contains the Nova services providing
 console access services to Virtual Machines.
 
+%package cells
+Summary:          OpenStack Nova Cells services
+Group:            Applications/System
+
+Requires:         openstack-nova-common = %{version}-%{release}
+
+%description cells
+OpenStack Compute (codename Nova) is open source software designed to
+provision and manage large networks of virtual machines, creating a
+redundant and scalable cloud computing platform. It gives you the
+software, control panels, and APIs required to orchestrate a cloud,
+including running instances, managing networks, and controlling access
+through users and projects. OpenStack Compute strives to be both
+hardware and hypervisor agnostic, currently supporting a variety of
+standard hardware configurations and seven major hypervisors.
+
+This package contains the Nova Cells service providing additional 
+scaling and (geographic) distribution for compute services.
 
 %package -n       python-nova
 Summary:          Nova Python libraries
@@ -311,6 +332,7 @@ Requires:         python-anyjson
 Requires:         python-boto
 Requires:         python-cheetah
 Requires:         python-ldap
+Requires:         python-stevedore
 
 Requires:         python-memcached
 
@@ -433,6 +455,14 @@ install -p -D -m 640 etc/nova/rootwrap.conf %{buildroot}%{_sysconfdir}/nova/root
 install -p -D -m 640 etc/nova/api-paste.ini %{buildroot}%{_sysconfdir}/nova/api-paste.ini
 install -p -D -m 640 etc/nova/policy.json %{buildroot}%{_sysconfdir}/nova/policy.json
 
+# Install version info file
+cat > %{buildroot}%{_sysconfdir}/nova/release <<EOF
+[Nova]
+vendor = Red Hat Inc.
+product = OpenStack Nova
+package = %{release}
+EOF
+
 # Install initscripts for Nova services
 install -p -D -m 755 %{SOURCE10} %{buildroot}%{_initrddir}/openstack-nova-api
 install -p -D -m 755 %{SOURCE11} %{buildroot}%{_initrddir}/openstack-nova-cert
@@ -445,6 +475,7 @@ install -p -D -m 755 %{SOURCE18} %{buildroot}%{_initrddir}/openstack-nova-xvpvnc
 install -p -D -m 755 %{SOURCE19} %{buildroot}%{_initrddir}/openstack-nova-console
 install -p -D -m 755 %{SOURCE24} %{buildroot}%{_initrddir}/openstack-nova-consoleauth
 install -p -D -m 755 %{SOURCE25} %{buildroot}%{_initrddir}/openstack-nova-metadata-api
+install -p -D -m 755 %{SOURCE26} %{buildroot}%{_initrddir}/openstack-nova-cells
 
 # Install sudoers
 install -p -D -m 440 %{SOURCE20} %{buildroot}%{_sysconfdir}/sudoers.d/nova
@@ -471,6 +502,7 @@ install -p -m 644 %{SOURCE180} %{buildroot}%{_datadir}/nova/
 install -p -m 644 %{SOURCE190} %{buildroot}%{_datadir}/nova/
 install -p -m 644 %{SOURCE240} %{buildroot}%{_datadir}/nova/
 install -p -m 644 %{SOURCE250} %{buildroot}%{_datadir}/nova/
+install -p -m 644 %{SOURCE260} %{buildroot}%{_datadir}/nova/
 
 # Install rootwrap files in /usr/share/nova/rootwrap
 mkdir -p %{buildroot}%{_datarootdir}/nova/rootwrap/
@@ -520,6 +552,8 @@ done
 for svc in console consoleauth xvpvncproxy; do
     /sbin/chkconfig --add openstack-nova-$svc
 done
+%post cells
+/sbin/chkconfig --add openstack-nova-cells
 
 %preun compute
 if [ $1 -eq 0 ] ; then
@@ -573,6 +607,13 @@ fi
 %preun console
 if [ $1 -eq 0 ] ; then
     for svc in console consoleauth xvpvncproxy; do
+        /sbin/service openstack-nova-${svc} stop >/dev/null 2>&1
+        /sbin/chkconfig --del openstack-nova-${svc}
+    done
+fi
+%preun cells
+if [ $1 -eq 0 ] ; then
+    for svc in cells; do
         /sbin/service openstack-nova-${svc} stop >/dev/null 2>&1
         /sbin/chkconfig --del openstack-nova-${svc}
     done
@@ -634,6 +675,13 @@ if [ $1 -ge 1 ] ; then
         /sbin/service openstack-nova-${svc} condrestart > /dev/null 2>&1 || :
     done
 fi
+%postun cells
+if [ $1 -ge 1 ] ; then
+    # Package upgrade, not uninstall
+    for svc in cells; do
+        /sbin/service openstack-nova-${svc} condrestart > /dev/null 2>&1 || :
+    done
+fi
 
 %files
 %doc LICENSE
@@ -642,6 +690,7 @@ fi
 %files common
 %doc LICENSE
 %dir %{_sysconfdir}/nova
+%{_sysconfdir}/nova/release 
 %config(noreplace) %attr(-, root, nova) %{_sysconfdir}/nova/nova.conf
 %config(noreplace) %attr(-, root, nova) %{_sysconfdir}/nova/api-paste.ini
 %config(noreplace) %attr(-, root, nova) %{_sysconfdir}/nova/rootwrap.conf
@@ -674,6 +723,8 @@ fi
 
 %files compute
 %{_bindir}/nova-compute
+%{_bindir}/nova-baremetal-deploy-helper
+%{_bindir}/nova-baremetal-manage
 %{_initrddir}/openstack-nova-compute
 %{_datarootdir}/nova/openstack-nova-compute.upstart
 %{_datarootdir}/nova/rootwrap/compute.filters
@@ -735,6 +786,11 @@ fi
 %{_initrddir}/openstack-nova-xvpvncproxy
 %{_datarootdir}/nova/openstack-nova-xvpvncproxy.upstart
 
+%files cells
+%{_bindir}/nova-cells
+%{_initrddir}/openstack-nova-cells
+%{_datarootdir}/nova/openstack-nova-cells.upstart
+
 %files -n python-nova
 %defattr(-,root,root,-)
 %doc LICENSE
@@ -747,6 +803,12 @@ fi
 %endif
 
 %changelog
+* Mon Jan 14 2013 Nikola Đipanov <ndipanov@redhat.com> - 2013.1-0.4.g2
+- Update to Grizzly milestone 2
+- Add the version info file
+- Add python-stevedore dependency
+- Add the cells subpackage and init scripts
+
 * Thu Dec 06 2012 Nikola Đipanov <ndipanov@redhat.com> 2013.1-0.3.g1
 - Update to Grizzly milestone 1
 - Remove volume subpackage - removed from Grizzly
