@@ -718,6 +718,7 @@ fi
 %files console
 %{_bindir}/nova-console*
 %{_bindir}/nova-xvpvncproxy
+%{_bindir}/nova-spicehtml5proxy
 %{_unitdir}/openstack-nova-console*.service
 %{_unitdir}/openstack-nova-xvpvncproxy.service
 
@@ -733,6 +734,9 @@ fi
 %endif
 
 %changelog
+* Thu Jan 17 2013 Dan Prince <dprince@redhat.com> - 2013.2-0.1.upstream
+- Add nova-spicehtml5proxy to console package.
+
 * Tue Jan 8 2013 Dan Prince <dprince@redhat.com> - 2013.2-0.1.upstream
 - Add nova-baremetal-deploy-helper.
 - Add nova-baremetal-manage.
