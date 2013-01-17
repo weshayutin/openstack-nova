@@ -1,14 +1,15 @@
 %global with_doc %{!?_without_doc:1}%{?_without_doc:0}
 
 Name:             openstack-nova
-Version:          2012.2
-Release:          0.6.f3%{?dist}
+Version:          2013.1
+Release:          0.4.g2%{?dist}
 Summary:          OpenStack Compute (nova)
 
 Group:            Applications/System
 License:          ASL 2.0
 URL:              http://openstack.org/projects/compute/
-Source0:          nova-2012.2.tar.gz
+Source0:          http://launchpad.net/nova/grizzly/grizzly-1/+download/nova-2013.1~g2.tar.gz
+
 Source1:          nova.conf
 Source3:          nova-tgt.conf
 Source6:          nova.logrotate
@@ -19,11 +20,12 @@ Source12:         openstack-nova-compute.service
 Source13:         openstack-nova-network.service
 Source14:         openstack-nova-objectstore.service
 Source15:         openstack-nova-scheduler.service
-Source16:         openstack-nova-conductor.service
 Source18:         openstack-nova-xvpvncproxy.service
 Source19:         openstack-nova-console.service
 Source20:         openstack-nova-consoleauth.service
 Source25:         openstack-nova-metadata-api.service
+Source26:         openstack-nova-conductor.service
+Source27:         openstack-nova-cells.service
 
 Source21:         nova-polkit.pkla
 Source23:         nova-polkit.rules
@@ -31,9 +33,9 @@ Source22:         nova-ifc-template
 Source24:         nova-sudoers
 
 #
-# patches_base=folsom-3
+# patches_base=grizzly-2
 #
-#Patch0001: 0001-Ensure-we-don-t-access-the-net-when-building-docs.patch
+Patch0001: 0001-Ensure-we-don-t-access-the-net-when-building-docs.patch
 
 BuildArch:        noarch
 BuildRequires:    intltool
@@ -48,8 +50,9 @@ Requires:         openstack-nova-scheduler = %{version}-%{release}
 Requires:         openstack-nova-api = %{version}-%{release}
 Requires:         openstack-nova-network = %{version}-%{release}
 Requires:         openstack-nova-objectstore = %{version}-%{release}
-Requires:         openstack-nova-console = %{version}-%{release}
 Requires:         openstack-nova-conductor = %{version}-%{release}
+Requires:         openstack-nova-console = %{version}-%{release}
+Requires:         openstack-nova-cells = %{version}-%{release}
 
 
 %description
@@ -66,7 +69,6 @@ standard hardware configurations and seven major hypervisors.
 Summary:          Components common to all OpenStack Nova services
 Group:            Applications/System
 
-#Requires:         openstack-utils
 Requires:         python-nova = %{version}-%{release}
 
 Requires(post):   systemd-units
@@ -97,10 +99,13 @@ Requires:         curl
 Requires:         iscsi-initiator-utils
 Requires:         iptables iptables-ipv6
 Requires:         vconfig
-Requires:         libguestfs-mount >= 1.7.17
 Requires:         python-libguestfs
 Requires:         libvirt >= 0.9.6
 Requires:         libvirt-python
+Requires:         openssh-clients
+Requires:         rsync
+Requires:         lvm2
+Requires:         python-cinderclient
 Requires(pre):    qemu-kvm
 
 %description compute
@@ -178,24 +183,6 @@ standard hardware configurations and seven major hypervisors.
 
 This package contains the Nova service for managing certificates.
 
-%package conductor
-Summary:          OpenStack Nova Conductor
-Group:            Applications/System
-
-Requires:         openstack-nova-common = %{version}-%{release}
-
-%description conductor
-OpenStack Compute (codename Nova) is open source software designed to
-provision and manage large networks of virtual machines, creating a
-redundant and scalable cloud computing platform. It gives you the
-software, control panels, and APIs required to orchestrate a cloud,
-including running instances, managing networks, and controlling access
-through users and projects. OpenStack Compute strives to be both
-hardware and hypervisor agnostic, currently supporting a variety of
-standard hardware configurations and seven major hypervisors.
-
-This package contains a conductor service which handles database
-updates and long running tasks for Nova compute.
 
 %package api
 Summary:          OpenStack Nova API services
@@ -215,6 +202,24 @@ standard hardware configurations and seven major hypervisors.
 
 This package contains the Nova services providing programmatic access.
 
+%package conductor
+Summary:          OpenStack Nova Conductor services
+Group:            Applications/System
+
+Requires:         openstack-nova-common = %{version}-%{release}
+
+%description conductor
+OpenStack Compute (codename Nova) is open source software designed to
+provision and manage large networks of virtual machines, creating a
+redundant and scalable cloud computing platform. It gives you the
+software, control panels, and APIs required to orchestrate a cloud,
+including running instances, managing networks, and controlling access
+through users and projects. OpenStack Compute strives to be both
+hardware and hypervisor agnostic, currently supporting a variety of
+standard hardware configurations and seven major hypervisors.
+
+This package contains the Nova services providing database access for
+the compute service
 
 %package objectstore
 Summary:          OpenStack Nova simple object store service
@@ -254,12 +259,32 @@ standard hardware configurations and seven major hypervisors.
 This package contains the Nova services providing
 console access services to Virtual Machines.
 
+%package cells
+Summary:          OpenStack Nova Cells services
+Group:            Applications/System
+
+Requires:         openstack-nova-common = %{version}-%{release}
+
+%description cells
+OpenStack Compute (codename Nova) is open source software designed to
+provision and manage large networks of virtual machines, creating a
+redundant and scalable cloud computing platform. It gives you the
+software, control panels, and APIs required to orchestrate a cloud,
+including running instances, managing networks, and controlling access
+through users and projects. OpenStack Compute strives to be both
+hardware and hypervisor agnostic, currently supporting a variety of
+standard hardware configurations and seven major hypervisors.
+
+This package contains the Nova Cells service providing additional 
+scaling and (geographic) distribution for compute services.
 
 %package -n       python-nova
 Summary:          Nova Python libraries
 Group:            Applications/System
 
 Requires:         openssl
+# Require openssh for ssh-keygen
+Requires:         openssh
 Requires:         sudo
 
 Requires:         MySQL-python
@@ -279,6 +304,7 @@ Requires:         python-anyjson
 Requires:         python-boto
 Requires:         python-cheetah
 Requires:         python-ldap
+Requires:         python-stevedore
 
 Requires:         python-memcached
 
@@ -291,9 +317,7 @@ Requires:         python-webob
 
 Requires:         python-glanceclient >= 1:0
 Requires:         python-quantumclient >= 1:2
-Requires:         python-cinderclient
 Requires:         python-novaclient
-Requires:         python-stevedore
 
 %description -n   python-nova
 OpenStack Compute (codename Nova) is open source software designed to
@@ -332,13 +356,15 @@ This package contains documentation files for nova.
 %prep
 %setup -q -n nova-%{version}
 
-#%patch0001 -p1
+%patch0001 -p1
 
 find . \( -name .gitignore -o -name .placeholder \) -delete
 
 find nova -name \*.py -exec sed -i '/\/usr\/bin\/env python/{d;q}' {} +
 
 sed -i '/setuptools_git/d' setup.py
+
+sed -i s/LOCALBRANCH:LOCALREVISION/%{release}/ nova/version.py
 
 %build
 %{__python} setup.py build
@@ -350,7 +376,7 @@ openstack-config --del etc/nova/api-paste.ini filter:authtoken admin_password
 openstack-config --del etc/nova/api-paste.ini filter:authtoken auth_host
 openstack-config --del etc/nova/api-paste.ini filter:authtoken auth_port
 openstack-config --del etc/nova/api-paste.ini filter:authtoken auth_protocol
-openstack-config --del etc/nova/api-paste.ini filter:authtoken signing_dirname
+openstack-config --del etc/nova/api-paste.ini filter:authtoken signing_dir
 
 %install
 %{__python} setup.py install -O1 --skip-build --root %{buildroot}
@@ -397,9 +423,19 @@ touch %{buildroot}%{_sharedstatedir}/nova/CA/private/cakey.pem
 # Install config files
 install -d -m 755 %{buildroot}%{_sysconfdir}/nova
 install -p -D -m 640 %{SOURCE1} %{buildroot}%{_sysconfdir}/nova/nova.conf
+install -d -m 755 %{buildroot}%{_sysconfdir}/nova/volumes
+install -p -D -m 644 %{SOURCE3} %{buildroot}%{_sysconfdir}/tgt/conf.d/nova.conf
 install -p -D -m 640 etc/nova/rootwrap.conf %{buildroot}%{_sysconfdir}/nova/rootwrap.conf
 install -p -D -m 640 etc/nova/api-paste.ini %{buildroot}%{_sysconfdir}/nova/api-paste.ini
 install -p -D -m 640 etc/nova/policy.json %{buildroot}%{_sysconfdir}/nova/policy.json
+
+# Install version info file
+cat > %{buildroot}%{_sysconfdir}/nova/release <<EOF
+[Nova]
+vendor = Fedora Project
+product = OpenStack Nova
+package = %{release}
+EOF
 
 # Install initscripts for Nova services
 install -p -D -m 755 %{SOURCE10} %{buildroot}%{_unitdir}/openstack-nova-api.service
@@ -408,11 +444,12 @@ install -p -D -m 755 %{SOURCE12} %{buildroot}%{_unitdir}/openstack-nova-compute.
 install -p -D -m 755 %{SOURCE13} %{buildroot}%{_unitdir}/openstack-nova-network.service
 install -p -D -m 755 %{SOURCE14} %{buildroot}%{_unitdir}/openstack-nova-objectstore.service
 install -p -D -m 755 %{SOURCE15} %{buildroot}%{_unitdir}/openstack-nova-scheduler.service
-install -p -D -m 755 %{SOURCE16} %{buildroot}%{_unitdir}/openstack-nova-conductor.service
 install -p -D -m 755 %{SOURCE18} %{buildroot}%{_unitdir}/openstack-nova-xvpvncproxy.service
 install -p -D -m 755 %{SOURCE19} %{buildroot}%{_unitdir}/openstack-nova-console.service
 install -p -D -m 755 %{SOURCE20} %{buildroot}%{_unitdir}/openstack-nova-consoleauth.service
 install -p -D -m 755 %{SOURCE25} %{buildroot}%{_unitdir}/openstack-nova-metadata-api.service
+install -p -D -m 755 %{SOURCE26} %{buildroot}%{_unitdir}/openstack-nova-conductor.service
+install -p -D -m 755 %{SOURCE27} %{buildroot}%{_unitdir}/openstack-nova-cells.service
 
 # Install sudoers
 install -p -D -m 440 %{SOURCE24} %{buildroot}%{_sysconfdir}/sudoers.d/nova
@@ -425,14 +462,13 @@ install -d -m 755 %{buildroot}%{_localstatedir}/run/nova
 
 # Install template files
 install -p -D -m 644 nova/cloudpipe/client.ovpn.template %{buildroot}%{_datarootdir}/nova/client.ovpn.template
-install -p -D -m 644 nova/virt/interfaces.template %{buildroot}%{_datarootdir}/nova/interfaces.template
 install -p -D -m 644 %{SOURCE22} %{buildroot}%{_datarootdir}/nova/interfaces.template
 
 # Install rootwrap files in /usr/share/nova/rootwrap
 mkdir -p %{buildroot}%{_datarootdir}/nova/rootwrap/
 install -p -D -m 644 etc/nova/rootwrap.d/* %{buildroot}%{_datarootdir}/nova/rootwrap/
 
-# Older format. Remove when we no longer want to support Fedora 17 with master branch package
+# Older format. Remove when we no longer want to support Fedora 17 with master branch packages
 install -d -m 755 %{buildroot}%{_sysconfdir}/polkit-1/localauthority/50-local.d
 install -p -D -m 644 %{SOURCE21} %{buildroot}%{_sysconfdir}/polkit-1/localauthority/50-local.d/50-nova.pkla
 # Newer format since Fedora 18
@@ -458,10 +494,6 @@ exit 0
 
 %pre compute
 usermod -a -G qemu nova
-# Add nova to the fuse group (if present) to support guestmount
-if getent group fuse >/dev/null; then
-  usermod -a -G fuse nova
-fi
 exit 0
 
 %post compute
@@ -484,12 +516,12 @@ if [ $1 -eq 1 ] ; then
     # Initial installation
     /bin/systemctl daemon-reload >/dev/null 2>&1 || :
 fi
-%post conductor
+%post api
 if [ $1 -eq 1 ] ; then
     # Initial installation
     /bin/systemctl daemon-reload >/dev/null 2>&1 || :
 fi
-%post api
+%post conductor
 if [ $1 -eq 1 ] ; then
     # Initial installation
     /bin/systemctl daemon-reload >/dev/null 2>&1 || :
@@ -500,6 +532,12 @@ if [ $1 -eq 1 ] ; then
     /bin/systemctl daemon-reload >/dev/null 2>&1 || :
 fi
 %post console
+if [ $1 -eq 1 ] ; then
+    # Initial installation
+    /bin/systemctl daemon-reload >/dev/null 2>&1 || :
+fi
+
+%post cells
 if [ $1 -eq 1 ] ; then
     # Initial installation
     /bin/systemctl daemon-reload >/dev/null 2>&1 || :
@@ -533,13 +571,6 @@ if [ $1 -eq 0 ] ; then
         /bin/systemctl stop openstack-nova-${svc}.service > /dev/null 2>&1 || :
     done
 fi
-%preun conductor
-if [ $1 -eq 0 ] ; then
-    for svc in conductor; do
-        /bin/systemctl --no-reload disable openstack-nova-${svc}.service > /dev/null 2>&1 || :
-        /bin/systemctl stop openstack-nova-${svc}.service > /dev/null 2>&1 || :
-    done
-fi
 %preun api
 if [ $1 -eq 0 ] ; then
     for svc in api metadata-api; do
@@ -554,9 +585,23 @@ if [ $1 -eq 0 ] ; then
         /bin/systemctl stop openstack-nova-${svc}.service > /dev/null 2>&1 || :
     done
 fi
+%preun conductor
+if [ $1 -eq 0 ] ; then
+    for svc in conductor; do
+        /bin/systemctl --no-reload disable openstack-nova-${svc}.service > /dev/null 2>&1 || :
+        /bin/systemctl stop openstack-nova-${svc}.service > /dev/null 2>&1 || :
+    done
+fi
 %preun console
 if [ $1 -eq 0 ] ; then
     for svc in console consoleauth xvpvncproxy; do
+        /bin/systemctl --no-reload disable openstack-nova-${svc}.service > /dev/null 2>&1 || :
+        /bin/systemctl stop openstack-nova-${svc}.service > /dev/null 2>&1 || :
+    done
+fi
+%preun cells
+if [ $1 -eq 0 ] ; then
+    for svc in cells; do
         /bin/systemctl --no-reload disable openstack-nova-${svc}.service > /dev/null 2>&1 || :
         /bin/systemctl stop openstack-nova-${svc}.service > /dev/null 2>&1 || :
     done
@@ -594,14 +639,6 @@ if [ $1 -ge 1 ] ; then
         /bin/systemctl try-restart openstack-nova-${svc}.service >/dev/null 2>&1 || :
     done
 fi
-%postun conductor
-/bin/systemctl daemon-reload >/dev/null 2>&1 || :
-if [ $1 -ge 1 ] ; then
-    # Package upgrade, not uninstall
-    for svc in conductor; do
-        /bin/systemctl try-restart openstack-nova-${svc}.service >/dev/null 2>&1 || :
-    done
-fi
 %postun api
 /bin/systemctl daemon-reload >/dev/null 2>&1 || :
 if [ $1 -ge 1 ] ; then
@@ -618,11 +655,27 @@ if [ $1 -ge 1 ] ; then
         /bin/systemctl try-restart openstack-nova-${svc}.service >/dev/null 2>&1 || :
     done
 fi
+%postun conductor
+/bin/systemctl daemon-reload >/dev/null 2>&1 || :
+if [ $1 -ge 1 ] ; then
+    # Package upgrade, not uninstall
+    for svc in conductor; do
+        /bin/systemctl try-restart openstack-nova-${svc}.service >/dev/null 2>&1 || :
+    done
+fi
 %postun console
 /bin/systemctl daemon-reload >/dev/null 2>&1 || :
 if [ $1 -ge 1 ] ; then
     # Package upgrade, not uninstall
     for svc in console consoleauth xvpvncproxy; do
+        /bin/systemctl try-restart openstack-nova-${svc}.service >/dev/null 2>&1 || :
+    done
+fi
+%postun cells
+/bin/systemctl daemon-reload >/dev/null 2>&1 || :
+if [ $1 -ge 1 ] ; then
+    # Package upgrade, not uninstall
+    for svc in cells; do
         /bin/systemctl try-restart openstack-nova-${svc}.service >/dev/null 2>&1 || :
     done
 fi
@@ -634,6 +687,7 @@ fi
 %files common
 %doc LICENSE
 %dir %{_sysconfdir}/nova
+%{_sysconfdir}/nova/release
 %config(noreplace) %attr(-, root, nova) %{_sysconfdir}/nova/nova.conf
 %config(noreplace) %attr(-, root, nova) %{_sysconfdir}/nova/api-paste.ini
 %config(noreplace) %attr(-, root, nova) %{_sysconfdir}/nova/rootwrap.conf
@@ -646,9 +700,6 @@ fi
 %dir %attr(0755, nova, root) %{_localstatedir}/log/nova
 %dir %attr(0755, nova, root) %{_localstatedir}/run/nova
 
-%{_bindir}/nova-baremetal-deploy-helper
-%{_bindir}/nova-baremetal-manage
-%{_bindir}/nova-cells
 %{_bindir}/nova-clear-rabbit-queues
 # TODO. zmq-receiver may need its own service?
 %{_bindir}/nova-rpc-zmq-receiver
@@ -669,8 +720,11 @@ fi
 
 %files compute
 %{_bindir}/nova-compute
+%{_bindir}/nova-baremetal-deploy-helper
+%{_bindir}/nova-baremetal-manage
 %{_unitdir}/openstack-nova-compute.service
 %{_datarootdir}/nova/rootwrap/compute.filters
+%config(noreplace) %{_sysconfdir}/tgt/conf.d/nova.conf
 
 %files network
 %{_bindir}/nova-network
@@ -702,14 +756,14 @@ fi
 %dir %attr(0750, -, -) %{_sharedstatedir}/nova/CA/private
 %ghost %config(missingok,noreplace) %verify(not md5 size mtime) %{_sharedstatedir}/nova/CA/private/cakey.pem
 
-%files conductor
-%{_bindir}/nova-conductor
-%{_unitdir}/openstack-nova-conductor.service
-
 %files api
 %{_bindir}/nova-api*
 %{_unitdir}/openstack-nova-*api.service
 %{_datarootdir}/nova/rootwrap/api-metadata.filters
+
+%files conductor
+%{_bindir}/nova-conductor
+%{_unitdir}/openstack-nova-conductor.service
 
 %files objectstore
 %{_bindir}/nova-objectstore
@@ -717,10 +771,14 @@ fi
 
 %files console
 %{_bindir}/nova-console*
-%{_bindir}/nova-xvpvncproxy
 %{_bindir}/nova-spicehtml5proxy
+%{_bindir}/nova-xvpvncproxy
 %{_unitdir}/openstack-nova-console*.service
 %{_unitdir}/openstack-nova-xvpvncproxy.service
+
+%files cells
+%{_bindir}/nova-cells
+%{_unitdir}/openstack-nova-cells.service
 
 %files -n python-nova
 %defattr(-,root,root,-)
@@ -734,39 +792,41 @@ fi
 %endif
 
 %changelog
-* Thu Jan 17 2013 Dan Prince <dprince@redhat.com> - 2013.2-0.1.upstream
-- Add nova-spicehtml5proxy to console package.
+* Thu Jan 17 2013 Dan Prince <dprince@redhat.com> - 2013.1-0.1.g3
+-Add nova-spicehtml5proxy to console package.
 
-* Tue Jan 8 2013 Dan Prince <dprince@redhat.com> - 2013.2-0.1.upstream
-- Add nova-baremetal-deploy-helper.
-- Add nova-baremetal-manage.
+* Fri Jan 11 2013 Nikola Đipanov <ndipanov@redhat.com> - 2013.1-0.4.g2
+- Update to Grizzly milestone 2
+- Add the version info file
+- Add python-stevedore dependency
+- Add the cells subpackage and service file
 
-* Fri Jan 4 2013 Dan Prince <dprince@redhat.com> - 2013.2-0.1.upstream
-- Add nova-cells.
+* Thu Dec 06 2012 Nikola Đipanov <ndipanov@redhat.com> - 2013.1-0.3.g1
+- signing_dir renamed from incorrect signing_dirname in default nova.conf
 
-* Mon Dec 10 2012 Dan Prince <dprince@redhat.com> - 2013.2-0.1.upstream
-- Add python-stevedore dependency to python-nova.
+* Thu Nov 29 2012 Nikola Đipanov <ndipanov@redhat.com> 2013.1-0.2.g1
+-Fix a few spec file issues introduced by the Grizzly update
 
-* Sat Dec 6 2012 Dan Prince <dprince@redhat.com> - 2013.2-0.1.upstream
-- Switch --logfile to --log-file in systemd service files.
+* Wed Nov 28 2012 Nikola Đipanov <ndipanov@redhat.com> 2013.1-0.1.g1
+- Update to Grizzly milestone 1
+- Remove volume subpackage - removed from Grizzly
+- Add the conductor subpackage - new service added in Grizzly
+- Depend on python-libguestfs instead of libguestfs-mount
+- Don't add the nova user to the group fuse
+- Removes openstack-utils from requirements for nova-common
 
-* Sat Dec 1 2012 Dan Prince <dprince@redhat.com> - 2013.2-0.1.upstream
-- Add python-guestfs to the nova-compute package.
+* Thu Sep 27 2012 Pádraig Brady <pbrady@redhat.com> - 2012.2-1
+- Update to folsom final
 
-* Sun Nov 6 2012 Dan Prince <dprince@redhat.com> - 2013.1-0.1.upstream
-- Add nova-conductor service.
+* Wed Sep 26 2012 Pádraig Brady <pbrady@redhat.com> - 2012.2-0.11.rc1
+- Support newer polkit config format to allow communication with libvirtd
+- Fix to ensure that tgt configuration is honored
 
-* Sun Nov 6 2012 Dan Prince <dprince@redhat.com> - 2012.2-0.6.upstream
-- Sync w/ latest folsom changes.
+* Fri Sep 21 2012 Pádraig Brady <pbrady@redhat.com> - 2012.2-0.8.rc1
+- Update to folsom rc1
 
-* Sun Oct 28 2012 Dan Prince <dprince@redhat.com> - 2012.2-0.6.upstream
-- Remove nova volume files.
-
-* Thu Sep 13 2012 Dan Prince <dprince@redhat.com> - 2012.2-0.6.upstream
-- Remove quantumclient requirement (for now).
-- Remove requirement on openstack-utils. Leave api-paste.ini as is.
-- Disable patching for upstream builds.
-- Remove glanceclient >= 1 requirement.
+* Mon Sep 17 2012 Alan Pevec <apevec@redhat.com> - 2012.2-0.7.f3
+- Remove user config from paste ini files
 
 * Mon Aug 27 2012 Pádraig Brady <P@draigBrady.com> - 2012.2-0.6.f3
 - Update to folsom milestone 3
