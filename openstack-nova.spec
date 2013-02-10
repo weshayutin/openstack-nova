@@ -305,6 +305,7 @@ Requires:         python-boto
 Requires:         python-cheetah
 Requires:         python-ldap
 Requires:         python-stevedore
+Requires:         python-pyasn1
 
 Requires:         python-memcached
 
@@ -792,6 +793,9 @@ fi
 %endif
 
 %changelog
+* Sun Feb 10 2013 Dan Prince <dprince@redhat.com> - 2013.1-0.1.g3
+-Add python-pyasn1 dependency.
+
 * Thu Jan 17 2013 Dan Prince <dprince@redhat.com> - 2013.1-0.1.g3
 -Add nova-spicehtml5proxy to console package.
 
