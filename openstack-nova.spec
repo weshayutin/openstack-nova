@@ -319,6 +319,7 @@ Requires:         python-webob
 Requires:         python-glanceclient >= 1:0
 Requires:         python-quantumclient >= 1:2
 Requires:         python-novaclient
+Requires:         python-oslo-config
 
 %description -n   python-nova
 OpenStack Compute (codename Nova) is open source software designed to
@@ -793,6 +794,9 @@ fi
 %endif
 
 %changelog
+* Tue Feb 19 2013 Dan Prince <dprince@redhat.com> - 2013.1-0.1.g3
+-Add python-oslo-config dependency.
+
 * Sun Feb 10 2013 Dan Prince <dprince@redhat.com> - 2013.1-0.1.g3
 -Add python-pyasn1 dependency.
 
