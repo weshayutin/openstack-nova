@@ -794,6 +794,9 @@ fi
 %endif
 
 %changelog
+* Thu Feb 21 2013 Dan Prince <dprince@redhat.com> - 2013.1-0.1.g3
+-Set LIBGUESTFS_ATTACH_METHOD=appliance in compute systemd script.
+
 * Tue Feb 19 2013 Dan Prince <dprince@redhat.com> - 2013.1-0.1.g3
 -Add python-oslo-config dependency.
 
