@@ -2,13 +2,13 @@
 
 Name:             openstack-nova
 Version:          2013.1
-Release:          0.4.g2%{?dist}
+Release:          0.5.g3%{?dist}
 Summary:          OpenStack Compute (nova)
 
 Group:            Applications/System
 License:          ASL 2.0
 URL:              http://openstack.org/projects/compute/
-Source0:          http://launchpad.net/nova/grizzly/grizzly-1/+download/nova-2013.1~g2.tar.gz
+Source0:          https://launchpad.net/nova/grizzly/grizzly-3/+download/nova-2013.1.g3.tar.gz
 
 Source1:          nova.conf
 Source6:          nova.logrotate
@@ -37,13 +37,15 @@ Source25:         openstack-nova-metadata-api.init
 Source250:        openstack-nova-metadata-api.upstart
 Source26:         openstack-nova-cells.init
 Source260:        openstack-nova-cells.upstart
+Source27:         openstack-nova-spicehtml5proxy.init
+Source270:        openstack-nova-spicehtml5proxy.upstart
 
 Source20:         nova-sudoers
 Source21:         nova-polkit.pkla
 Source22:         nova-ifc-template
 
 #
-# patches_base=grizzly-2
+# patches_base=2013.1.g3
 #
 Patch0001: 0001-Ensure-we-don-t-access-the-net-when-building-docs.patch
 
@@ -273,6 +275,7 @@ Summary:          OpenStack Nova console access services
 Group:            Applications/System
 
 Requires:         openstack-nova-common = %{version}-%{release}
+Requires:         python-websockify
 
 %description console
 OpenStack Compute (codename Nova) is open source software designed to
@@ -346,6 +349,7 @@ Requires:         python-webob1.0
 Requires:         python-glanceclient >= 1:0
 Requires:         python-quantumclient >= 1:2
 Requires:         python-novaclient
+Requires:         python-oslo-config
 
 %description -n   python-nova
 OpenStack Compute (codename Nova) is open source software designed to
@@ -378,7 +382,7 @@ This package contains documentation files for nova.
 %endif
 
 %prep
-%setup -q -n nova-%{version}
+%setup -q -n nova-%{version}.g3
 
 %patch0001 -p1
 
@@ -476,6 +480,7 @@ install -p -D -m 755 %{SOURCE19} %{buildroot}%{_initrddir}/openstack-nova-consol
 install -p -D -m 755 %{SOURCE24} %{buildroot}%{_initrddir}/openstack-nova-consoleauth
 install -p -D -m 755 %{SOURCE25} %{buildroot}%{_initrddir}/openstack-nova-metadata-api
 install -p -D -m 755 %{SOURCE26} %{buildroot}%{_initrddir}/openstack-nova-cells
+install -p -D -m 755 %{SOURCE27} %{buildroot}%{_initrddir}/openstack-nova-spicehtml5proxy
 
 # Install sudoers
 install -p -D -m 440 %{SOURCE20} %{buildroot}%{_sysconfdir}/sudoers.d/nova
@@ -503,6 +508,7 @@ install -p -m 644 %{SOURCE190} %{buildroot}%{_datadir}/nova/
 install -p -m 644 %{SOURCE240} %{buildroot}%{_datadir}/nova/
 install -p -m 644 %{SOURCE250} %{buildroot}%{_datadir}/nova/
 install -p -m 644 %{SOURCE260} %{buildroot}%{_datadir}/nova/
+install -p -m 644 %{SOURCE270} %{buildroot}%{_datadir}/nova/
 
 # Install rootwrap files in /usr/share/nova/rootwrap
 mkdir -p %{buildroot}%{_datarootdir}/nova/rootwrap/
@@ -781,10 +787,13 @@ fi
 %files console
 %{_bindir}/nova-console*
 %{_bindir}/nova-xvpvncproxy
+%{_bindir}/nova-spicehtml5proxy
 %{_initrddir}/openstack-nova-console*
 %{_datarootdir}/nova/openstack-nova-console*.upstart
 %{_initrddir}/openstack-nova-xvpvncproxy
 %{_datarootdir}/nova/openstack-nova-xvpvncproxy.upstart
+%{_initrddir}/openstack-nova-spicehtml5proxy*
+%{_datarootdir}/nova/openstack-nova-spicehtml5proxy.upstart
 
 %files cells
 %{_bindir}/nova-cells
@@ -795,7 +804,7 @@ fi
 %defattr(-,root,root,-)
 %doc LICENSE
 %{python_sitelib}/nova
-%{python_sitelib}/nova-%{version}-*.egg-info
+%{python_sitelib}/nova-%{version}*.egg-info
 
 %if 0%{?with_doc}
 %files doc
@@ -803,6 +812,9 @@ fi
 %endif
 
 %changelog
+* Mon Feb 25 2013 Nikola Đipanov <ndipanov@redhat.com> - 2013.1-0.5.g3
+- Update to Grizzly milestone 3
+
 * Mon Jan 14 2013 Nikola Đipanov <ndipanov@redhat.com> - 2013.1-0.4.g2
 - Update to Grizzly milestone 2
 - Add the version info file
