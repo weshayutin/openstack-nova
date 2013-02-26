@@ -2,7 +2,7 @@
 
 Name:             openstack-nova
 Version:          2013.1
-Release:          0.5.g3%{?dist}
+Release:          0.6.g3%{?dist}
 Summary:          OpenStack Compute (nova)
 
 Group:            Applications/System
@@ -350,6 +350,7 @@ Requires:         python-glanceclient >= 1:0
 Requires:         python-quantumclient >= 1:2
 Requires:         python-novaclient
 Requires:         python-oslo-config
+Requires:         python-pyasn1
 
 %description -n   python-nova
 OpenStack Compute (codename Nova) is open source software designed to
@@ -812,6 +813,9 @@ fi
 %endif
 
 %changelog
+* Tue Feb 26 2013 Nikola Đipanov <ndipanov@redhat.com> - 2013.1-0.6.g3
+- Add dep to python-pyasn1
+
 * Mon Feb 25 2013 Nikola Đipanov <ndipanov@redhat.com> - 2013.1-0.5.g3
 - Update to Grizzly milestone 3
 
