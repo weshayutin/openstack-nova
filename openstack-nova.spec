@@ -2,7 +2,7 @@
 
 Name:             openstack-nova
 Version:          2013.1
-Release:          0.6.g3%{?dist}
+Release:          0.9.g3%{?dist}
 Summary:          OpenStack Compute (nova)
 
 Group:            Applications/System
@@ -363,8 +363,6 @@ This package contains the nova Python library.
 %package doc
 Summary:          Documentation for OpenStack Compute
 Group:            Documentation
-
-Requires:         %{name} = %{version}-%{release}
 
 BuildRequires:    graphviz
 
@@ -813,6 +811,9 @@ fi
 %endif
 
 %changelog
+* Tue Mar 12 2013 Pádraig Brady - 2013.1-0.9.g3
+- Allow openstack-nova-doc to be installed in isolation
+
 * Tue Feb 26 2013 Nikola Đipanov <ndipanov@redhat.com> - 2013.1-0.6.g3
 - Add dep to python-pyasn1
 
