@@ -11,7 +11,6 @@ URL:              http://openstack.org/projects/compute/
 Source0:          https://launchpad.net/nova/grizzly/grizzly-3/+download/nova-2013.1.g3.tar.gz
 
 Source1:          nova.conf
-Source3:          nova-tgt.conf
 Source6:          nova.logrotate
 
 Source10:         openstack-nova-api.service
@@ -356,7 +355,7 @@ This package contains documentation files for nova.
 %endif
 
 %prep
-%setup -q -n nova-%{version}.g3
+%setup -q -n nova-%{version}
 
 %patch0001 -p1
 
@@ -425,7 +424,6 @@ touch %{buildroot}%{_sharedstatedir}/nova/CA/private/cakey.pem
 install -d -m 755 %{buildroot}%{_sysconfdir}/nova
 install -p -D -m 640 %{SOURCE1} %{buildroot}%{_sysconfdir}/nova/nova.conf
 install -d -m 755 %{buildroot}%{_sysconfdir}/nova/volumes
-install -p -D -m 644 %{SOURCE3} %{buildroot}%{_sysconfdir}/tgt/conf.d/nova.conf
 install -p -D -m 640 etc/nova/rootwrap.conf %{buildroot}%{_sysconfdir}/nova/rootwrap.conf
 install -p -D -m 640 etc/nova/api-paste.ini %{buildroot}%{_sysconfdir}/nova/api-paste.ini
 install -p -D -m 640 etc/nova/policy.json %{buildroot}%{_sysconfdir}/nova/policy.json
@@ -725,7 +723,6 @@ fi
 %{_bindir}/nova-baremetal-manage
 %{_unitdir}/openstack-nova-compute.service
 %{_datarootdir}/nova/rootwrap/compute.filters
-%config(noreplace) %{_sysconfdir}/tgt/conf.d/nova.conf
 
 %files network
 %{_bindir}/nova-network
@@ -794,6 +791,9 @@ fi
 %endif
 
 %changelog
+* Thu Mar 14 2013 Dan Prince - 2013.1-0.9.g3
+- Remove nova-tgt.conf (no longer used).
+
 * Tue Mar 12 2013 Pádraig Brady - 2013.1-0.9.g3
 - Allow openstack-nova-doc to be installed in isolation
 
