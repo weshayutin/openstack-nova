@@ -2,13 +2,13 @@
 
 Name:             openstack-nova
 Version:          2013.1
-Release:          0.4.g2%{?dist}
+Release:          0.9.g3%{?dist}
 Summary:          OpenStack Compute (nova)
 
 Group:            Applications/System
 License:          ASL 2.0
 URL:              http://openstack.org/projects/compute/
-Source0:          http://launchpad.net/nova/grizzly/grizzly-1/+download/nova-2013.1~g2.tar.gz
+Source0:          https://launchpad.net/nova/grizzly/grizzly-3/+download/nova-2013.1.g3.tar.gz
 
 Source1:          nova.conf
 Source3:          nova-tgt.conf
@@ -26,6 +26,7 @@ Source20:         openstack-nova-consoleauth.service
 Source25:         openstack-nova-metadata-api.service
 Source26:         openstack-nova-conductor.service
 Source27:         openstack-nova-cells.service
+Source28:         openstack-nova-spicehtml5proxy.service
 
 Source21:         nova-polkit.pkla
 Source23:         nova-polkit.rules
@@ -33,7 +34,7 @@ Source22:         nova-ifc-template
 Source24:         nova-sudoers
 
 #
-# patches_base=grizzly-2
+# patches_base=2013.1.g3
 #
 Patch0001: 0001-Ensure-we-don-t-access-the-net-when-building-docs.patch
 
@@ -245,6 +246,7 @@ Summary:          OpenStack Nova console access services
 Group:            Applications/System
 
 Requires:         openstack-nova-common = %{version}-%{release}
+Requires:         python-websockify
 
 %description console
 OpenStack Compute (codename Nova) is open source software designed to
@@ -305,7 +307,6 @@ Requires:         python-boto
 Requires:         python-cheetah
 Requires:         python-ldap
 Requires:         python-stevedore
-Requires:         python-pyasn1
 
 Requires:         python-memcached
 
@@ -320,6 +321,7 @@ Requires:         python-glanceclient >= 1:0
 Requires:         python-quantumclient >= 1:2
 Requires:         python-novaclient
 Requires:         python-oslo-config
+Requires:         python-pyasn1
 
 %description -n   python-nova
 OpenStack Compute (codename Nova) is open source software designed to
@@ -332,8 +334,6 @@ This package contains the nova Python library.
 %package doc
 Summary:          Documentation for OpenStack Compute
 Group:            Documentation
-
-Requires:         %{name} = %{version}-%{release}
 
 BuildRequires:    systemd-units
 BuildRequires:    graphviz
@@ -356,7 +356,7 @@ This package contains documentation files for nova.
 %endif
 
 %prep
-%setup -q -n nova-%{version}
+%setup -q -n nova-%{version}.g3
 
 %patch0001 -p1
 
@@ -406,7 +406,6 @@ popd
 # Setup directories
 install -d -m 755 %{buildroot}%{_sharedstatedir}/nova
 install -d -m 755 %{buildroot}%{_sharedstatedir}/nova/buckets
-install -d -m 755 %{buildroot}%{_sharedstatedir}/nova/images
 install -d -m 755 %{buildroot}%{_sharedstatedir}/nova/instances
 install -d -m 755 %{buildroot}%{_sharedstatedir}/nova/keys
 install -d -m 755 %{buildroot}%{_sharedstatedir}/nova/networks
@@ -452,6 +451,7 @@ install -p -D -m 755 %{SOURCE20} %{buildroot}%{_unitdir}/openstack-nova-consolea
 install -p -D -m 755 %{SOURCE25} %{buildroot}%{_unitdir}/openstack-nova-metadata-api.service
 install -p -D -m 755 %{SOURCE26} %{buildroot}%{_unitdir}/openstack-nova-conductor.service
 install -p -D -m 755 %{SOURCE27} %{buildroot}%{_unitdir}/openstack-nova-cells.service
+install -p -D -m 755 %{SOURCE28} %{buildroot}%{_unitdir}/openstack-nova-spicehtml5proxy.service
 
 # Install sudoers
 install -p -D -m 440 %{SOURCE24} %{buildroot}%{_sysconfdir}/sudoers.d/nova
@@ -714,7 +714,6 @@ fi
 %defattr(-, nova, nova, -)
 %dir %{_sharedstatedir}/nova
 %dir %{_sharedstatedir}/nova/buckets
-%dir %{_sharedstatedir}/nova/images
 %dir %{_sharedstatedir}/nova/instances
 %dir %{_sharedstatedir}/nova/keys
 %dir %{_sharedstatedir}/nova/networks
@@ -773,10 +772,11 @@ fi
 
 %files console
 %{_bindir}/nova-console*
-%{_bindir}/nova-spicehtml5proxy
 %{_bindir}/nova-xvpvncproxy
+%{_bindir}/nova-spicehtml5proxy
 %{_unitdir}/openstack-nova-console*.service
 %{_unitdir}/openstack-nova-xvpvncproxy.service
+%{_unitdir}/openstack-nova-spicehtml5proxy.service
 
 %files cells
 %{_bindir}/nova-cells
@@ -786,7 +786,7 @@ fi
 %defattr(-,root,root,-)
 %doc LICENSE
 %{python_sitelib}/nova
-%{python_sitelib}/nova-%{version}-*.egg-info
+%{python_sitelib}/nova-%{version}*.egg-info
 
 %if 0%{?with_doc}
 %files doc
@@ -794,17 +794,20 @@ fi
 %endif
 
 %changelog
-* Thu Feb 21 2013 Dan Prince <dprince@redhat.com> - 2013.1-0.1.g3
--Set LIBGUESTFS_ATTACH_METHOD=appliance in compute systemd script.
+* Tue Mar 12 2013 Pádraig Brady - 2013.1-0.9.g3
+- Allow openstack-nova-doc to be installed in isolation
 
-* Tue Feb 19 2013 Dan Prince <dprince@redhat.com> - 2013.1-0.1.g3
--Add python-oslo-config dependency.
+* Thu Feb 28 2013 Dan Prince <dprince@redhat.com> - 2013.1-0.8.g3
+- Use LIBGUESTFS_ATTACH_METHOD=appliance to allow injection to work
 
-* Sun Feb 10 2013 Dan Prince <dprince@redhat.com> - 2013.1-0.1.g3
--Add python-pyasn1 dependency.
+* Tue Feb 26 2013 Nikola Đipanov <ndipanov@redhat.com> - 2013.1-0.7.g3
+- Fix dependency issues caused by the Milestone 3 update
 
-* Thu Jan 17 2013 Dan Prince <dprince@redhat.com> - 2013.1-0.1.g3
--Add nova-spicehtml5proxy to console package.
+* Mon Feb 25 2013 Nikola Đipanov <ndipanov@redhat.com> - 2013.1-0.6.g3
+- Update to Grizzly milestone 3
+
+* Thu Feb 14 2013 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2013.1-0.5.g2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_19_Mass_Rebuild
 
 * Fri Jan 11 2013 Nikola Đipanov <ndipanov@redhat.com> - 2013.1-0.4.g2
 - Update to Grizzly milestone 2
