@@ -2,7 +2,7 @@
 
 Name:             openstack-nova
 Version:          2013.1
-Release:          0.9.g3%{?dist}
+Release:          0.10.g3%{?dist}
 Summary:          OpenStack Compute (nova)
 
 Group:            Applications/System
@@ -453,7 +453,6 @@ touch %{buildroot}%{_sharedstatedir}/nova/CA/private/cakey.pem
 # Install config files
 install -d -m 755 %{buildroot}%{_sysconfdir}/nova
 install -p -D -m 640 %{SOURCE1} %{buildroot}%{_sysconfdir}/nova/nova.conf
-install -d -m 755 %{buildroot}%{_sysconfdir}/nova/volumes
 install -p -D -m 640 etc/nova/rootwrap.conf %{buildroot}%{_sysconfdir}/nova/rootwrap.conf
 install -p -D -m 640 etc/nova/api-paste.ini %{buildroot}%{_sysconfdir}/nova/api-paste.ini
 install -p -D -m 640 etc/nova/policy.json %{buildroot}%{_sysconfdir}/nova/policy.json
@@ -811,6 +810,9 @@ fi
 %endif
 
 %changelog
+* Wed Mar 20 2013 Pádraig Brady - 2013.1-0.10.g3
+- Remove /etc/tgt/conf.d/nova.conf which was invalid for grizzly
+
 * Tue Mar 12 2013 Pádraig Brady - 2013.1-0.9.g3
 - Allow openstack-nova-doc to be installed in isolation
 
