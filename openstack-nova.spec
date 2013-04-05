@@ -36,6 +36,7 @@ Source24:         nova-sudoers
 # patches_base=2013.1.g3
 #
 Patch0001: 0001-Ensure-we-don-t-access-the-net-when-building-docs.patch
+Patch0002: 0002-remove-auto-deps.patch
 
 BuildArch:        noarch
 BuildRequires:    intltool
@@ -358,6 +359,7 @@ This package contains documentation files for nova.
 %setup -q -n nova-%{version}
 
 %patch0001 -p1
+%patch0002 -p1
 
 find . \( -name .gitignore -o -name .placeholder \) -delete
 
@@ -791,6 +793,9 @@ fi
 %endif
 
 %changelog
+* Thu Apr 4 2013 Dan Prince - 2013.1-0.9.g3
+- Add patch to remove auto deps.
+
 * Thu Mar 14 2013 Dan Prince - 2013.1-0.9.g3
 - Remove nova-tgt.conf (no longer used).
 
