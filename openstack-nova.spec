@@ -363,7 +363,8 @@ find . \( -name .gitignore -o -name .placeholder \) -delete
 
 find nova -name \*.py -exec sed -i '/\/usr\/bin\/env python/{d;q}' {} +
 
-sed -i '/setuptools_git/d' setup.py
+# Nuke requirements from pip-requires (which requires specific versions, etc)
+echo "" > tools/pip-requires
 
 sed -i s/LOCALBRANCH:LOCALREVISION/%{release}/ nova/version.py
 
@@ -792,7 +793,7 @@ fi
 
 %changelog
 * Wed May 8 2013 Dan Prince - 2013.1-0.9.g3
-- Updates to work w/ latest PBR patches.
+- Updates to work w/ PBR.
 
 * Thu Apr 4 2013 Dan Prince - 2013.1-0.9.g3
 - Add patch to remove auto deps.
