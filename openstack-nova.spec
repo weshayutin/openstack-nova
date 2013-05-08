@@ -43,6 +43,8 @@ BuildRequires:    python-sphinx
 BuildRequires:    python-setuptools
 BuildRequires:    python-netaddr
 BuildRequires:    openstack-utils
+BuildRequires:    python-pbr
+BuildRequires:    python-d2to1
 
 Requires:         openstack-nova-compute = %{version}-%{release}
 Requires:         openstack-nova-cert = %{version}-%{release}
@@ -69,6 +71,7 @@ standard hardware configurations and seven major hypervisors.
 Summary:          Components common to all OpenStack Nova services
 Group:            Applications/System
 
+Requires:         python-pbr
 Requires:         python-nova = %{version}-%{release}
 
 Requires(post):   systemd-units
@@ -793,7 +796,7 @@ fi
 
 %changelog
 * Wed May 8 2013 Dan Prince - 2013.1-0.9.g3
-- Updates to work w/ PBR.
+- Updates to work w/ pbr.
 
 * Thu Apr 4 2013 Dan Prince - 2013.1-0.9.g3
 - Add patch to remove auto deps.
