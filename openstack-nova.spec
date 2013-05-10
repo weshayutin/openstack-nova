@@ -2,7 +2,7 @@
 
 Name:             openstack-nova
 Version:          2013.1
-Release:          2%{?dist}
+Release:          3%{?dist}
 Summary:          OpenStack Compute (nova)
 
 Group:            Applications/System
@@ -162,6 +162,7 @@ Requires:         dnsmasq
 #Requires:         dnsmasq-utils
 # tunctl is needed where `ip tuntap` is not available
 Requires:         tunctl
+Requires:         ebtables
 
 %description network
 OpenStack Compute (codename Nova) is open source software designed to
@@ -812,7 +813,10 @@ fi
 %endif
 
 %changelog
-* Thu Apr 11 2013 Nikola Đipanov <pbrady@redhat.com> - 2013.1-2
+* Fri May 10 2013 Pádraig Brady <pbrady@redhat.com> - 2013.1-3
+- Make openstack-nova-network depend on ebtables #961567
+
+* Thu Apr 11 2013 Pádraig Brady <pbrady@redhat.com> - 2013.1-2
 - Fix nova network dnsmasq invocation failure #951144
 
 * Mon Apr 08 2013 Nikola Đipanov <ndipanov@redhat.com> - 2013.1-1
