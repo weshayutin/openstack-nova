@@ -2,7 +2,7 @@
 
 Name:             openstack-nova
 Version:          2013.1
-Release:          3%{?dist}
+Release:          4%{?dist}
 Summary:          OpenStack Compute (nova)
 
 Group:            Applications/System
@@ -73,7 +73,7 @@ Requires:         openstack-nova-network = %{version}-%{release}
 Requires:         openstack-nova-objectstore = %{version}-%{release}
 Requires:         openstack-nova-conductor = %{version}-%{release}
 Requires:         openstack-nova-console = %{version}-%{release}
-Requires:         openstack-nova-console = %{version}-%{release}
+Requires:         openstack-nova-cells = %{version}-%{release}
 
 
 %description
@@ -813,6 +813,9 @@ fi
 %endif
 
 %changelog
+* Mon May 13 2013 Pádraig Brady <pbrady@redhat.com> - 2013.1-4
+- Make openstack-nova metapackage depend on openstack-nova-cells
+
 * Fri May 10 2013 Pádraig Brady <pbrady@redhat.com> - 2013.1-3
 - Make openstack-nova-network depend on ebtables #961567
 
