@@ -91,6 +91,7 @@ Summary:          Components common to all OpenStack Nova services
 Group:            Applications/System
 
 Requires:         python-nova = %{version}-%{release}
+Requires:         python-keystoneclient
 
 Requires(post):   chkconfig
 Requires(postun): initscripts
@@ -697,7 +698,7 @@ fi
 %files common
 %doc LICENSE
 %dir %{_sysconfdir}/nova
-%{_sysconfdir}/nova/release 
+%{_sysconfdir}/nova/release
 %config(noreplace) %attr(-, root, nova) %{_sysconfdir}/nova/nova.conf
 %config(noreplace) %attr(-, root, nova) %{_sysconfdir}/nova/api-paste.ini
 %config(noreplace) %attr(-, root, nova) %{_sysconfdir}/nova/rootwrap.conf
@@ -815,6 +816,7 @@ fi
 %changelog
 * Mon May 13 2013 Pádraig Brady <pbrady@redhat.com> - 2013.1-4
 - Make openstack-nova metapackage depend on openstack-nova-cells
+- Add a dependency on python-keystonclient (for auth middleware)
 
 * Fri May 10 2013 Pádraig Brady <pbrady@redhat.com> - 2013.1-3
 - Make openstack-nova-network depend on ebtables #961567
