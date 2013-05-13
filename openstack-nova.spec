@@ -1,14 +1,14 @@
 %global with_doc %{!?_without_doc:1}%{?_without_doc:0}
 
 Name:             openstack-nova
-Version:          2013.1
-Release:          4%{?dist}
+Version:          2013.1.1
+Release:          1%{?dist}
 Summary:          OpenStack Compute (nova)
 
 Group:            Applications/System
 License:          ASL 2.0
 URL:              http://openstack.org/projects/compute/
-Source0:          https://launchpad.net/nova/grizzly/2013.1/+download/nova-2013.1.tar.gz
+Source0:          https://launchpad.net/nova/grizzly/2013.1/+download/nova-%{version}.tar.gz
 
 Source1:          nova.conf
 Source6:          nova.logrotate
@@ -45,10 +45,9 @@ Source21:         nova-polkit.pkla
 Source22:         nova-ifc-template
 
 #
-# patches_base=2013.1
+# patches_base=2013.1.1
 #
 Patch0001: 0001-Ensure-we-don-t-access-the-net-when-building-docs.patch
-Patch0002: 0002-improve-handling-of-an-empty-dnsmasq-domain.patch
 
 # This is EPEL specific and not upstream
 Patch100:         openstack-nova-newdeps.patch
@@ -387,7 +386,6 @@ This package contains documentation files for nova.
 %setup -q -n nova-%{version}
 
 %patch0001 -p1
-%patch0002 -p1
 
 # Apply EPEL patch
 %patch100 -p1
@@ -814,6 +812,9 @@ fi
 %endif
 
 %changelog
+* Mon May 13 2013 Pádraig Brady <pbrady@redhat.com> - 2013.1.1-1
+- Update to stable/grizzly 2013.1.1 release
+
 * Mon May 13 2013 Pádraig Brady <pbrady@redhat.com> - 2013.1-4
 - Make openstack-nova metapackage depend on openstack-nova-cells
 - Add a dependency on python-keystonclient (for auth middleware)
