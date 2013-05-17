@@ -2,7 +2,7 @@
 
 Name:             openstack-nova
 Version:          2013.1.1
-Release:          1%{?dist}
+Release:          2%{?dist}
 Summary:          OpenStack Compute (nova)
 
 Group:            Applications/System
@@ -48,6 +48,7 @@ Source22:         nova-ifc-template
 # patches_base=2013.1.1
 #
 Patch0001: 0001-Ensure-we-don-t-access-the-net-when-building-docs.patch
+Patch0002: 0002-Check-QCOW2-image-size-during-root-disk-creation.patch
 
 # This is EPEL specific and not upstream
 Patch100:         openstack-nova-newdeps.patch
@@ -386,6 +387,7 @@ This package contains documentation files for nova.
 %setup -q -n nova-%{version}
 
 %patch0001 -p1
+%patch0002 -p1
 
 # Apply EPEL patch
 %patch100 -p1
@@ -812,6 +814,9 @@ fi
 %endif
 
 %changelog
+* Fri May 17 2013 Nikola Đipanov <ndipanov@redhat.com> - 2013.1.1-2
+- Check QCOW2 image size during root disk creation (CVE-2013-2096)
+
 * Mon May 13 2013 Pádraig Brady <pbrady@redhat.com> - 2013.1.1-1
 - Update to stable/grizzly 2013.1.1 release
 
