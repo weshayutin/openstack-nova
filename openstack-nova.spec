@@ -366,8 +366,8 @@ find . \( -name .gitignore -o -name .placeholder \) -delete
 
 find nova -name \*.py -exec sed -i '/\/usr\/bin\/env python/{d;q}' {} +
 
-# Nuke requirements from pip-requires (which requires specific versions, etc)
-echo "" > tools/pip-requires
+# Nuke requirements.txt (which requires specific versions, etc)
+echo "" > requirements.txt
 
 sed -i s/LOCALBRANCH:LOCALREVISION/%{release}/ nova/version.py
 
@@ -795,6 +795,9 @@ fi
 %endif
 
 %changelog
+* Wed May 23 2013 Dan Prince - 2013.1-0.9.g3
+- Updated use requirements.txt.
+
 * Wed May 8 2013 Dan Prince - 2013.1-0.9.g3
 - Updates to work w/ pbr.
 
