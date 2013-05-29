@@ -72,6 +72,7 @@ Summary:          Components common to all OpenStack Nova services
 Group:            Applications/System
 
 Requires:         python-pbr
+Requires:         python-d2to1
 Requires:         python-nova = %{version}-%{release}
 
 Requires(post):   systemd-units
@@ -795,6 +796,9 @@ fi
 %endif
 
 %changelog
+* Wed May 29 2013 Dan Prince - 2013.1-0.9.g3
+- Add missing dep on d2to1.
+
 * Wed May 23 2013 Dan Prince - 2013.1-0.9.g3
 - Updated use requirements.txt.
 
