@@ -2,7 +2,7 @@
 
 Name:             openstack-nova
 Version:          2013.1.1
-Release:          2%{?dist}
+Release:          3%{?dist}
 Summary:          OpenStack Compute (nova)
 
 Group:            Applications/System
@@ -159,8 +159,8 @@ Requires:         vconfig
 Requires:         radvd
 Requires:         bridge-utils
 Requires:         dnsmasq
-#TODO: Enable when available in RHEL 6.3
-#Requires:         dnsmasq-utils
+# dnsmasq-utils vailable from RDO
+Requires:         dnsmasq-utils
 # tunctl is needed where `ip tuntap` is not available
 Requires:         tunctl
 Requires:         ebtables
@@ -814,6 +814,9 @@ fi
 %endif
 
 %changelog
+* Fri May 31 2013 Pádraig Brady <pbrady@redhat.com> - 2013.1.1-3
+- Depend on dnsmasq-utils to give direct control over dnsmasq leases
+
 * Fri May 17 2013 Nikola Đipanov <ndipanov@redhat.com> - 2013.1.1-2
 - Check QCOW2 image size during root disk creation (CVE-2013-2096)
 
