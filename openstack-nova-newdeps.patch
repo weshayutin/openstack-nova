@@ -1,11 +1,23 @@
+From 17ce490483d8da9cb2ff859c07ff88f809e335d3 Mon Sep 17 00:00:00 2001
+From: Nikola Dipanov <ndipanov@redhat.com>
+Date: Mon, 10 Jun 2013 10:24:55 +0200
+Subject: [PATCH] openstack-nova-new-deps
+
+Change-Id: I06793fee68ef2847899aa712d3f10aa2fd3887e9
+---
+ nova/__init__.py                |   30 ++++++++++++++++++++++++++++++
+ nova/db/sqlalchemy/migration.py |    8 +++++++-
+ 2 files changed, 37 insertions(+), 1 deletion(-)
+
 diff --git a/nova/__init__.py b/nova/__init__.py
-index a9eca48..9bf9c4d 100644
+index e21bdd7..ee3e322 100644
 --- a/nova/__init__.py
 +++ b/nova/__init__.py
-@@ -24,6 +24,36 @@
+@@ -24,3 +24,33 @@
     :platform: Unix
     :synopsis: Infrastructure-as-a-Service Cloud platform.
  """
++
 +import sys
 +import pkg_resources
 +
@@ -35,15 +47,11 @@ index a9eca48..9bf9c4d 100644
 +# TODO: See can we get pkg_resources to do the right thing directly
 +import paste
 +paste.__path__.insert(0, paste.__path__.pop(-1))
-+
- 
- import gettext
- 
 diff --git a/nova/db/sqlalchemy/migration.py b/nova/db/sqlalchemy/migration.py
-index dbc1ed4..0260be0 100644
+index 14758ab..a9727e3 100644
 --- a/nova/db/sqlalchemy/migration.py
 +++ b/nova/db/sqlalchemy/migration.py
-@@ -56,7 +56,13 @@ if (not hasattr(migrate, '__version__') or
+@@ -52,7 +52,13 @@ if (not hasattr(migrate, '__version__') or
  
  
  # NOTE(jkoelker) Delay importing migrate until we are patched
@@ -58,3 +66,6 @@ index dbc1ed4..0260be0 100644
  from migrate.versioning import api as versioning_api
  from migrate.versioning.repository import Repository
  
+-- 
+1.7.9.5
+

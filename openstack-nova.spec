@@ -1,14 +1,14 @@
 %global with_doc %{!?_without_doc:1}%{?_without_doc:0}
 
 Name:             openstack-nova
-Version:          2013.1.1
-Release:          3%{?dist}
+Version:          2013.2
+Release:          0.1.h1%{?dist}
 Summary:          OpenStack Compute (nova)
 
 Group:            Applications/System
 License:          ASL 2.0
 URL:              http://openstack.org/projects/compute/
-Source0:          https://launchpad.net/nova/grizzly/2013.1/+download/nova-%{version}.tar.gz
+Source0:	  https://launchpad.net/nova/havana/havana-1/+download/nova-%{version}.b1.tar.gz
 
 Source1:          nova.conf
 Source6:          nova.logrotate
@@ -45,10 +45,10 @@ Source21:         nova-polkit.pkla
 Source22:         nova-ifc-template
 
 #
-# patches_base=2013.1.1
+# patches_base=2013.2.b1
 #
 Patch0001: 0001-Ensure-we-don-t-access-the-net-when-building-docs.patch
-Patch0002: 0002-Check-QCOW2-image-size-during-root-disk-creation.patch
+Patch0002: 0002-Remove-a-run-time-dep-on-python-pbr.patch
 
 # This is EPEL specific and not upstream
 Patch100:         openstack-nova-newdeps.patch
@@ -59,6 +59,8 @@ BuildRequires:    python-sphinx10
 BuildRequires:    python-setuptools
 BuildRequires:    python-netaddr
 BuildRequires:    openstack-utils
+BuildRequires:    python-pbr
+BuildRequires:    python-d2to1
 # These are required to build due to the requirements check added
 BuildRequires:    python-paste-deploy1.5
 BuildRequires:    python-routes1.12
@@ -384,7 +386,7 @@ This package contains documentation files for nova.
 %endif
 
 %prep
-%setup -q -n nova-%{version}
+%setup -q -n nova-%{version}.b1
 
 %patch0001 -p1
 %patch0002 -p1
@@ -397,8 +399,6 @@ find . \( -name .gitignore -o -name .placeholder \) -delete
 find nova -name \*.py -exec sed -i '/\/usr\/bin\/env python/{d;q}' {} +
 
 sed -i '/setuptools_git/d' setup.py
-
-sed -i s/LOCALBRANCH:LOCALREVISION/%{release}/ nova/version.py
 
 %build
 %{__python} setup.py build
@@ -814,6 +814,9 @@ fi
 %endif
 
 %changelog
+* Fri Jun 7 2013 Nikola Đipanov <ndipanov@redhat.com> - 2013.2-0.1.h1
+- Update to Havana milestone 1
+
 * Fri May 31 2013 Pádraig Brady <pbrady@redhat.com> - 2013.1.1-3
 - Depend on dnsmasq-utils to give direct control over dnsmasq leases
 
