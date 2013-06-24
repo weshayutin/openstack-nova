@@ -387,7 +387,7 @@ This package contains documentation files for nova.
 %endif
 
 %prep
-%setup -q -n nova-%{version}.b1
+%setup -q -n nova-%{version}
 
 %patch0001 -p1
 %patch0002 -p1
@@ -817,6 +817,9 @@ fi
 %endif
 
 %changelog
+* Mon Jun 24 2013 Dan Prince <dprince@redhat.com> - 2013.2-0.3.h1
+- Drop b1 from directory name.
+
 * Fri Jun 14 2013 Nikola Đipanov <ndipanov@redhat.com> - 2013.2-0.3.h1
 - Fix an issue with the version string
 
