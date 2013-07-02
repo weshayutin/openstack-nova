@@ -399,6 +399,9 @@ find . \( -name .gitignore -o -name .placeholder \) -delete
 
 find nova -name \*.py -exec sed -i '/\/usr\/bin\/env python/{d;q}' {} +
 
+# Nuke requirements.txt (which requires specific versions, etc)
+echo "" > requirements.txt
+
 sed -i '/setuptools_git/d' setup.py
 sed -i s/REDHATNOVAVERSION/%{version}/ nova/version.py
 sed -i s/REDHATNOVARELEASE/%{release}/ nova/version.py
@@ -817,6 +820,9 @@ fi
 %endif
 
 %changelog
+* Tue Jul 2 2013 Dan Prince <dprince@redhat.com> - 2013.2-0.3.h1
+- Nuke requirements.txt.
+
 * Mon Jun 24 2013 Dan Prince <dprince@redhat.com> - 2013.2-0.3.h1
 - Drop b1 from directory name.
 
