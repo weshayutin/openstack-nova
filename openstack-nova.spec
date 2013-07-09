@@ -45,6 +45,7 @@ BuildRequires:    python-netaddr
 BuildRequires:    openstack-utils
 BuildRequires:    python-pbr
 BuildRequires:    python-d2to1
+BuildRequires:    python-oslo-sphinx
 
 Requires:         openstack-nova-compute = %{version}-%{release}
 Requires:         openstack-nova-cert = %{version}-%{release}
@@ -796,6 +797,9 @@ fi
 %endif
 
 %changelog
+* Mon Jul 8 2013 Dan Prince - 2013.1-0.9.g3
+- Add build requires for python-oslo-sphinx
+
 * Wed May 29 2013 Dan Prince - 2013.1-0.9.g3
 - Add missing dep on d2to1.
 
