@@ -56,6 +56,7 @@ Patch100:         openstack-nova-newdeps.patch
 BuildArch:        noarch
 BuildRequires:    intltool
 BuildRequires:    python-sphinx10
+BuildRequires:    python-oslo-sphinx
 BuildRequires:    python-setuptools
 BuildRequires:    python-netaddr
 BuildRequires:    openstack-utils
@@ -820,6 +821,9 @@ fi
 %endif
 
 %changelog
+* Mon Jul 8 2013 Dan Prince <dprince@redhat.com> - 2013.2-0.3.h1
+- Add build requirement on python-oslo-sphinx.
+
 * Tue Jul 2 2013 Dan Prince <dprince@redhat.com> - 2013.2-0.3.h1
 - Nuke requirements.txt.
 
