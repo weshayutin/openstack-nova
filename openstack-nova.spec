@@ -322,7 +322,7 @@ Requires:         python-routes
 Requires:         python-webob
 
 Requires:         python-glanceclient >= 1:0
-Requires:         python-quantumclient >= 1:2
+Requires:         python-neutronclient
 Requires:         python-novaclient
 Requires:         python-oslo-config
 Requires:         python-pyasn1
@@ -797,6 +797,9 @@ fi
 %endif
 
 %changelog
+* Sat Jul 13 2013 Dan Prince - 2013.1-0.9.g3
+- Add dependency on python-neutronclient.
+
 * Mon Jul 8 2013 Dan Prince - 2013.1-0.9.g3
 - Add build requires for python-oslo-sphinx
 
