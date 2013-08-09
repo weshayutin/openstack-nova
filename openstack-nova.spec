@@ -1,8 +1,8 @@
 %global with_doc %{!?_without_doc:1}%{?_without_doc:0}
 
 Name:             openstack-nova
-Version:          2013.1
-Release:          0.9.g3%{?dist}
+Version:          2013.2
+Release:          1.g3%{?dist}
 Summary:          OpenStack Compute (nova)
 
 Group:            Applications/System
@@ -797,6 +797,9 @@ fi
 %endif
 
 %changelog
+* Fri Aug 09 2013 wes hayutin <whayutin@redhat.com> 2013.2-1.g3
+- new package built with tito
+
 * Sat Jul 13 2013 Dan Prince - 2013.1-0.9.g3
 - Add dependency on python-neutronclient.
 
